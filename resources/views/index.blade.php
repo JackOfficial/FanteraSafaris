@@ -788,7 +788,7 @@
         <div class="row d-flex">
           <div class="col-md-3 d-flex ftco-animate">
             <div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('images/image_1.jpg');">
+              <a href="blog-single.html" class="block-20" style="background-image: url('{{ asset('front/images/image_1.jpg') }}');">
               </a>
               <div class="text p-4 d-block">
               	<span class="tag">Tips, Travel</span>
@@ -803,7 +803,7 @@
           </div>
           <div class="col-md-3 d-flex ftco-animate">
             <div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('images/image_2.jpg');">
+              <a href="blog-single.html" class="block-20" style="background-image: url('{{ asset('front/images/image_2.jpg') }}');">
               </a>
               <div class="text p-4">
               	<span class="tag">Culture</span>
@@ -818,7 +818,7 @@
           </div>
           <div class="col-md-3 d-flex ftco-animate">
             <div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('images/image_3.jpg');">
+              <a href="blog-single.html" class="block-20" style="background-image: url('{{ asset('front/images/image_3.jpg') }}');">
               </a>
               <div class="text p-4">
               	<span class="tag">Tips, Travel</span>
@@ -833,7 +833,7 @@
           </div>
           <div class="col-md-3 d-flex ftco-animate">
             <div class="blog-entry align-self-stretch">
-              <a href="blog-single.html" class="block-20" style="background-image: url('images/image_4.jpg');">
+              <a href="blog-single.html" class="block-20" style="background-image: url('{{ asset('front/images/image_4.jpg') }}');">
               </a>
               <div class="text p-4">
               	<span class="tag">Tips, Travel</span>
