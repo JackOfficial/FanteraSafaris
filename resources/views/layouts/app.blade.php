@@ -39,13 +39,13 @@
 
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item active"><a href="index.html" class="nav-link">Home</a></li>
-          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="tour.html" class="nav-link">Tour</a></li>
-          <li class="nav-item"><a href="hotel.html" class="nav-link">Hotels</a></li>
-          <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
-          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-          <li class="nav-item cta"><a href="contact.html" class="nav-link"><span>Add listing</span></a></li>
+          <li class="nav-item active"><a href="/" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="/tour" class="nav-link">Tour</a></li>
+          <li class="nav-item"><a href="/hotel" class="nav-link">Hotels</a></li>
+          <li class="nav-item"><a href="/blog" class="nav-link">Blog</a></li>
+          <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+          <li class="nav-item cta"><a href="/contact" class="nav-link"><span>Add listing</span></a></li>
         </ul>
       </div>
     </div>
