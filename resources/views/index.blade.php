@@ -1,182 +1,146 @@
 @extends('layouts.app')
-@push('styles')
-<style>
-      .hero-section {
-      height: 100vh;
-      background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-                  url('front/images/Bwindi.jpg') center center/cover no-repeat;
-    }
 
-    .btn-warning {
-      background-color: #d4a373;
-      border: none;
-    }
-
-    .btn-warning:hover {
-      background-color: #c48c5a;
-    }
-
-    .service-box,
-    .tour-card {
-      transition: 0.3s;
-    }
-
-    .service-box:hover,
-    .tour-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    }
-
-</style>
-@endpush
 @section('content')
     
-   <!-- HERO SECTION -->
-<section class="hero-wrap d-flex align-items-center" style="background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('front/images/Bwindi.jpg') center center/cover no-repeat; height: 100vh;">
-
-  <div class="container">
-    <div class="row align-items-center">
-      
-      <!-- LEFT CONTENT -->
-      <div class="col-lg-7 text-white">
-        <h1 class="font-weight-bold mb-4" style="font-size:52px; line-height:1.2;">
-          Experience <br>
-          <span class="text-warning">The Wild Heart of Africa</span>
-        </h1>
-
-        <p class="lead mb-4" style="max-width:600px;">
-          Bespoke luxury safaris across Uganda, Kenya, Tanzania & Rwanda.
-          From intimate Gorilla encounters to the breathtaking Great Migration.
-        </p>
-
-        <a href="#" class="btn btn-warning btn-lg font-weight-bold px-4 py-3">
-          Explore Tours
-        </a>
-      </div>
-
-      <!-- RIGHT FORM -->
-      <div class="col-lg-5 mt-5 mt-lg-0">
-        <div class="bg-white p-4 rounded shadow">
-          <h5 class="font-weight-bold mb-3 text-center">Plan Your Safari</h5>
-          <form>
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Full Name">
+    <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/bg_1.jpg') }}');">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start" data-scrollax-parent="true">
+          <div class="col-md-9 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+            <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">
+                <strong>Experience <br></strong> The Wild Heart of Africa
+            </h1>
+            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Bespoke luxury safaris through Uganda, Kenya, and Tanzania. From Mountain Gorillas to the Great Migration.</p>
+            
+            <div class="block-17 my-4">
+              <form action="#" method="get" class="d-block d-flex">
+                <div class="fields d-block d-flex">
+                  <div class="textfield-search one-third">
+                    <input type="text" class="form-control" placeholder="Ex: Gorilla Trekking, Serengeti">
+                  </div>
+                  <div class="select-wrap one-third">
+                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                    <select name="" id="" class="form-control">
+                      <option value="">Choose Destination</option>
+                      <option value="">Uganda - Pearl of Africa</option>
+                      <option value="">Kenya - Maasai Mara</option>
+                      <option value="">Tanzania - Serengeti</option>
+                      <option value="">Rwanda - Land of 1000 Hills</option>
+                    </select>
+                  </div>
+                </div>
+                <input type="submit" class="search-submit btn btn-primary" value="Inquire Now">  
+              </form>
             </div>
-
-            <div class="form-group">
-              <input type="email" class="form-control" placeholder="Email Address">
-            </div>
-
-            <div class="form-group">
-              <select class="form-control">
-                <option>Select Destination</option>
-                <option>Uganda</option>
-                <option>Rwanda</option>
-                <option>Kenya</option>
-                <option>Tanzania</option>
-              </select>
-            </div>
-
-            <button class="btn btn-warning btn-block font-weight-bold">
-              Start Planning
-            </button>
-          </form>
+            <p>Or browse our signature experiences</p>
+            <p class="browse d-md-flex">
+                <span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-mountain"></i> Gorilla Treks</a></span>
+                <span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-sun"></i> Savannah Game Drives</a></span> 
+                <span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-hotel"></i> Luxury Lodges</a></span> 
+            </p>
+          </div>
         </div>
       </div>
-
     </div>
-  </div>
-</section>
 
-   <section class="py-5 bg-light">
-  <div class="container">
-    <div class="row text-center">
-
-      <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded shadow-sm h-100 service-box">
-          <div class="mb-3">
-            <span class="fa fa-map-marker fa-2x text-warning"></span>
+    <section class="ftco-section services-section bg-light">
+      <div class="container">
+        <div class="row d-flex">
+          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
+            <div class="media block-6 services d-block text-center">
+              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-guarantee"></span></div></div>
+              <div class="media-body p-2 mt-2">
+                <h3 class="heading mb-3">Expert Local Knowledge</h3>
+                <p>Based in Kampala, our guides possess intimate knowledge of East Africa's hidden gems.</p>
+              </div>
+            </div>      
           </div>
-          <h5 class="font-weight-bold">Expert Local Guides</h5>
-          <p>Professional safari guides with deep regional knowledge.</p>
+          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
+            <div class="media block-6 services d-block text-center">
+              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-like"></span></div></div>
+              <div class="media-body p-2 mt-2">
+                <h3 class="heading mb-3">Tailor-Made Journeys</h3>
+                <p>No two travelers are the same. We curate every itinerary to match your specific desires.</p>
+              </div>
+            </div>    
+          </div>
+          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
+            <div class="media block-6 services d-block text-center">
+              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-detective"></span></div></div>
+              <div class="media-body p-2 mt-2">
+                <h3 class="heading mb-3">Eco-Conscious Travel</h3>
+                <p>We prioritize sustainability and community support in every park we visit.</p>
+              </div>
+            </div>      
+          </div>
+          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
+            <div class="media block-6 services d-block text-center">
+              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-support"></span></div></div>
+              <div class="media-body p-2 mt-2">
+                <h3 class="heading mb-3">24/7 Concierge Support</h3>
+                <p>From arrival at Entebbe to your final departure, we are with you every step.</p>
+              </div>
+            </div>      
+          </div>
         </div>
       </div>
-
-      <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded shadow-sm h-100 service-box">
-          <div class="mb-3">
-            <span class="fa fa-shield fa-2x text-warning"></span>
-          </div>
-          <h5 class="font-weight-bold">Safe & Secure</h5>
-          <p>Your safety and comfort are our top priorities.</p>
-        </div>
-      </div>
-
-      <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded shadow-sm h-100 service-box">
-          <div class="mb-3">
-            <span class="fa fa-star fa-2x text-warning"></span>
-          </div>
-          <h5 class="font-weight-bold">Luxury Experience</h5>
-          <p>Handcrafted safari experiences tailored to you.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
+    </section>
     
-    <section class="py-5">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="font-weight-bold">Featured Safari Packages</h2>
-      <p class="text-muted">Explore our most popular adventures</p>
-    </div>
-
-    <div class="row">
-
-      <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow tour-card h-100">
-          <img src="front/images/Bwindi.jpg" class="card-img-top" style="height:250px; object-fit:cover;">
-          <div class="card-body">
-            <h5 class="font-weight-bold">3 Days Gorilla Trekking</h5>
-            <p>Bwindi Impenetrable Forest</p>
-          </div>
-          <div class="card-footer bg-white border-0">
-            <a href="#" class="btn btn-warning btn-block font-weight-bold">View Details</a>
+    <section class="ftco-section ftco-destination">
+        <div class="container">
+            <div class="row justify-content-start mb-5 pb-3">
+          <div class="col-md-7 heading-section ftco-animate">
+            <span class="subheading">Unforgettable Places</span>
+            <h2 class="mb-4"><strong>Featured</strong> Destinations</h2>
           </div>
         </div>
-      </div>
-
-      <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow tour-card h-100">
-          <img src="front/images/Serengeti.jpg" class="card-img-top" style="height:250px; object-fit:cover;">
-          <div class="card-body">
-            <h5 class="font-weight-bold">5 Days Serengeti Safari</h5>
-            <p>Tanzania</p>
-          </div>
-          <div class="card-footer bg-white border-0">
-            <a href="#" class="btn btn-warning btn-block font-weight-bold">View Details</a>
-          </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="destination-slider owl-carousel ftco-animate">
+                        <div class="item">
+                            <div class="destination">
+                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Bwindi.jpg') }}');">
+                                    <div class="icon d-flex justify-content-center align-items-center">
+                                        <span class="icon-search2"></span>
+                                    </div>
+                                </a>
+                                <div class="text p-3">
+                                    <h3><a href="#">Bwindi Impenetrable, Uganda</a></h3>
+                                    <span class="listing">Home of the Gorillas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="destination">
+                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Serengeti.jpg') }}');">
+                                    <div class="icon d-flex justify-content-center align-items-center">
+                                        <span class="icon-search2"></span>
+                                    </div>
+                                </a>
+                                <div class="text p-3">
+                                    <h3><a href="#">Serengeti National Park</a></h3>
+                                    <span class="listing">The Great Migration</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="destination">
+                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Maasai mara.jpg') }}');">
+                                    <div class="icon d-flex justify-content-center align-items-center">
+                                        <span class="icon-search2"></span>
+                                    </div>
+                                </a>
+                                <div class="text p-3">
+                                    <h3><a href="#">Maasai Mara, Kenya</a></h3>
+                                    <span class="listing">Unlimited Game Viewing</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow tour-card h-100">
-          <img src="front/images/Masai.jpg" class="card-img-top" style="height:250px; object-fit:cover;">
-          <div class="card-body">
-            <h5 class="font-weight-bold">4 Days Maasai Mara</h5>
-            <p>Kenya</p>
-          </div>
-          <div class="card-footer bg-white border-0">
-            <a href="#" class="btn btn-warning btn-block font-weight-bold">View Details</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
+    </section>
 
     <section class="ftco-section bg-light">
   <div class="container">
@@ -536,16 +500,6 @@
         </div>
       </div>
       </div>
-  </div>
-</section>
-
-<section class="py-5 text-center text-white" style="background:#1b4332;">
-  <div class="container">
-    <h2 class="font-weight-bold mb-3">Ready For Your African Adventure?</h2>
-    <p class="mb-4">Let Fantera Safaris design your unforgettable journey.</p>
-    <a href="#" class="btn btn-warning btn-lg font-weight-bold px-4 py-3">
-      Start Planning Now
-    </a>
   </div>
 </section>
 
