@@ -108,7 +108,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Uganda</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -131,7 +131,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Tanzania</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Kenya</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -177,7 +177,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Rwanda</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -200,7 +200,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> East Africa</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -223,7 +223,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Zanzibar</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
