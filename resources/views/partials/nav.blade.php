@@ -12,7 +12,7 @@
         <li class="nav-item {{ request()->is('/') ? 'active' : '' }}"><a href="/" class="nav-link">Home</a></li>
          <li class="nav-item {{ request()->is('/about') ? 'active' : '' }}"><a href="/about" class="nav-link">About Us</a></li>
         <li class="nav-item {{ request()->is('/tour') ? 'active' : '' }}"><a href="/tour" class="nav-link">Destinations</a></li>
-        <li class="nav-item {{ request()->is('/packages') ? 'active' : '' }}"><a href="/safari-packages" class="nav-link">Safari Packages</a></li>
+        <li class="nav-item {{ request()->is('/packages') ? 'active' : '' }}"><a href="/packages" class="nav-link">Safari Packages</a></li>
         <li class="nav-item {{ request()->is('/story') ? 'active' : '' }}"><a href="/about" class="nav-link">Our Story</a></li>
         <li class="nav-item {{ request()->is('/contact') ? 'active' : '' }}"><a href="/contact" class="nav-link">Contact</a></li>
         
