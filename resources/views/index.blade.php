@@ -112,7 +112,7 @@
                         </div>
                         <div class="item">
                             <div class="destination">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/tanzania-serengeti.jpg') }}');">
+                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Serengeti.jpg') }}');">
                                     <div class="icon d-flex justify-content-center align-items-center">
                                         <span class="icon-search2"></span>
                                     </div>
