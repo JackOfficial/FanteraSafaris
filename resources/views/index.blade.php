@@ -539,6 +539,16 @@
   </div>
 </section>
 
+<section class="py-5 text-center text-white" style="background:#1b4332;">
+  <div class="container">
+    <h2 class="font-weight-bold mb-3">Ready For Your African Adventure?</h2>
+    <p class="mb-4">Let Fantera Safaris design your unforgettable journey.</p>
+    <a href="#" class="btn btn-warning btn-lg font-weight-bold px-4 py-3">
+      Start Planning Now
+    </a>
+  </div>
+</section>
+
     <section class="ftco-section-parallax">
       <div class="parallax-img d-flex align-items-center" style="background-image: url({{ asset('front/images/bg_2.jpg') }}); padding: 100px 0;">
         <div class="container">
