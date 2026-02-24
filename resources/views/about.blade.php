@@ -17,6 +17,28 @@
 .card:hover {
   transform: translateY(-5px);
 }
+/* Bigger, more premium icons */
+
+.icon-box {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a373, #c48c5a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-box i {
+  font-size: 48px;
+  color: #fff;
+}
+
+.commitment-card:hover .icon-box {
+  transform: scale(1.08);
+  transition: 0.3s ease;
+}
   </style>
 @endpush
 @section('content')
