@@ -18,53 +18,39 @@
   </div>
 </div>
 
-<section class="ftco-section">
-    <div class="container">
-        <div class="row d-md-flex">
-            <div class="col-md-6 ftco-animate img about-image" style="background-image: url({{ asset('front/images/about_safari.jpg') }});">
-            </div>
-            <div class="col-md-6 ftco-animate p-md-5">
-                <div class="row">
-              <div class="col-md-12 nav-link-wrap mb-5">
-                <div class="nav ftco-animate nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                  <a class="nav-link active" id="v-pills-whatwedo-tab" data-toggle="pill" href="#v-pills-whatwedo" role="tab" aria-controls="v-pills-whatwedo" aria-selected="true">What We Do</a>
-                  <a class="nav-link" id="v-pills-mission-tab" data-toggle="pill" href="#v-pills-mission" role="tab" aria-controls="v-pills-mission" aria-selected="false">Our Mission</a>
-                  <a class="nav-link" id="v-pills-goal-tab" data-toggle="pill" href="#v-pills-goal" role="tab" aria-controls="v-pills-goal" aria-selected="false">Our Values</a>
-                </div>
-              </div>
-              <div class="col-md-12 d-flex align-items-center">
-                
-                <div class="tab-content ftco-animate" id="v-pills-tabContent">
+<section class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
 
-                  <div class="tab-pane fade show active" id="v-pills-whatwedo" role="tabpanel" aria-labelledby="v-pills-whatwedo-tab">
-                    <div>
-                        <h2 class="mb-4">Curating Extraordinary Encounters</h2>
-                        <p>At Fantera Safaris, we specialize in bespoke luxury expeditions across Uganda, Kenya, Tanzania, and Rwanda. We bridge the gap between untamed wilderness and refined comfort.</p>
-                        <p>From private gorilla trekking permits to luxury mobile camps in the path of the Great Migration, we handle every detail of your East African odyssey.</p>
-                    </div>
-                  </div>
+      <!-- Image -->
+      <div class="col-md-6 mb-4 mb-md-0">
+        <img src="{{ asset('front/images/about_us.jpg') }}" 
+             class="img-fluid rounded shadow" 
+             alt="Luxury Safari Experience">
+      </div>
 
-                  <div class="tab-pane fade" id="v-pills-mission" role="tabpanel" aria-labelledby="v-pills-mission-tab">
-                    <div>
-                        <h2 class="mb-4">Preserving the Wild</h2>
-                        <p>Our mission is to provide life-changing travel experiences that directly contribute to the conservation of Africa’s wildlife and the empowerment of its local communities.</p>
-                        <p>We believe that responsible tourism is the most powerful tool for protecting endangered species like the Mountain Gorilla and the African Lion.</p>
-                    </div>
-                  </div>
+      <!-- Content -->
+      <div class="col-md-6 pl-md-5">
 
-                  <div class="tab-pane fade" id="v-pills-goal" role="tabpanel" aria-labelledby="v-pills-goal-tab">
-                    <div>
-                        <h2 class="mb-4">Integrity & Authenticity</h2>
-                        <p>We don't do "tourist traps." Our goal is to provide authentic cultural immersion and exclusive access to the most pristine wilderness areas in East Africa.</p>
-                        <p>We prioritize safety, professional guiding, and a "leave no trace" philosophy in every park we enter.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <h2 class="font-weight-bold mb-4">Curating Extraordinary Encounters</h2>
+
+        <p>
+          At <strong>Fantera Safaris</strong>, we specialize in bespoke luxury expeditions across Uganda, Kenya, Tanzania, and Rwanda — bridging the gap between untamed wilderness and refined comfort.
+        </p>
+
+        <p>
+          From private gorilla trekking permits to exclusive mobile camps positioned along the Great Migration route, we manage every detail of your East African odyssey with precision and care.
+        </p>
+
+        <div class="mt-4">
+          <a href="{{ route('contact') }}" class="btn btn-warning font-weight-bold px-4 py-2">
+            Plan Your Safari
+          </a>
         </div>
+
+      </div>
     </div>
+  </div>
 </section>
 
 <section class="ftco-section bg-light">
