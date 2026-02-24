@@ -291,7 +291,7 @@
     <div class="row justify-content-start">
       
       <div class="col-md-5 heading-section ftco-animate">
-        <span class="subheading">The Safari Experts</span>
+        <span class="subheading">FanteraSafaris</span>
         <h2 class="mb-4 pb-3"><strong>Why</strong> Book With Us?</h2>
         <p>With over a decade of experience across the East African Savannah, we don't just organize trips; we curate life-changing encounters. From the vast plains of the Serengeti to the mist-covered peaks of Rwanda, our local guides ensure you are in the right place at the right moment.</p>
         <p>We prioritize sustainable tourism and authentic cultural immersion, giving you a deeper connection to the wild heart of Africa.</p>
