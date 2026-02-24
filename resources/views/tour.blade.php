@@ -4,7 +4,32 @@
 @section('meta_description', 'Discover the best destinations in Uganda, Kenya, and Tanzania. From the misty mountains of Bwindi to the vast Serengeti plains.')
 @section('meta_keywords', 'Uganda Destinations, Serengeti Tours, Masai Mara Safaris, Gorilla Trekking Locations')
 @section('og_image', asset('front/images/zanzibar_beach.jpg'))
-
+@push('styles')
+	<style>
+		.destination:hover .img {
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+}
+.destination .text p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: #555;
+}
+.destination .img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.3), rgba(0,0,0,0));
+    border-radius: 8px;
+}
+.destination .icon {
+    transition: transform 0.3s ease;
+}
+.destination:hover .icon {
+    transform: scale(1.2);
+}
+	</style>
+@endpush
 @section('content')
     
     <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/zanzibar_beach.jpg') }}');">
