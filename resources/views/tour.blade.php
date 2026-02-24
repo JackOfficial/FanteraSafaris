@@ -1,123 +1,200 @@
+@extends('layouts.app')
+
+@section('title', 'Premier East African Safari Destinations | Fantera Safaris')
+@section('meta_description', 'Discover the best destinations in Uganda, Kenya, and Tanzania. From the misty mountains of Bwindi to the vast Serengeti plains.')
+@section('meta_keywords', 'Uganda Destinations, Serengeti Tours, Masai Mara Safaris, Gorilla Trekking Locations')
+@section('og_image', asset('front/images/zanzibar_beach.jpg'))
+
 @section('content')
 <style>
-    /* 2026 Custom Utilities for BS4 */
-    .hero-wrap { height: 75vh; min-height: 600px; position: relative; overflow: hidden; }
-    .hero-content { position: relative; z-index: 2; color: #fff; text-align: center; }
-    
-    /* Soft Elevation instead of Borders */
-    .destination-card { 
-        border: none; 
-        border-radius: 24px; 
-        transition: all 0.4s ease-in-out; 
-        background: #fff;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    }
-    .destination-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-    
-    .img-container { height: 280px; position: relative; overflow: hidden; }
-    .img-container img { transition: transform 0.6s; width: 100%; height: 100%; object-fit: cover; }
-    .destination-card:hover img { transform: scale(1.1); }
-
-    /* Price Badge */
-    .price-badge {
-        position: absolute; bottom: 20px; right: 20px;
-        background: #1a1a1a; color: #fff; padding: 10px 20px;
-        border-radius: 15px; font-weight: 700;
+    /* 2026 Aesthetic Overrides for Bootstrap 4 */
+    :root {
+        --safari-green: #008155;
+        --safari-dark: #1a1a1a;
+        --soft-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        --radius: 24px;
     }
 
-    /* Modern Glassmorphic Sidebar */
-    .sidebar-filter {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 30px;
+    .hero-section {
+        height: 70vh;
+        min-height: 500px;
+        background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('{{ asset('front/images/zanzibar_beach.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        border-bottom-left-radius: 60px; /* 2026 Organic edge trend */
+        display: flex;
+        align-items: center;
+        color: white;
+    }
+
+    .glass-sidebar {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: var(--radius);
         padding: 30px;
-        border: 1px solid rgba(0,0,0,0.05);
-        position: sticky; top: 100px;
+        box-shadow: var(--soft-shadow);
     }
-    
-    .btn-safari { 
-        background: #1a1a1a; color: #fff; border-radius: 12px; 
-        padding: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+
+    .dest-card {
+        border: none;
+        border-radius: var(--radius);
+        background: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: var(--soft-shadow);
     }
-    .btn-safari:hover { background: #00d084; color: #fff; }
+
+    .dest-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+    }
+
+    .dest-img-container {
+        height: 250px;
+        position: relative;
+    }
+
+    .dest-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .price-tag {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: var(--safari-dark);
+        color: white;
+        padding: 8px 18px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .badge-country {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(5px);
+        color: var(--safari-dark);
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .form-control-safari {
+        border-radius: 12px;
+        background: #f8f9fa;
+        border: 1px solid #eee;
+        padding: 12px 15px;
+        height: auto;
+    }
+
+    .btn-safari {
+        background: var(--safari-green);
+        color: white;
+        border-radius: 12px;
+        padding: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: none;
+    }
 </style>
 
-<div class="hero-wrap d-flex align-items-center justify-content-center" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{{ asset('front/images/zanzibar_beach.jpg') }}') no-repeat center center/cover;">
-    <div class="hero-content">
-        <h6 class="text-uppercase tracking-wider mb-3" style="letter-spacing: 4px;">Luxury Safaris</h6>
-        <h1 class="display-3 font-weight-bold mb-4">Explore East Africa</h1>
-        <p class="lead opacity-75">Curated wildlife experiences for the modern explorer.</p>
+<header class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-3 font-weight-bold tracking-tight">Explore East Africa</h1>
+        <p class="lead font-weight-light opacity-75">Boutique Safari Experiences & Hidden Gems</p>
     </div>
-</div>
+</header>
 
-<section class="ftco-section bg-light py-5">
+<section class="py-5 bg-white">
     <div class="container">
         <div class="row">
-            <div class="col-lg-3 mb-5">
-                <div class="sidebar-filter shadow-sm">
-                    <h5 class="font-weight-bold mb-4">Refine Search</h5>
-                    <form action="#">
-                        <div class="form-group mb-4">
-                            <label class="small font-weight-bold text-muted uppercase">Destination</label>
-                            <select class="form-control border-0 bg-light rounded-pill px-4">
-                                <option>All Regions</option>
+            <div class="col-lg-3">
+                <div class="glass-sidebar sticky-top" style="top: 20px;">
+                    <h5 class="font-weight-bold mb-4">Find Your Journey</h5>
+                    <form>
+                        <div class="form-group">
+                            <label class="small text-muted font-weight-bold">Search</label>
+                            <input type="text" class="form-control form-control-safari" placeholder="e.g. Bwindi">
+                        </div>
+                        <div class="form-group">
+                            <label class="small text-muted font-weight-bold">Region</label>
+                            <select class="form-control form-control-safari">
+                                <option>All Destinations</option>
                                 <option>Uganda</option>
                                 <option>Kenya</option>
+                                <option>Tanzania</option>
                             </select>
                         </div>
-                        <div class="form-group mb-4">
-                            <label class="small font-weight-bold text-muted uppercase">Travel Date</label>
-                            <input type="text" class="form-control border-0 bg-light rounded-pill px-4" placeholder="Anytime">
-                        </div>
-                        <div class="form-group mb-4">
-                            <div class="d-flex justify-content-between">
-                                <label class="small font-weight-bold text-muted uppercase">Budget</label>
-                                <span class="small font-weight-bold text-dark">$10,000</span>
+                        <div class="form-group">
+                            <label class="small text-muted font-weight-bold">Price Range</label>
+                            <input type="range" class="custom-range" min="500" max="10000">
+                            <div class="d-flex justify-content-between small font-weight-bold">
+                                <span>$500</span>
+                                <span>$10,000</span>
                             </div>
-                            <input type="range" class="custom-range accent-dark" min="500" max="10000">
                         </div>
-                        <button class="btn btn-safari btn-block mt-4">Update Results</button>
+                        <button class="btn btn-safari btn-block shadow-sm mt-3">Filter Results</button>
                     </form>
                 </div>
             </div>
 
             <div class="col-lg-9">
                 <div class="row">
-                    @foreach($destinations as $dest)
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="destination-card">
-                            <div class="img-container">
-                                <img src="{{ asset('front/images/'.$dest->image) }}" alt="{{ $dest->name }}">
-                                <div class="price-badge">${{ number_format($dest->price) }}</div>
-                                <div class="position-absolute p-3" style="top:0; left:0;">
-                                    <span class="badge badge-light rounded-pill px-3 py-2 text-uppercase" style="font-size: 10px;">{{ $dest->country }}</span>
-                                </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="dest-card">
+                            <div class="dest-img-container">
+                                <span class="badge-country">Uganda</span>
+                                <img src="{{ asset('front/images/Bwindi.jpg') }}" alt="Bwindi">
+                                <div class="price-tag">$1,800</div>
                             </div>
                             <div class="p-4">
-                                <div class="mb-2">
-                                    <span class="text-warning small"><i class="fa fa-star"></i> 5.0</span>
-                                </div>
-                                <h5 class="font-weight-bold text-dark mb-3">{{ $dest->name }}</h5>
-                                <p class="text-muted small mb-4">{{ Str::limit($dest->description, 60) }}</p>
-                                <hr class="border-light">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted"><i class="fa fa-clock-o mr-1"></i> 7 Days</span>
-                                    <a href="{{ route('tours.show', $dest->slug) }}" class="font-weight-bold text-dark">Details <i class="fa fa-arrow-right ml-1"></i></a>
+                                <h4 class="font-weight-bold mb-2">Bwindi Gorilla Trek</h4>
+                                <p class="text-muted small">Deep dive into the misty forests for a life-changing encounter.</p>
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                    <span class="small font-weight-bold"><i class="fa fa-map-marker mr-1 text-success"></i> Bwindi NP</span>
+                                    <a href="#" class="btn btn-link text-dark font-weight-bold p-0">View Details <i class="fa fa-arrow-right ml-1"></i></a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @endforeach
-                </div>
 
-                <div class="row mt-5">
-                    <div class="col text-center">
-                        <div class="pagination-custom">
-                            {{ $destinations->links() }}
+                    <div class="col-md-6 mb-4">
+                        <div class="dest-card">
+                            <div class="dest-img-container">
+                                <span class="badge-country">Tanzania</span>
+                                <img src="{{ asset('front/images/Serengeti.jpg') }}" alt="Serengeti">
+                                <div class="price-tag">$1,250</div>
+                            </div>
+                            <div class="p-4">
+                                <h4 class="font-weight-bold mb-2">Serengeti Migration</h4>
+                                <p class="text-muted small">The greatest wildlife spectacle on earth across the endless plains.</p>
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                    <span class="small font-weight-bold"><i class="fa fa-map-marker mr-1 text-success"></i> Serengeti NP</span>
+                                    <a href="#" class="btn btn-link text-dark font-weight-bold p-0">View Details <i class="fa fa-arrow-right ml-1"></i></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled"><a class="page-link border-0 rounded-circle mr-2" href="#">&lt;</a></li>
+                        <li class="page-item active"><a class="page-link border-0 rounded-circle mr-2 bg-dark" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link border-0 rounded-circle mr-2" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link border-0 rounded-circle" href="#">&gt;</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
