@@ -286,36 +286,79 @@
   </div>
 </section>
 
-    <section class="ftco-section testimony-section bg-light">
-      <div class="container">
-        <div class="row justify-content-start mb-5 pb-3">
-          <div class="col-md-7 heading-section ftco-animate">
-            <span class="subheading">Guest Reviews</span>
-            <h2 class="mb-4"><strong>Shared</strong> Experiences</h2>
-          </div>
-        </div>
+ <section class="ftco-section testimony-section bg-light">
+  <div class="container">
+    <div class="row justify-content-start">
+      
+      <div class="col-md-5 heading-section ftco-animate">
+        <span class="subheading">The Safari Experts</span>
+        <h2 class="mb-4 pb-3"><strong>Why</strong> Book With Us?</h2>
+        <p>With over a decade of experience across the East African Savannah, we don't just organize trips; we curate life-changing encounters. From the vast plains of the Serengeti to the mist-covered peaks of Rwanda, our local guides ensure you are in the right place at the right moment.</p>
+        <p>We prioritize sustainable tourism and authentic cultural immersion, giving you a deeper connection to the wild heart of Africa.</p>
+        <p><a href="#" class="btn btn-primary btn-outline-primary mt-4 px-4 py-3">View Our Packages</a></p>
+      </div>
+
+      <div class="col-md-1"></div>
+
+      <div class="col-md-6 heading-section ftco-animate">
+        <span class="subheading">Guest Reviews</span>
+        <h2 class="mb-4 pb-3"><strong>What</strong> Our Explorers Say</h2>
         <div class="row ftco-animate">
           <div class="col-md-12">
             <div class="carousel-testimony owl-carousel">
+              
               <div class="item">
-                <div class="testimony-wrap p-4 pb-5">
-                  <div class="text">
-                    <p class="mb-5">"The attention to detail was incredible. Our guide in Bwindi knew every bird and tree. Fantera made our honeymoon magical."</p>
-                    <div class="d-flex align-items-center">
-                        <div class="user-img" style="background-image: url({{ asset('front/images/person_1.jpg') }})"></div>
-                        <div class="ml-3">
-                            <p class="name">James Willson</p>
-                            <span class="position">London, UK</span>
-                        </div>
-                    </div>
+                <div class="testimony-wrap d-flex">
+                  <div class="user-img mb-5" style="background-image: url({{ asset('front/images/person_1.jpg') }})">
+                    <span class="quote d-flex align-items-center justify-content-center">
+                      <i class="icon-quote-left"></i>
+                    </span>
+                  </div>
+                  <div class="text ml-md-4">
+                    <p class="mb-5">"Watching the Great Migration from a hot air balloon was surreal. The attention to detail and the knowledge of our guide made this the trip of a lifetime!"</p>
+                    <p class="name">James Henderson</p>
+                    <span class="position">Guest from Canada</span>
                   </div>
                 </div>
               </div>
+
+              <div class="item">
+                <div class="testimony-wrap d-flex">
+                  <div class="user-img mb-5" style="background-image: url({{ asset('front/images/person_2.jpg') }})">
+                    <span class="quote d-flex align-items-center justify-content-center">
+                      <i class="icon-quote-left"></i>
+                    </span>
+                  </div>
+                  <div class="text ml-md-4">
+                    <p class="mb-5">"The gorilla trekking in Uganda was breath-taking. Everything was perfectly organized, from the permits to the stunning eco-lodges we stayed in."</p>
+                    <p class="name">Elena Rossi</p>
+                    <span class="position">Guest from Italy</span>
+                  </div>
+                </div>
               </div>
+
+              <div class="item">
+                <div class="testimony-wrap d-flex">
+                  <div class="user-img mb-5" style="background-image: url({{ asset('front/images/person_3.jpg') }})">
+                    <span class="quote d-flex align-items-center justify-content-center">
+                      <i class="icon-quote-left"></i>
+                    </span>
+                  </div>
+                  <div class="text ml-md-4">
+                    <p class="mb-5">"Expertly handled. We saw the Big Five within the first two days! If you're looking for an authentic East African adventure, this is it."</p>
+                    <p class="name">Sarah Jenkins</p>
+                    <span class="position">Guest from USA</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
-    </section>
+      </div>
+  </div>
+</section>
 
     <section class="ftco-section-parallax">
       <div class="parallax-img d-flex align-items-center" style="background-image: url({{ asset('front/images/bg_2.jpg') }}); padding: 100px 0;">
