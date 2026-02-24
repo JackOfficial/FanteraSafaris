@@ -47,7 +47,7 @@
           <div class="block-23 mb-3">
             <ul>
               <li><span class="icon icon-map-marker"></span><span class="text">Plot 47, Kampala Road, Kampala, Uganda</span></li>
-              <li><a href="tel:+256XXXXXXXXX"><span class="icon icon-phone"></span><span class="text">+256 708 239010</span></a></li>
+              <li><a href="tel:+256708239010"><span class="icon icon-phone"></span><span class="text">+256 708 239010</span></a></li>
               <li><a href="mailto:info@fanterasafaris.com"><span class="icon icon-envelope"></span><span class="text">info@fanterasafaris.com</span></a></li>
             </ul>
           </div>
