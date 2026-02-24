@@ -34,7 +34,7 @@ Route::get('/packages', function () {
     return view('packages.index');
 });
 
-Route::get('/packages', function () {
+Route::get('/package', function () {
     return view('packages.show');
 });
 
