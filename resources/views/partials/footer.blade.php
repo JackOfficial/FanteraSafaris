@@ -46,9 +46,9 @@
           <h2 class="ftco-heading-2">Have a Question?</h2>
           <div class="block-23 mb-3">
             <ul>
-              <li><span class="icon icon-map-marker"></span><span class="text">Plot XX, Kampala Road, Kampala, Uganda</span></li>
-              <li><a href="tel:+256XXXXXXXXX"><span class="icon icon-phone"></span><span class="text">+256 7xx xxxxxx</span></a></li>
-              <li><a href="mailto:info@fanterasafaris.com"><span class="icon icon-envelope"></span><span class="text">reservations@fanterasafaris.com</span></a></li>
+              <li><span class="icon icon-map-marker"></span><span class="text">Plot 47, Kampala Road, Kampala, Uganda</span></li>
+              <li><a href="tel:+256XXXXXXXXX"><span class="icon icon-phone"></span><span class="text">+256 708 239010</span></a></li>
+              <li><a href="mailto:info@fanterasafaris.com"><span class="icon icon-envelope"></span><span class="text">info@fanterasafaris.com</span></a></li>
             </ul>
           </div>
         </div>
