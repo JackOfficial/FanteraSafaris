@@ -2,46 +2,62 @@
 
 @section('content')
     
-    <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/bg_1.jpg') }}');">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start" data-scrollax-parent="true">
-          <div class="col-md-9 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">
-                <strong>Experience <br></strong> The Wild Heart of Africa
-            </h1>
-            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Bespoke luxury safaris through Uganda, Kenya, and Tanzania. From Mountain Gorillas to the Great Migration.</p>
-            
-            <div class="block-17 my-4">
-              <form action="#" method="get" class="d-block d-flex">
-                <div class="fields d-block d-flex">
-                  <div class="textfield-search one-third">
-                    <input type="text" class="form-control" placeholder="Ex: Gorilla Trekking, Serengeti">
-                  </div>
-                  <div class="select-wrap one-third">
-                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                    <select name="" id="" class="form-control">
-                      <option value="">Choose Destination</option>
-                      <option value="">Uganda - Pearl of Africa</option>
-                      <option value="">Kenya - Maasai Mara</option>
-                      <option value="">Tanzania - Serengeti</option>
-                      <option value="">Rwanda - Land of 1000 Hills</option>
-                    </select>
-                  </div>
-                </div>
-                <input type="submit" class="search-submit btn btn-primary" value="Inquire Now">  
-              </form>
+   <!-- HERO SECTION -->
+<section class="hero-wrap d-flex align-items-center" style="background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('front/images/Bwindi.jpg') center center/cover no-repeat; height: 100vh;">
+
+  <div class="container">
+    <div class="row align-items-center">
+      
+      <!-- LEFT CONTENT -->
+      <div class="col-lg-7 text-white">
+        <h1 class="font-weight-bold mb-4" style="font-size:52px; line-height:1.2;">
+          Experience <br>
+          <span class="text-warning">The Wild Heart of Africa</span>
+        </h1>
+
+        <p class="lead mb-4" style="max-width:600px;">
+          Bespoke luxury safaris across Uganda, Kenya, Tanzania & Rwanda.
+          From intimate Gorilla encounters to the breathtaking Great Migration.
+        </p>
+
+        <a href="#" class="btn btn-warning btn-lg font-weight-bold px-4 py-3">
+          Explore Tours
+        </a>
+      </div>
+
+      <!-- RIGHT FORM -->
+      <div class="col-lg-5 mt-5 mt-lg-0">
+        <div class="bg-white p-4 rounded shadow">
+          <h5 class="font-weight-bold mb-3 text-center">Plan Your Safari</h5>
+          <form>
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Full Name">
             </div>
-            <p>Or browse our signature experiences</p>
-            <p class="browse d-md-flex">
-                <span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-mountain"></i> Gorilla Treks</a></span>
-                <span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-sun"></i> Savannah Game Drives</a></span> 
-                <span class="d-flex justify-content-md-center align-items-md-center"><a href="#"><i class="flaticon-hotel"></i> Luxury Lodges</a></span> 
-            </p>
-          </div>
+
+            <div class="form-group">
+              <input type="email" class="form-control" placeholder="Email Address">
+            </div>
+
+            <div class="form-group">
+              <select class="form-control">
+                <option>Select Destination</option>
+                <option>Uganda</option>
+                <option>Rwanda</option>
+                <option>Kenya</option>
+                <option>Tanzania</option>
+              </select>
+            </div>
+
+            <button class="btn btn-warning btn-block font-weight-bold">
+              Start Planning
+            </button>
+          </form>
         </div>
       </div>
+
     </div>
+  </div>
+</section>
 
     <section class="ftco-section services-section bg-light">
       <div class="container">
