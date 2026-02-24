@@ -142,6 +142,26 @@
         </div>
     </section>
 
+    <section class="ftco-section ftco-no-pt ftco-no-pb">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 d-flex align-items-stretch">
+                    <div class="img img-video d-flex align-self-stretch align-items-center justify-content-center" style="background-image:url({{ asset('front/images/about_safari.jpg') }});">
+                    </div>
+                </div>
+                <div class="col-md-6 py-md-5 mt-md-5">
+                    <div class="heading-section mb-5 ftco-animate">
+                        <span class="subheading">Since 2014</span>
+                        <h2 class="mb-4">The Fantera Safaris Philosophy</h2>
+                        <p>We don't just organize trips; we curate soul-stirring encounters with the wild. Born in the heart of Uganda, Fantera Safaris was founded on the belief that travel should be immersive, ethical, and uncompromising in luxury.</p>
+                        <p>Whether it’s the silent gaze of a Mountain Gorilla or the thundering hooves across the Serengeti, we ensure your journey is seamless, private, and profoundly personal.</p>
+                        <p><a href="#" class="btn btn-primary px-4 py-3">Learn More About Us</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url({{ asset('front/images/bg_1.jpg') }});">
         <div class="container">
             <div class="row justify-content-center mb-5 pb-3">
@@ -189,6 +209,51 @@
             </div>
         </div>
         </div>
+    </section>
+
+    <section class="ftco-section testimony-section bg-light">
+      <div class="container">
+        <div class="row justify-content-start mb-5 pb-3">
+          <div class="col-md-7 heading-section ftco-animate">
+            <span class="subheading">Guest Reviews</span>
+            <h2 class="mb-4"><strong>Shared</strong> Experiences</h2>
+          </div>
+        </div>
+        <div class="row ftco-animate">
+          <div class="col-md-12">
+            <div class="carousel-testimony owl-carousel">
+              <div class="item">
+                <div class="testimony-wrap p-4 pb-5">
+                  <div class="text">
+                    <p class="mb-5">"The attention to detail was incredible. Our guide in Bwindi knew every bird and tree. Fantera made our honeymoon magical."</p>
+                    <div class="d-flex align-items-center">
+                        <div class="user-img" style="background-image: url({{ asset('front/images/person_1.jpg') }})"></div>
+                        <div class="ml-3">
+                            <p class="name">James Willson</p>
+                            <span class="position">London, UK</span>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ftco-section-parallax">
+      <div class="parallax-img d-flex align-items-center" style="background-image: url({{ asset('front/images/bg_2.jpg') }}); padding: 100px 0;">
+        <div class="container">
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+              <h2>Follow the Adventure</h2>
+              <p>Join our community on Instagram for daily glimpses into the wild.</p>
+              <p><a href="#" class="btn btn-white btn-outline-white px-4 py-3">@FanteraSafaris</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
 @endsection
