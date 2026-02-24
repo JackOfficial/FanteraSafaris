@@ -363,7 +363,7 @@
 
       <div class="col-sm col-md-6 col-lg ftco-animate">
         <div class="destination">
-          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/garilla_trek.jpg') }});">
+          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/gorilla_trek.jpg') }});">
             <div class="icon d-flex justify-content-center align-items-center">
               <span class="icon-search2"></span>
             </div>
