@@ -211,12 +211,12 @@
         </div>
     </section>
 
-	<section class="ftco-section bg-light">
+<section class="ftco-section bg-light">
   <div class="container">
     <div class="row justify-content-start mb-5 pb-3">
       <div class="col-md-7 heading-section ftco-animate">
-        <span class="subheading">Recent Blog</span>
-        <h2><strong>Tips</strong> &amp; Articles</h2>
+        <span class="subheading">Safari Insights</span>
+        <h2><strong>Wild</strong> Stories &amp; Safari Tips</h2>
       </div>
     </div>
 
@@ -224,14 +224,14 @@
       
       <div class="col-md-3 d-flex ftco-animate">
         <div class="blog-entry align-self-stretch">
-          <a href="blog-single.html" class="block-20" style="background-image: url('images/image_1.jpg');"></a>
+          <a href="blog-single.html" class="block-20" style="background-image: url({{ asset('front/images/Serengeti.jpg') }});"></a>
           <div class="text p-4 d-block">
-            <span class="tag">Tips, Travel</span>
-            <h3 class="heading mt-3"><a href="#">8 Best homestay in Philippines that you don't miss out</a></h3>
+            <span class="tag">Wild Experience</span>
+            <h3 class="heading mt-3"><a href="#">The Great Migration: When and Where to See the Herd</a></h3>
             <div class="meta mb-3">
-              <div><a href="#">August 12, 2018</a></div>
-              <div><a href="#">Admin</a></div>
-              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
+              <div><a href="#">Feb 24, 2026</a></div>
+              <div><a href="#">Safari Guide</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 42</a></div>
             </div>
           </div>
         </div>
@@ -239,14 +239,14 @@
 
       <div class="col-md-3 d-flex ftco-animate">
         <div class="blog-entry align-self-stretch">
-          <a href="blog-single.html" class="block-20" style="background-image: url('images/image_2.jpg');"></a>
+          <a href="blog-single.html" class="block-20" style="background-image: url('{{ asset('front/images/gorilla_trek.jpg') }}');"></a>
           <div class="text p-4">
-            <span class="tag">Culture</span>
-            <h3 class="heading mt-3"><a href="#">Even the all-powerful Pointing has no control about the blind texts</a></h3>
+            <span class="tag">Adventure</span>
+            <h3 class="heading mt-3"><a href="#">Chasing Shadows: A Guide to Gorilla Trekking in Rwanda</a></h3>
             <div class="meta mb-3">
-              <div><a href="#">August 12, 2018</a></div>
+              <div><a href="#">Feb 22, 2026</a></div>
               <div><a href="#">Admin</a></div>
-              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 18</a></div>
             </div>
           </div>
         </div>
@@ -254,14 +254,14 @@
 
       <div class="col-md-3 d-flex ftco-animate">
         <div class="blog-entry align-self-stretch">
-          <a href="blog-single.html" class="block-20" style="background-image: url('images/image_3.jpg');"></a>
+          <a href="blog-single.html" class="block-20" style="background-image: url('{{ asset('front/images/big_five.jpg') }}');"></a>
           <div class="text p-4">
-            <span class="tag">Tips, Travel</span>
-            <h3 class="heading mt-3"><a href="#">Even the all-powerful Pointing has no control about the blind texts</a></h3>
+            <span class="tag">Photography</span>
+            <h3 class="heading mt-3"><a href="#">Capturing the Big Five: Best Camera Settings for Safari</a></h3>
             <div class="meta mb-3">
-              <div><a href="#">August 12, 2018</a></div>
+              <div><a href="#">Feb 19, 2026</a></div>
               <div><a href="#">Admin</a></div>
-              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 9</a></div>
             </div>
           </div>
         </div>
@@ -269,14 +269,14 @@
 
       <div class="col-md-3 d-flex ftco-animate">
         <div class="blog-entry align-self-stretch">
-          <a href="blog-single.html" class="block-20" style="background-image: url('images/image_4.jpg');"></a>
+          <a href="blog-single.html" class="block-20" style="background-image: url('{{ asset('front/images/zanzibar_beach.jpg') }}');"></a>
           <div class="text p-4">
-            <span class="tag">Tips, Travel</span>
-            <h3 class="heading mt-3"><a href="#">Even the all-powerful Pointing has no control about the blind texts</a></h3>
+            <span class="tag">Coastal</span>
+            <h3 class="heading mt-3"><a href="#">From Bush to Beach: Relaxing in Zanzibar After Your Safari</a></h3>
             <div class="meta mb-3">
-              <div><a href="#">August 12, 2018</a></div>
-              <div><a href="#">Admin</a></div>
-              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
+              <div><a href="#">Feb 14, 2026</a></div>
+              <div><a href="#">Travel Expert</a></div>
+              <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 31</a></div>
             </div>
           </div>
         </div>
