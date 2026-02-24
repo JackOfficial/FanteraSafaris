@@ -99,7 +99,7 @@
                             <div class="text p-3">
                                 <div class="d-flex">
                                     <div class="one">
-                                        <h3><a href="#">Bwindi Gorilla Trek</a></h3>
+                                        <h3><a href="/tour-details">Bwindi Gorilla Trek</a></h3>
                                         <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
                                     </div>
                                     <div class="two"><span class="price">$1,800</span></div>
@@ -108,7 +108,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Uganda</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -116,13 +116,13 @@
 
                     <div class="col-md-4 ftco-animate">
                         <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Serengeti.jpg') }});">
+                            <a href="/tour-details" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Serengeti.jpg') }});">
                                 <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
                             </a>
                             <div class="text p-3">
                                 <div class="d-flex">
                                     <div class="one">
-                                        <h3><a href="#">Serengeti Migration</a></h3>
+                                        <h3><a href="/tour-details">Serengeti Migration</a></h3>
                                         <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
                                     </div>
                                     <div class="two"><span class="price">$1,250</span></div>
@@ -131,7 +131,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Tanzania</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -139,13 +139,13 @@
 
                     <div class="col-md-4 ftco-animate">
                         <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Maasai mara.jpg') }});">
+                            <a href="/tour-details" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Maasai mara.jpg') }});">
                                 <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
                             </a>
                             <div class="text p-3">
                                 <div class="d-flex">
                                     <div class="one">
-                                        <h3><a href="#">Maasai Mara Luxury</a></h3>
+                                        <h3><a href="/tour-details">Maasai Mara Luxury</a></h3>
                                         <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
                                     </div>
                                     <div class="two"><span class="price">$980</span></div>
@@ -154,7 +154,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Kenya</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -162,13 +162,13 @@
 
                     <div class="col-md-4 ftco-animate">
                         <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/gorilla_trek.jpg') }});">
+                            <a href="/tour-details" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/gorilla_trek.jpg') }});">
                                 <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
                             </a>
                             <div class="text p-3">
                                 <div class="d-flex">
                                     <div class="one">
-                                        <h3><a href="#">Rwanda Primates</a></h3>
+                                        <h3><a href="/tour-details">Rwanda Primates</a></h3>
                                         <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
                                     </div>
                                     <div class="two"><span class="price">$2,100</span></div>
@@ -177,7 +177,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Rwanda</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -185,13 +185,13 @@
 
                     <div class="col-md-4 ftco-animate">
                         <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/big_five.jpg') }});">
+                            <a href="/tour-details" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/big_five.jpg') }});">
                                 <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
                             </a>
                             <div class="text p-3">
                                 <div class="d-flex">
                                     <div class="one">
-                                        <h3><a href="#">Big Five Special</a></h3>
+                                        <h3><a href="/tour-details">Big Five Special</a></h3>
                                         <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
                                     </div>
                                     <div class="two"><span class="price">$1,400</span></div>
@@ -200,7 +200,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> East Africa</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
@@ -214,7 +214,7 @@
                             <div class="text p-3">
                                 <div class="d-flex">
                                     <div class="one">
-                                        <h3><a href="#">Zanzibar Escapade</a></h3>
+                                        <h3><a href="/tour-details">Zanzibar Escapade</a></h3>
                                         <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star-o"></i></p>
                                     </div>
                                     <div class="two"><span class="price">$450</span></div>
@@ -223,7 +223,7 @@
                                 <hr>
                                 <p class="bottom-area d-flex">
                                     <span><i class="icon-map-o"></i> Zanzibar</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
+                                    <span class="ml-auto"><a href="/tour-details">Details</a></span>
                                 </p>
                             </div>
                         </div>
