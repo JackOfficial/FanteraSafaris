@@ -10,10 +10,10 @@
     <div class="collapse navbar-collapse" id="ftco-nav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item {{ request()->is('/') ? 'active' : '' }}"><a href="/" class="nav-link">Home</a></li>
-        <li class="nav-item"><a href="/destinations" class="nav-link">Destinations</a></li>
-        <li class="nav-item"><a href="/safari-packages" class="nav-link">Safari Packages</a></li>
-        <li class="nav-item"><a href="/about-us" class="nav-link">Our Story</a></li>
-        <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+        <li class="nav-item {{ request()->is('/tour') ? 'active' : '' }}"><a href="/tour" class="nav-link">Destinations</a></li>
+        <li class="nav-item {{ request()->is('/package') ? 'active' : '' }}"><a href="/safari-packages" class="nav-link">Safari Packages</a></li>
+        <li class="nav-item {{ request()->is('/story') ? 'active' : '' }}"><a href="/about" class="nav-link">Our Story</a></li>
+        <li class="nav-item {{ request()->is('/contact') ? 'active' : '' }}"><a href="/contact" class="nav-link">Contact</a></li>
         
         <li class="nav-item cta ml-md-2">
             <a href="https://wa.me/256xxxxxxxxx" class="nav-link bg-success border-0 text-white">
