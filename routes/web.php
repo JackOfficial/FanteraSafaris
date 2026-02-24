@@ -30,6 +30,13 @@ Route::get('/tour-details', function () {
     return view('tours.show');
 });
 
+Route::get('/packages', function () {
+    return view('packages.index');
+});
+
+Route::get('/packages', function () {
+    return view('packages.show');
+});
 
 Route::get('/hotel-single', function () {
     return view('hotel-single');
