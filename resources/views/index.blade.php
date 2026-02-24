@@ -1,4 +1,5 @@
 @section('content')
+@push('styles')
 <style>
     /* Modern Safari Branding */
     :root { --safari-gold: #c5a059; --safari-green: #1a4314; --soft-bg: #f8f9fa; }
@@ -42,7 +43,7 @@
     /* Video section curve */
     .img-video { border-radius: 30px; box-shadow: 20px 20px 60px rgba(0,0,0,0.1); }
 </style>
-
+@endpush
 <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/bg_1.jpg') }}');">
     <div class="overlay" style="background: linear-gradient(45deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%);"></div>
     <div class="container">
