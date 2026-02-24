@@ -23,7 +23,7 @@ Route::get('/hotel', function () {
 });
 
 Route::get('/tour', function () {
-    return view('tours.show');
+    return view('tours.index');
 });
 
 Route::get('/tour-details', function () {
