@@ -6,63 +6,7 @@
 @section('og_image', asset('front/images/zanzibar_beach.jpg'))
 @push('styles')
 	<style>
-.hero-wrap {
-  position: relative;
-  height: 90vh;
-  min-height: 600px;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-}
 
-.hero-wrap .overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45); /* darker overlay for readability */
-  z-index: 1;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  animation: fadeInUp 1s ease forwards;
-}
-
-.hero-content h1 {
-  text-shadow: 2px 2px 12px rgba(0,0,0,0.6);
-}
-
-.hero-content p {
-  font-size: 1.25rem;
-  line-height: 1.6;
-}
-
-.hero-content .btn {
-  transition: all 0.3s ease;
-}
-
-.hero-content .btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* Fade-in animation */
-@keyframes fadeInUp {
-  0% { opacity: 0; transform: translateY(30px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* Breadcrumb styles */
-.breadcrumb a {
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-
-.breadcrumb a:hover {
-  color: #ffc107; /* highlight on hover */
-}
 	</style>
 @endpush
 @section('content')
