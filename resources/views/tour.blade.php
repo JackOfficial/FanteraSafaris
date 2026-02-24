@@ -6,43 +6,100 @@
 @section('og_image', asset('front/images/zanzibar_beach.jpg'))
 @push('styles')
 	<style>
-		.destination:hover .img {
-    transform: scale(1.05);
-    transition: all 0.3s ease-in-out;
+.hero-wrap {
+  position: relative;
+  height: 90vh;
+  min-height: 600px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
 }
-.destination .text p {
-    margin-bottom: 10px;
-    font-size: 0.95rem;
-    color: #555;
+
+.hero-wrap .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* darker overlay for readability */
+  z-index: 1;
 }
-.destination .img::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(0deg, rgba(0,0,0,0.3), rgba(0,0,0,0));
-    border-radius: 8px;
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 1s ease forwards;
 }
-.destination .icon {
-    transition: transform 0.3s ease;
+
+.hero-content h1 {
+  text-shadow: 2px 2px 12px rgba(0,0,0,0.6);
 }
-.destination:hover .icon {
-    transform: scale(1.2);
+
+.hero-content p {
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.hero-content .btn {
+  transition: all 0.3s ease;
+}
+
+.hero-content .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Breadcrumb styles */
+.breadcrumb a {
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+  color: #ffc107; /* highlight on hover */
 }
 	</style>
 @endpush
 @section('content')
     
-    <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/zanzibar_beach.jpg') }}');">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
-          <div class="col-md-9 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
-            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="/">Home</a></span> <span>Tours</span></p>
-            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Explore East Africa</h1>
-          </div>
-        </div>
+   <!-- Hero Section -->
+<div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/zanzibar_beach.jpg') }}');">
+  <div class="overlay"></div>
+  <div class="container h-100">
+    <div class="row h-100 align-items-center justify-content-center text-center">
+      
+      <!-- Content Box -->
+      <div class="col-md-10 hero-content">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb" class="d-inline-block mb-3">
+          <ol class="breadcrumb justify-content-center bg-transparent p-0 m-0">
+            <li class="breadcrumb-item"><a href="/" class="text-white">Home</a></li>
+            <li class="breadcrumb-item active text-warning" aria-current="page">Tours</li>
+          </ol>
+        </nav>
+
+        <!-- Main Title -->
+        <h1 class="display-4 font-weight-bold text-white mb-3">Explore East Africa</h1>
+        
+        <!-- Subtitle / Tagline -->
+        <p class="lead text-light mb-4" style="max-width: 700px; margin: 0 auto;">
+          Discover the most extraordinary safaris from pristine beaches to iconic wildlife sanctuaries.
+        </p>
+        
+        <!-- CTA Button -->
+        <a href="#tours-section" class="btn btn-warning btn-lg shadow-lg mt-3">
+          Browse Tours <i class="fas fa-arrow-right ml-2"></i>
+        </a>
       </div>
+
     </div>
+  </div>
+</div>
 
     <section class="ftco-section ftco-degree-bg">
       <div class="container">
