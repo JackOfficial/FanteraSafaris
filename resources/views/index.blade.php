@@ -142,6 +142,147 @@
         </div>
     </section>
 
+    <section class="ftco-section bg-light">
+  <div class="container">
+    <div class="row justify-content-start mb-5 pb-3">
+      <div class="col-md-7 heading-section ftco-animate">
+        <span class="subheading">Exclusive Experiences</span>
+        <h2 class="mb-4"><strong>Top</strong> Safari Packages</h2>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-fluid">
+    <div class="row">
+      
+      <div class="col-sm col-md-6 col-lg ftco-animate">
+        <div class="destination">
+          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Serengeti.jpg') }});">
+            <div class="icon d-flex justify-content-center align-items-center">
+              <span class="icon-search2"></span>
+            </div>
+          </a>
+          <div class="text p-3">
+            <div class="d-flex">
+              <div class="one">
+                <h3><a href="#">Serengeti Migration</a></h3>
+                <p class="rate">
+                  <i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
+                  <span>25 Rating</span>
+                </p>
+              </div>
+              <div class="two">
+                <span class="price">$1,250</span>
+              </div>
+            </div>
+            <p>Witness the world's largest land mammal migration across the endless plains.</p>
+            <p class="days"><span>5 days 4 nights</span></p>
+            <hr>
+            <p class="bottom-area d-flex">
+              <span><i class="icon-map-o"></i> Tanzania</span>
+              <span class="ml-auto"><a href="#">Book Now</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm col-md-6 col-lg ftco-animate">
+        <div class="destination">
+          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Maasai mara.jpg') }});">
+            <div class="icon d-flex justify-content-center align-items-center">
+              <span class="icon-search2"></span>
+            </div>
+          </a>
+          <div class="text p-3">
+            <div class="d-flex">
+              <div class="one">
+                <h3><a href="#">Maasai Mara Luxury</a></h3>
+                <p class="rate">
+                  <i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
+                  <span>18 Rating</span>
+                </p>
+              </div>
+              <div class="two">
+                <span class="price">$980</span>
+              </div>
+            </div>
+            <p>Experience the heart of the Big Five territory with expert Maasai guides.</p>
+            <p class="days"><span>4 days 3 nights</span></p>
+            <hr>
+            <p class="bottom-area d-flex">
+              <span><i class="icon-map-o"></i> Kenya</span>
+              <span class="ml-auto"><a href="#">Book Now</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm col-md-6 col-lg ftco-animate">
+        <div class="destination">
+          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/gorilla_trek.jpg') }});">
+            <div class="icon d-flex justify-content-center align-items-center">
+              <span class="icon-search2"></span>
+            </div>
+          </a>
+          <div class="text p-3">
+            <div class="d-flex">
+              <div class="one">
+                <h3><a href="#">Gorilla Trekking</a></h3>
+                <p class="rate">
+                  <i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
+                  <span>30 Rating</span>
+                </p>
+              </div>
+              <div class="two">
+                <span class="price">$1,800</span>
+              </div>
+            </div>
+            <p>An intimate encounter with the mountain gorillas in the misty volcanic hills.</p>
+            <p class="days"><span>3 days 2 nights</span></p>
+            <hr>
+            <p class="bottom-area d-flex">
+              <span><i class="icon-map-o"></i> Rwanda/Uganda</span>
+              <span class="ml-auto"><a href="#">Book Now</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm col-md-6 col-lg ftco-animate">
+        <div class="destination">
+          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/zanzibar_beach.jpg') }});">
+            <div class="icon d-flex justify-content-center align-items-center">
+              <span class="icon-search2"></span>
+            </div>
+          </a>
+          <div class="text p-3">
+            <div class="d-flex">
+              <div class="one">
+                <h3><a href="#">Zanzibar Escapade</a></h3>
+                <p class="rate">
+                  <i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star-o"></i>
+                  <span>12 Rating</span>
+                </p>
+              </div>
+              <div class="two">
+                <span class="price">$450</span>
+              </div>
+            </div>
+            <p>The perfect post-safari relaxation on the white sands of the Spice Island.</p>
+            <p class="days"><span>3 days 3 nights</span></p>
+            <hr>
+            <p class="bottom-area d-flex">
+              <span><i class="icon-map-o"></i> Zanzibar</span>
+              <span class="ml-auto"><a href="#">Book Now</a></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
     <section class="ftco-section ftco-no-pt ftco-no-pb">
         <div class="container">
             <div class="row">
@@ -286,146 +427,7 @@
   </div>
 </section>
 
-<section class="ftco-section bg-light">
-  <div class="container">
-    <div class="row justify-content-start mb-5 pb-3">
-      <div class="col-md-7 heading-section ftco-animate">
-        <span class="subheading">Exclusive Experiences</span>
-        <h2 class="mb-4"><strong>Top</strong> Safari Packages</h2>
-      </div>
-    </div>
-  </div>
-  
-  <div class="container-fluid">
-    <div class="row">
-      
-      <div class="col-sm col-md-6 col-lg ftco-animate">
-        <div class="destination">
-          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Serengeti.jpg') }});">
-            <div class="icon d-flex justify-content-center align-items-center">
-              <span class="icon-search2"></span>
-            </div>
-          </a>
-          <div class="text p-3">
-            <div class="d-flex">
-              <div class="one">
-                <h3><a href="#">Serengeti Migration</a></h3>
-                <p class="rate">
-                  <i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
-                  <span>25 Rating</span>
-                </p>
-              </div>
-              <div class="two">
-                <span class="price">$1,250</span>
-              </div>
-            </div>
-            <p>Witness the world's largest land mammal migration across the endless plains.</p>
-            <p class="days"><span>5 days 4 nights</span></p>
-            <hr>
-            <p class="bottom-area d-flex">
-              <span><i class="icon-map-o"></i> Tanzania</span>
-              <span class="ml-auto"><a href="#">Book Now</a></span>
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <div class="col-sm col-md-6 col-lg ftco-animate">
-        <div class="destination">
-          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Maasai mara.jpg') }});">
-            <div class="icon d-flex justify-content-center align-items-center">
-              <span class="icon-search2"></span>
-            </div>
-          </a>
-          <div class="text p-3">
-            <div class="d-flex">
-              <div class="one">
-                <h3><a href="#">Maasai Mara Luxury</a></h3>
-                <p class="rate">
-                  <i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
-                  <span>18 Rating</span>
-                </p>
-              </div>
-              <div class="two">
-                <span class="price">$980</span>
-              </div>
-            </div>
-            <p>Experience the heart of the Big Five territory with expert Maasai guides.</p>
-            <p class="days"><span>4 days 3 nights</span></p>
-            <hr>
-            <p class="bottom-area d-flex">
-              <span><i class="icon-map-o"></i> Kenya</span>
-              <span class="ml-auto"><a href="#">Book Now</a></span>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-sm col-md-6 col-lg ftco-animate">
-        <div class="destination">
-          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/gorilla_trek.jpg') }});">
-            <div class="icon d-flex justify-content-center align-items-center">
-              <span class="icon-search2"></span>
-            </div>
-          </a>
-          <div class="text p-3">
-            <div class="d-flex">
-              <div class="one">
-                <h3><a href="#">Gorilla Trekking</a></h3>
-                <p class="rate">
-                  <i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
-                  <span>30 Rating</span>
-                </p>
-              </div>
-              <div class="two">
-                <span class="price">$1,800</span>
-              </div>
-            </div>
-            <p>An intimate encounter with the mountain gorillas in the misty volcanic hills.</p>
-            <p class="days"><span>3 days 2 nights</span></p>
-            <hr>
-            <p class="bottom-area d-flex">
-              <span><i class="icon-map-o"></i> Rwanda/Uganda</span>
-              <span class="ml-auto"><a href="#">Book Now</a></span>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-sm col-md-6 col-lg ftco-animate">
-        <div class="destination">
-          <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/zanzibar_beach.jpg') }});">
-            <div class="icon d-flex justify-content-center align-items-center">
-              <span class="icon-search2"></span>
-            </div>
-          </a>
-          <div class="text p-3">
-            <div class="d-flex">
-              <div class="one">
-                <h3><a href="#">Zanzibar Escapade</a></h3>
-                <p class="rate">
-                  <i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star-o"></i>
-                  <span>12 Rating</span>
-                </p>
-              </div>
-              <div class="two">
-                <span class="price">$450</span>
-              </div>
-            </div>
-            <p>The perfect post-safari relaxation on the white sands of the Spice Island.</p>
-            <p class="days"><span>3 days 3 nights</span></p>
-            <hr>
-            <p class="bottom-area d-flex">
-              <span><i class="icon-map-o"></i> Zanzibar</span>
-              <span class="ml-auto"><a href="#">Book Now</a></span>
-            </p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
 
  <section class="ftco-section testimony-section bg-light">
   <div class="container">
