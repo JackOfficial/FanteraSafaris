@@ -146,7 +146,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 d-flex align-items-stretch">
-                    <div class="img img-video d-flex align-self-stretch align-items-center justify-content-center" style="background-image:url({{ asset('front/images/about_safari.jpg') }});">
+                    <div class="img img-video d-flex align-self-stretch align-items-center justify-content-center" style="background-image:url({{ asset('front/images/about_us.jpg') }});">
                     </div>
                 </div>
                 <div class="col-md-6 py-md-5 mt-md-5">
