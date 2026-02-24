@@ -72,43 +72,69 @@
   </div>
 </section>
 
-<section class="py-5 bg-light">
+<section class="py-5 bg-light commitment-section">
   <div class="container">
+
+    <!-- Section Heading -->
     <div class="row text-center mb-5">
       <div class="col-md-8 mx-auto">
-        <h2 class="font-weight-bold">Our Commitment</h2>
-        <p class="text-muted">Luxury travel rooted in conservation and authenticity.</p>
+        <span class="text-warning text-uppercase font-weight-bold" style="letter-spacing:2px;font-size:13px;">
+          Our Philosophy
+        </span>
+        <h2 class="font-weight-bold mt-2">Our Commitment</h2>
+        <p class="text-muted">
+          Luxury travel rooted in conservation, authenticity, and meaningful impact.
+        </p>
       </div>
     </div>
 
+    <!-- Commitment Cards -->
     <div class="row">
 
+      <!-- Card 1 -->
       <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded shadow-sm h-100 text-center">
-          <i class="fa fa-leaf fa-2x text-warning mb-3"></i>
-          <h5 class="font-weight-bold">Conservation First</h5>
-          <p>
-            We actively support wildlife preservation and sustainable tourism initiatives that protect Africa’s fragile ecosystems.
+        <div class="commitment-card text-center p-5 bg-white rounded shadow-sm h-100">
+          
+          <div class="icon-box mb-4">
+            <i class="fas fa-paw"></i>
+          </div>
+
+          <h5 class="font-weight-bold mb-3">Conservation First</h5>
+          <p class="text-muted mb-0">
+            We actively support wildlife preservation and sustainable tourism 
+            initiatives that protect Africa’s fragile ecosystems.
           </p>
         </div>
       </div>
 
+      <!-- Card 2 -->
       <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded shadow-sm h-100 text-center">
-          <i class="fa fa-users fa-2x text-warning mb-3"></i>
-          <h5 class="font-weight-bold">Community Empowerment</h5>
-          <p>
-            Our safaris directly contribute to local communities through employment, partnerships, and ethical sourcing.
+        <div class="commitment-card text-center p-5 bg-white rounded shadow-sm h-100">
+
+          <div class="icon-box mb-4">
+            <i class="fas fa-hands-helping"></i>
+          </div>
+
+          <h5 class="font-weight-bold mb-3">Community Empowerment</h5>
+          <p class="text-muted mb-0">
+            Our safaris directly contribute to local communities through 
+            employment, partnerships, and ethical sourcing.
           </p>
         </div>
       </div>
 
+      <!-- Card 3 -->
       <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded shadow-sm h-100 text-center">
-          <i class="fa fa-star fa-2x text-warning mb-3"></i>
-          <h5 class="font-weight-bold">Authentic Experiences</h5>
-          <p>
-            We avoid mass tourism and curate immersive journeys that connect travelers to Africa’s true spirit.
+        <div class="commitment-card text-center p-5 bg-white rounded shadow-sm h-100">
+
+          <div class="icon-box mb-4">
+            <i class="fas fa-globe-africa"></i>
+          </div>
+
+          <h5 class="font-weight-bold mb-3">Authentic Experiences</h5>
+          <p class="text-muted mb-0">
+            We avoid mass tourism and curate immersive journeys that connect 
+            travelers to Africa’s true spirit.
           </p>
         </div>
       </div>
