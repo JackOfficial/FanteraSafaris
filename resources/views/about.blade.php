@@ -20,8 +20,8 @@
 /* Bigger, more premium icons */
 
 .icon-box {
-  width: 110px;
-  height: 110px;
+  width: 50px;
+  height: 50px;
   margin: 0 auto;
   border-radius: 50%;
   background: linear-gradient(135deg, #d4a373, #c48c5a);
@@ -31,7 +31,7 @@
 }
 
 .icon-box i {
-  font-size: 48px;
+  font-size: 25px;
   color: #fff;
 }
 
