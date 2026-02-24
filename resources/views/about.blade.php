@@ -43,7 +43,7 @@
         </p>
 
         <div class="mt-4">
-          <a href="{{ route('contact') }}" class="btn btn-warning font-weight-bold px-4 py-2">
+          <a href="/contact" class="btn btn-warning font-weight-bold px-4 py-2">
             Plan Your Safari
           </a>
         </div>
