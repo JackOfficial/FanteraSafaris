@@ -1,13 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/bg_2.jpg') }}');">
-  <div class="overlay"></div>
-  <div class="container">
-    <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
-      <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-        <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="/">Home</a></span> <span>Our Story</span></p>
-        <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">The Fantera Legacy</h1>
+<div class="hero-wrap" style="background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('{{ asset('front/images/bg_2.jpg') }}') center center/cover no-repeat; height: 70vh;">
+  <div class="container h-100">
+    <div class="row h-100 align-items-center justify-content-center text-center">
+      <div class="col-md-10 text-white">
+        <p class="breadcrumbs mb-3">
+          <span class="mr-2"><a href="/" class="text-white">Home</a></span>
+          <span>About Us</span>
+        </p>
+        <h1 class="display-4 font-weight-bold">The Fantera Legacy</h1>
+        <p class="lead mt-3" style="max-width:700px;margin:auto;">
+          Crafting unforgettable East African safaris with integrity, conservation, and refined luxury.
+        </p>
       </div>
     </div>
   </div>
