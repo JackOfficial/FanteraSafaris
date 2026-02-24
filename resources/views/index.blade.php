@@ -59,104 +59,95 @@
   </div>
 </section>
 
-    <section class="ftco-section services-section bg-light">
-      <div class="container">
-        <div class="row d-flex">
-          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-guarantee"></span></div></div>
-              <div class="media-body p-2 mt-2">
-                <h3 class="heading mb-3">Expert Local Knowledge</h3>
-                <p>Based in Kampala, our guides possess intimate knowledge of East Africa's hidden gems.</p>
-              </div>
-            </div>      
+   <section class="py-5 bg-light">
+  <div class="container">
+    <div class="row text-center">
+
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded shadow-sm h-100 service-box">
+          <div class="mb-3">
+            <span class="fa fa-map-marker fa-2x text-warning"></span>
           </div>
-          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-like"></span></div></div>
-              <div class="media-body p-2 mt-2">
-                <h3 class="heading mb-3">Tailor-Made Journeys</h3>
-                <p>No two travelers are the same. We curate every itinerary to match your specific desires.</p>
-              </div>
-            </div>    
+          <h5 class="font-weight-bold">Expert Local Guides</h5>
+          <p>Professional safari guides with deep regional knowledge.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded shadow-sm h-100 service-box">
+          <div class="mb-3">
+            <span class="fa fa-shield fa-2x text-warning"></span>
           </div>
-          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-detective"></span></div></div>
-              <div class="media-body p-2 mt-2">
-                <h3 class="heading mb-3">Eco-Conscious Travel</h3>
-                <p>We prioritize sustainability and community support in every park we visit.</p>
-              </div>
-            </div>      
+          <h5 class="font-weight-bold">Safe & Secure</h5>
+          <p>Your safety and comfort are our top priorities.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded shadow-sm h-100 service-box">
+          <div class="mb-3">
+            <span class="fa fa-star fa-2x text-warning"></span>
           </div>
-          <div class="col-md-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-support"></span></div></div>
-              <div class="media-body p-2 mt-2">
-                <h3 class="heading mb-3">24/7 Concierge Support</h3>
-                <p>From arrival at Entebbe to your final departure, we are with you every step.</p>
-              </div>
-            </div>      
+          <h5 class="font-weight-bold">Luxury Experience</h5>
+          <p>Handcrafted safari experiences tailored to you.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+    
+    <section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="font-weight-bold">Featured Safari Packages</h2>
+      <p class="text-muted">Explore our most popular adventures</p>
+    </div>
+
+    <div class="row">
+
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow tour-card h-100">
+          <img src="front/images/Bwindi.jpg" class="card-img-top" style="height:250px; object-fit:cover;">
+          <div class="card-body">
+            <h5 class="font-weight-bold">3 Days Gorilla Trekking</h5>
+            <p>Bwindi Impenetrable Forest</p>
+          </div>
+          <div class="card-footer bg-white border-0">
+            <a href="#" class="btn btn-warning btn-block font-weight-bold">View Details</a>
           </div>
         </div>
       </div>
-    </section>
-    
-    <section class="ftco-section ftco-destination">
-        <div class="container">
-            <div class="row justify-content-start mb-5 pb-3">
-          <div class="col-md-7 heading-section ftco-animate">
-            <span class="subheading">Unforgettable Places</span>
-            <h2 class="mb-4"><strong>Featured</strong> Destinations</h2>
+
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow tour-card h-100">
+          <img src="front/images/Serengeti.jpg" class="card-img-top" style="height:250px; object-fit:cover;">
+          <div class="card-body">
+            <h5 class="font-weight-bold">5 Days Serengeti Safari</h5>
+            <p>Tanzania</p>
+          </div>
+          <div class="card-footer bg-white border-0">
+            <a href="#" class="btn btn-warning btn-block font-weight-bold">View Details</a>
           </div>
         </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="destination-slider owl-carousel ftco-animate">
-                        <div class="item">
-                            <div class="destination">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Bwindi.jpg') }}');">
-                                    <div class="icon d-flex justify-content-center align-items-center">
-                                        <span class="icon-search2"></span>
-                                    </div>
-                                </a>
-                                <div class="text p-3">
-                                    <h3><a href="#">Bwindi Impenetrable, Uganda</a></h3>
-                                    <span class="listing">Home of the Gorillas</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="destination">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Serengeti.jpg') }}');">
-                                    <div class="icon d-flex justify-content-center align-items-center">
-                                        <span class="icon-search2"></span>
-                                    </div>
-                                </a>
-                                <div class="text p-3">
-                                    <h3><a href="#">Serengeti National Park</a></h3>
-                                    <span class="listing">The Great Migration</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="destination">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Maasai mara.jpg') }}');">
-                                    <div class="icon d-flex justify-content-center align-items-center">
-                                        <span class="icon-search2"></span>
-                                    </div>
-                                </a>
-                                <div class="text p-3">
-                                    <h3><a href="#">Maasai Mara, Kenya</a></h3>
-                                    <span class="listing">Unlimited Game Viewing</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow tour-card h-100">
+          <img src="front/images/Masai.jpg" class="card-img-top" style="height:250px; object-fit:cover;">
+          <div class="card-body">
+            <h5 class="font-weight-bold">4 Days Maasai Mara</h5>
+            <p>Kenya</p>
+          </div>
+          <div class="card-footer bg-white border-0">
+            <a href="#" class="btn btn-warning btn-block font-weight-bold">View Details</a>
+          </div>
         </div>
-    </section>
+      </div>
+
+    </div>
+  </div>
+</section>
 
     <section class="ftco-section bg-light">
   <div class="container">
