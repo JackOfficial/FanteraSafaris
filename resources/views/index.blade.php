@@ -1,5 +1,34 @@
 @extends('layouts.app')
+@push('styles')
+<style>
+      .hero-section {
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+                  url('front/images/Bwindi.jpg') center center/cover no-repeat;
+    }
 
+    .btn-warning {
+      background-color: #d4a373;
+      border: none;
+    }
+
+    .btn-warning:hover {
+      background-color: #c48c5a;
+    }
+
+    .service-box,
+    .tour-card {
+      transition: 0.3s;
+    }
+
+    .service-box:hover,
+    .tour-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+</style>
+@endpush
 @section('content')
     
    <!-- HERO SECTION -->
