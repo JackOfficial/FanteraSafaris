@@ -175,6 +175,18 @@ sub {
     }
 }
 
+.ftco-footer {
+    padding: 7em 0 4em 0 !important; /* Increases the top padding for a more luxurious feel */
+    font-size: 15px;
+}
+.ftco-footer .ftco-heading-2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fff;
+}
+
 /* Typography for High-End Feel */
 h1, h2, .ftco-heading-2 {
     font-family: 'Playfair Display', serif !important;
