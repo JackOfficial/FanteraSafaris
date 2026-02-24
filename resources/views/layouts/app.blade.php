@@ -7,8 +7,8 @@
     <link rel="canonical" href="{{ url()->current() }}">
 
     <meta property="og:title" content="Explore the Pearl of Africa with Fantera Safaris">
-    <meta property="og:image" content="{{ asset('front/images/FanteraSafaris.png') }}">
-    <link href="{{ asset('front/images/FanteraSafaris.png') }}" rel="icon">
+    <meta property="og:image" content="{{ asset('front/images/FanteraSafaris_logo.png') }}">
+    <link href="{{ asset('front/images/FanteraSafaris_logo.png') }}" rel="icon">
     
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700" rel="stylesheet"> @include('partials.styles') </head>
