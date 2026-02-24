@@ -6,217 +6,125 @@
 @section('og_image', asset('front/images/zanzibar_beach.jpg'))
 
 @section('content')
-    
-    <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/zanzibar_beach.jpg') }}');">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
-          <div class="col-md-9 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
-            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="/">Home</a></span> <span>Tours</span></p>
-            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Explore East Africa</h1>
-          </div>
+    <div class="hero-wrap relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="{{ asset('front/images/zanzibar_beach.jpg') }}" class="w-full h-full object-cover scale-105 motion-safe:animate-slow-zoom" alt="Hero">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-stone-50"></div>
         </div>
-      </div>
+        
+        <div class="container relative z-10 text-center text-white mt-20">
+            <nav class="flex justify-center space-x-2 mb-6 opacity-80 uppercase tracking-widest text-xs">
+                <a href="/" class="hover:text-emerald-400">Home</a>
+                <span>/</span>
+                <span class="text-emerald-400">Tours</span>
+            </nav>
+            <h1 class="text-5xl md:text-7xl font-serif font-light tracking-tight mb-4">Explore East Africa</h1>
+            <p class="text-lg opacity-90 max-w-xl mx-auto font-light">Hand-picked safaris designed for the conscious traveler.</p>
+        </div>
     </div>
 
-    <section class="ftco-section ftco-degree-bg">
-      <div class="container">
-        <div class="row">
-            <div class="col-lg-3 sidebar ftco-animate">
-                <div class="sidebar-wrap bg-light ftco-animate">
-                    <h3 class="heading mb-4">Filter Your Safari</h3>
-                    <form action="#">
-                        <div class="fields">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Search Park or Activity">
-                            </div>
-                            <div class="form-group">
-                                <div class="select-wrap one-third">
-                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                    <select name="" id="" class="form-control">
-                                      <option value="">Select Region</option>
-                                      <option value="">Uganda (Gorillas)</option>
-                                      <option value="">Kenya (Maasai Mara)</option>
-                                      <option value="">Tanzania (Serengeti)</option>
-                                      <option value="">Rwanda (Volcanoes NP)</option>
+    <section class="pb-24 bg-stone-50">
+        <div class="container mx-auto px-4">
+            
+            <div class="flex flex-col lg:flex-row gap-12 -mt-16 relative z-20">
+                
+                <aside class="lg:w-1/4">
+                    <div class="sticky top-24 p-8 bg-white/80 backdrop-blur-2xl rounded-[2rem] shadow-2xl shadow-stone-200/50 border border-white">
+                        <h3 class="text-xl font-bold text-stone-900 mb-6 flex items-center">
+                            <i class="icon-filter mr-2 text-emerald-600"></i> Refine Search
+                        </h3>
+                        
+                        <form action="#" class="space-y-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] uppercase tracking-wider font-bold text-stone-400 ml-1">Destination</label>
+                                <div class="relative">
+                                    <select class="w-full bg-stone-100 border-none rounded-2xl py-4 px-5 appearance-none focus:ring-2 focus:ring-emerald-500/20 transition-all">
+                                        <option value="">All Regions</option>
+                                        <option>Uganda (Gorillas)</option>
+                                        <option>Kenya (Maasai Mara)</option>
+                                        <option>Tanzania (Serengeti)</option>
                                     </select>
+                                    <i class="ion-ios-arrow-down absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-50"></i>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <input type="text" id="checkin_date" class="form-control" placeholder="Travel Date">
+
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-end">
+                                    <label class="text-[10px] uppercase tracking-wider font-bold text-stone-400 ml-1">Budget</label>
+                                    <span class="text-emerald-700 font-serif font-bold">$500 - $10k</span>
+                                </div>
+                                <input type="range" class="w-full accent-emerald-600 h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer" min="500" max="10000">
                             </div>
-                            <div class="form-group">
-                                <div class="range-slider">
-                                    <small class="d-block mb-2 text-muted">Price Range ($)</small>
-                                    <input value="500" min="0" max="10000" step="100" type="range" class="w-100">
-                                    <div class="d-flex justify-content-between mt-2">
-                                        <span class="badge badge-primary">$500</span>
-                                        <span class="badge badge-primary">$10,000</span>
+
+                            <button type="submit" class="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold hover:bg-emerald-800 hover:shadow-lg hover:shadow-emerald-900/20 transition-all duration-300">
+                                Apply Filters
+                            </button>
+                        </form>
+                    </div>
+                </aside>
+
+                <div class="lg:w-3/4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        
+                        @php
+                            $tours = [
+                                ['name' => 'Bwindi Gorilla Trek', 'price' => '1,800', 'loc' => 'Uganda', 'img' => 'Bwindi.jpg', 'desc' => 'Encounter the mountain gorillas.'],
+                                ['name' => 'Serengeti Migration', 'price' => '1,250', 'loc' => 'Tanzania', 'img' => 'Serengeti.jpg', 'desc' => 'Witness the Great Migration.'],
+                                ['name' => 'Maasai Mara Luxury', 'price' => '980', 'loc' => 'Kenya', 'img' => 'Maasai mara.jpg', 'desc' => 'The ultimate Big Five experience.'],
+                            ];
+                        @endphp
+
+                        @foreach($tours as $tour)
+                        <div class="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-stone-100">
+                            <div class="relative h-72 overflow-hidden">
+                                <img src="{{ asset('front/images/' . $tour['img']) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute top-6 left-6">
+                                    <span class="bg-white/90 backdrop-blur px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                                        {{ $tour['loc'] }}
+                                    </span>
+                                </div>
+                                <div class="absolute bottom-6 right-6">
+                                    <div class="bg-emerald-600 text-white p-4 rounded-2xl shadow-xl">
+                                        <p class="text-[10px] opacity-80 leading-none">From</p>
+                                        <p class="text-xl font-serif font-bold leading-tight">${{ $tour['price'] }}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <input type="submit" value="Filter Results" class="btn btn-primary py-3 px-5 w-100">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="col-lg-9">
-                <div class="row">
-                    <div class="col-md-4 ftco-animate">
-                        <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Bwindi.jpg') }});">
-                                <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
-                            </a>
-                            <div class="text p-3">
-                                <div class="d-flex">
-                                    <div class="one">
-                                        <h3><a href="#">Bwindi Gorilla Trek</a></h3>
-                                        <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
-                                    </div>
-                                    <div class="two"><span class="price">$1,800</span></div>
+                            
+                            <div class="p-8">
+                                <div class="flex items-center space-x-1 mb-3 text-amber-400 text-xs">
+                                    @for($i=0; $i<5; $i++) <i class="icon-star"></i> @endfor
                                 </div>
-                                <p>Encounter the mountain gorillas in Uganda.</p>
-                                <hr>
-                                <p class="bottom-area d-flex">
-                                    <span><i class="icon-map-o"></i> Uganda</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 ftco-animate">
-                        <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Serengeti.jpg') }});">
-                                <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
-                            </a>
-                            <div class="text p-3">
-                                <div class="d-flex">
-                                    <div class="one">
-                                        <h3><a href="#">Serengeti Migration</a></h3>
-                                        <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
-                                    </div>
-                                    <div class="two"><span class="price">$1,250</span></div>
+                                <h3 class="text-2xl font-serif font-medium text-stone-900 mb-2 group-hover:text-emerald-700 transition-colors">
+                                    {{ $tour['name'] }}
+                                </h3>
+                                <p class="text-stone-500 text-sm font-light mb-6 leading-relaxed">{{ $tour['desc'] }}</p>
+                                
+                                <div class="flex items-center justify-between pt-6 border-t border-stone-50">
+                                    <span class="text-xs font-bold uppercase tracking-tighter text-stone-400 flex items-center">
+                                        <i class="icon-calendar-o mr-2"></i> 5 - 12 Days
+                                    </span>
+                                    <a href="#" class="text-stone-900 font-bold text-sm flex items-center group/btn">
+                                        View Details 
+                                        <i class="icon-arrow-right ml-2 transition-transform group-hover/btn:translate-x-2"></i>
+                                    </a>
                                 </div>
-                                <p>Witness the Great Migration plains.</p>
-                                <hr>
-                                <p class="bottom-area d-flex">
-                                    <span><i class="icon-map-o"></i> Tanzania</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
-                                </p>
                             </div>
                         </div>
+                        @endforeach
+
                     </div>
 
-                    <div class="col-md-4 ftco-animate">
-                        <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Maasai mara.jpg') }});">
-                                <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
-                            </a>
-                            <div class="text p-3">
-                                <div class="d-flex">
-                                    <div class="one">
-                                        <h3><a href="#">Maasai Mara Luxury</a></h3>
-                                        <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
-                                    </div>
-                                    <div class="two"><span class="price">$980</span></div>
-                                </div>
-                                <p>The ultimate Big Five experience.</p>
-                                <hr>
-                                <p class="bottom-area d-flex">
-                                    <span><i class="icon-map-o"></i> Kenya</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
-                                </p>
-                            </div>
-                        </div>
+                    <div class="mt-16 flex justify-center">
+                        <nav class="inline-flex p-2 bg-white rounded-2xl shadow-sm border border-stone-100 space-x-1">
+                            <a href="#" class="px-4 py-2 rounded-xl hover:bg-stone-50 transition-colors">Prev</a>
+                            <a href="#" class="px-4 py-2 bg-emerald-600 text-white rounded-xl shadow-md">1</a>
+                            <a href="#" class="px-4 py-2 rounded-xl hover:bg-stone-50 transition-colors">2</a>
+                            <a href="#" class="px-4 py-2 rounded-xl hover:bg-stone-50 transition-colors">Next</a>
+                        </nav>
                     </div>
-
-                    <div class="col-md-4 ftco-animate">
-                        <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/gorilla_trek.jpg') }});">
-                                <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
-                            </a>
-                            <div class="text p-3">
-                                <div class="d-flex">
-                                    <div class="one">
-                                        <h3><a href="#">Rwanda Primates</a></h3>
-                                        <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
-                                    </div>
-                                    <div class="two"><span class="price">$2,100</span></div>
-                                </div>
-                                <p>Land of a thousand hills adventure.</p>
-                                <hr>
-                                <p class="bottom-area d-flex">
-                                    <span><i class="icon-map-o"></i> Rwanda</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 ftco-animate">
-                        <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/big_five.jpg') }});">
-                                <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
-                            </a>
-                            <div class="text p-3">
-                                <div class="d-flex">
-                                    <div class="one">
-                                        <h3><a href="#">Big Five Special</a></h3>
-                                        <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
-                                    </div>
-                                    <div class="two"><span class="price">$1,400</span></div>
-                                </div>
-                                <p>Spot the giants of the Savannah.</p>
-                                <hr>
-                                <p class="bottom-area d-flex">
-                                    <span><i class="icon-map-o"></i> East Africa</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 ftco-animate">
-                        <div class="destination">
-                            <a href="#" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/zanzibar_beach.jpg') }});">
-                                <div class="icon d-flex justify-content-center align-items-center"><span class="icon-search2"></span></div>
-                            </a>
-                            <div class="text p-3">
-                                <div class="d-flex">
-                                    <div class="one">
-                                        <h3><a href="#">Zanzibar Escapade</a></h3>
-                                        <p class="rate"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star-o"></i></p>
-                                    </div>
-                                    <div class="two"><span class="price">$450</span></div>
-                                </div>
-                                <p>Relax on pristine white beaches.</p>
-                                <hr>
-                                <p class="bottom-area d-flex">
-                                    <span><i class="icon-map-o"></i> Zanzibar</span> 
-                                    <span class="ml-auto"><a href="#">Details</a></span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div><div class="row mt-5">
-                  <div class="col text-center">
-                    <div class="block-27">
-                      <ul>
-                        <li><a href="#">&lt;</a></li>
-                        <li class="active"><span>1</span></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">&gt;</a></li>
-                      </ul>
-                    </div>
-                  </div>
                 </div>
             </div>
         </div>
-      </div>
     </section>
 @endsection
