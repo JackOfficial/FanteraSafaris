@@ -7,7 +7,7 @@
                     <div class="col-md-3">
                     </div>
                     <div class="col-md-6">
-                        <img class="mb-4 d-block mx-auto" style="width: 150px;" src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="Icon">
+                        <img class="mb-4 d-block mx-auto" style="width: 100px;" src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="Icon">
                     
                         <div class="card rounded shadow">
                           <div class="card-header">Sign up For FanteraSafaris</div>
