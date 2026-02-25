@@ -8,7 +8,7 @@
 
             <div class="col-md-6">
                 <!-- Logo -->
-                <img class="mb-4 d-block mx-auto" style="width: 200px;"
+                <img class="mb-4 d-block mx-auto" style="width: 150px;"
                      src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="FanteraSafaris Logo">
 
                 <!-- Card -->
