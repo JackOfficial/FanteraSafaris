@@ -1,108 +1,106 @@
 @extends('layouts.auth')
 
-@section('title', 'Reset Password | FameOceans')
+@section('title', 'Reset Password | AutoSpareLink') 
 
 @section('content')
-<div class="auth-page container-fluid">
-    <div class="row w-100 justify-content-center">
-        <div class="col-md-5 col-lg-4">
+<div class="container-fluid about py-2">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-md-3"></div>
 
-            <!-- Logo -->
-            <div class="text-center my-4">
-                <a href="/"><img src="{{ asset('images/FameOceans.png') }}"
-                     alt="FameOceans Logo"
-                     style="width: 180px;"></a>
-            </div>
+            <div class="col-md-6">
+                <!-- Logo -->
+                <img class="mb-4 d-block mx-auto" style="width: 200px;"
+                     src="{{ asset('frontend/img/logo.png') }}" alt="AutoSpareLink Logo">
 
-            <!-- Glass Card -->
-            <div class="card glass-card">
-                <div class="card-header">
-                    Reset Your Password
-                </div>
-
-                <div class="card-body">
-
-                    <p class="mb-3 text-center text-muted">
-                        Enter your new password below.
-                    </p>
-
-                    <!-- Status message -->
-                    @if (session('status'))
-                        <div class="alert alert-success small">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    <form action="{{ route('password.update') }}" method="POST">
-                        @csrf
-
-                        <!-- Hidden token -->
-                        <input type="hidden" name="token" value="{{ request()->route('token') }}">
-
-                        <!-- Email -->
-    <div class="input-group mb-3 d-none">
-        <input type="email"
-               name="email"
-               value="{{ old('email', request('email')) }}"
-               class="form-control"
-               required
-               autofocus>
-    </div>
-
-                        <!-- Password -->
-                        <div class="input-group mb-3" x-data="{ show: false }">
-                            <input :type="show ? 'text' : 'password'"
-                                   name="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   placeholder="New password"
-                                   required>
-                            <span class="input-group-text" @click="show = !show" style="cursor:pointer">
-                                <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                            </span>
-                        </div>
-                        @error('password')
-                            <div class="text-warning small mb-2">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                        <!-- Password Confirmation -->
-                        <div class="input-group mb-4" x-data="{ show: false }">
-                            <input :type="show ? 'text' : 'password'"
-                                   name="password_confirmation"
-                                   class="form-control @error('password_confirmation') is-invalid @enderror"
-                                   placeholder="Confirm password"
-                                   required>
-                            <span class="input-group-text" @click="show = !show" style="cursor:pointer">
-                                <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                            </span>
-                        </div>
-                        @error('password_confirmation')
-                            <div class="text-warning small mb-2">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                        <div class="text-center mb-3">
-                            <button type="submit" class="btn btn-ocean w-50 py-2">
-                                Reset Password
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="text-center mt-2">
-                        <a href="/login" class="fw-semibold">Back to Login</a>
+                <!-- Card -->
+                <div class="card rounded shadow">
+                    <div class="card-header text-center">
+                        <strong>Reset Your Password</strong>
                     </div>
 
+                    <div class="card-body">
+
+                        <!-- Status message -->
+                        @if (session('status'))
+                            <div class="alert alert-success">
+                                {{ session('status') }}
+                            </div>
+                        @endif
+
+                        <form action="/reset-password" method="POST">
+                            @csrf
+
+                            <!-- Hidden token -->
+                            <input type="hidden" name="token" value="{{ request()->route('token') }}">
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" 
+                                       name="email" 
+                                       id="email" 
+                                       value="{{ old('email') }}"
+                                       class="form-control @error('email') is-invalid @enderror"
+                                       required>
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-3" x-data="{ show: false }">
+                                <label for="password" class="form-label">New Password</label>
+                                <input :type="show ? 'text' : 'password'" 
+                                       name="password" 
+                                       id="password" 
+                                       class="form-control @error('password') is-invalid @enderror"
+                                       required>
+                                <div class="form-text">
+                                    <input type="checkbox" @click="show = !show"> Show password
+                                </div>
+                                @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <!-- Password Confirmation -->
+                            <div class="mb-3" x-data="{ showConfirm: false }">
+                                <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                <input :type="showConfirm ? 'text' : 'password'" 
+                                       name="password_confirmation" 
+                                       id="password_confirmation" 
+                                       class="form-control @error('password_confirmation') is-invalid @enderror"
+                                       required>
+                                <div class="form-text">
+                                    <input type="checkbox" @click="showConfirm = !showConfirm"> Show confirmation
+                                </div>
+                                @error('password_confirmation')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary w-50">Reset Password</button>
+                            </div>
+
+                        </form>
+
+                        <div class="mt-3 text-center">
+                            <a href="/login" class="text-decoration-none">Back to Login</a>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
-            <div class="auth-footer text-center text-muted mt-4">
-                © {{ date('Y') }} FameOceans ·
-                <a href="/privacy-policy">Privacy</a> ·
-                <a href="/terms">Terms</a>
-            </div>
-
+            <div class="col-md-3"></div>
         </div>
     </div>
 </div>
