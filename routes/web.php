@@ -49,7 +49,7 @@ Route::get('/blog-single', function () {
 });
 
 //Authenticated user routes
-Route::middleware(['auth', 'verified', 'role:user'])->group(function () { 
+Route::middleware(['auth', 'verified'])->group(function () { 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     // Route::post('/comment', [PageController::class, 'post']);
     // Route::post('/deleteComment/{id}', [PageController::class, 'deleteComment']);
