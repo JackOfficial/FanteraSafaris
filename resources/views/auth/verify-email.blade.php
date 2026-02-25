@@ -1,5 +1,5 @@
 @extends('layouts.auth')
-@section('title', 'Verify Email | AutoSpareLink') 
+@section('title', 'Verify Email | FanteraSafaris') 
 @section('content')
 <div class="container-fluid about py-2">
     <div class="container py-5">
@@ -9,7 +9,7 @@
             <div class="col-md-6">
                 <!-- Logo -->
                 <img class="mb-4 d-block mx-auto" style="width: 200px;"
-                     src="{{ asset('frontend/img/logo.png') }}" alt="AutoSpareLink Logo">
+                     src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="FanteraSafaris Logo">
 
                 <!-- Card -->
                 <div class="card rounded shadow">
