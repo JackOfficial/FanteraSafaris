@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Auth\SocialLoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -45,3 +47,14 @@ Route::get('/hotel-single', function () {
 Route::get('/blog-single', function () {
     return view('blog-single');
 });
+
+//Authenticated user routes
+Route::middleware(['auth', 'verified', 'role:user'])->group(function () { 
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    // Route::post('/comment', [PageController::class, 'post']);
+    // Route::post('/deleteComment/{id}', [PageController::class, 'deleteComment']);
+});
+
+// Social login routes
+Route::get('/auth/redirect/{provider}', [SocialLoginController::class, 'redirect']);
+Route::get('/auth/callback/{provider}', [SocialLoginController::class, 'callback']);
