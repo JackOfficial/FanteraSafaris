@@ -1,104 +1,89 @@
-@extends('layouts.auth')
-@section('content')
+<x-auth :title="'Sign Up | Fantera Safaris'">
+    <h3 class="text-center mb-1" style="font-weight: 700;">Create Account</h3>
+    <p class="text-muted text-center mb-4">Join Fantera Safaris for your next adventure</p>
 
-        <div class="container-fluid py-5">
-            <div class="container">
-                <div class="row g-5">
-                    <div class="col-md-3">
-                    </div>
-                    <div class="col-md-6">
-                        <img class="mb-4 d-block mx-auto" style="width: 100px;" src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="Icon">
-                    
-                        <div class="card rounded shadow">
-                          <div class="card-header">Sign up For FanteraSafaris</div>
-                          <div class="card-body">
-                           @error('socialLoginInError')
-    <div>
-        {{ $message }}
-    </div>
-                  @enderror
-
-@if (session('status'))
-    <div class="mb-4 font-medium text-sm text-green-600">
-        {{ session('status') }}
-    </div>
-@endif
-
-<div>
-  <a class="btn mb-2 d-block" style="background-color: #ccc" href="{{ url('auth/redirect/google') }}">Sign up with Google <i class="fab fa-google fa-lg"></i></a>
-</div>
-<div class="text-center my-1">Or</div>
-
-<form method="post" action="/register">
-      @csrf
-
-       <div class="input-group mb-3">
-          <input type="text" name="name" value="{{old('name')}}" class="form-control @error('name') is-invalid @enderror" placeholder="Full name" required />
-          <div class="input-group-append">
-            <div class="input-group-text h-100">
-              <span class="fas fa-user"></span>
-            </div>
-          </div>
-      </div>
-      @error('name')
-        <div class="text-primary" role="alert">
-            <strong>{{ $message }}</strong>
-        </div>
+    <div class="mb-4">
+        <a class="btn btn-outline-dark w-100 py-2 d-flex align-items-center justify-content-center" href="{{ url('auth/redirect/google') }}">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" class="me-2" alt="Google">
+            Sign up with Google
+        </a>
+        @error('socialLoginInError')
+            <div class="alert alert-danger mt-2 small">{{ $message }}</div>
         @enderror
+    </div>
 
-      <div class="input-group mb-3">
-          <input type="email" name="email" value="{{old('email')}}" class="form-control @error('email') is-invalid @enderror" placeholder="Email" required />
-          <div class="input-group-append">
-            <div class="input-group-text h-100">
-              <span class="fas fa-envelope"></span>
-            </div>
-          </div>
-      </div>
-       @error('email')
-        <div class="text-primary" role="alert">
-            <strong>{{ $message }}</strong>
-        </div>
-        @enderror
+    <div class="d-flex align-items-center mb-4">
+        <hr class="flex-grow-1">
+        <span class="mx-3 text-muted small text-uppercase">Or register with email</span>
+        <hr class="flex-grow-1">
+    </div>
 
-      <div class="input-group mb-3" x-data="{ show: false }">
-          <input :type="show ? 'text' : 'password'" id="psd" name="password" value="{{old('password')}}" class="form-control @error('password') is-invalid @enderror" placeholder="Password" />
-          <div class="input-group-append">
-            <div class="input-group-text h-100" @click="show = !show">
-              <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-            </div>
-          </div>
+    @if (session('status'))
+        <div class="alert alert-success small mb-4">
+            {{ session('status') }}
         </div>
-           @error('password')
-            <div class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </div>
-          @enderror
+    @endif
 
-        <div class="input-group mb-3" x-data="{ show: false }">
-          <input :type="show ? 'text' : 'password'" id="password_confirmation" name="password_confirmation" value="{{old('password_confirmation')}}" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Re-type your password" />
-          <div class="input-group-append">
-            <div class="input-group-text h-100" @click="show = !show">
-              <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+    <form method="POST" action="/register">
+        @csrf
+
+        <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-user text-muted"></i></span>
+                <input type="text" name="name" value="{{ old('name') }}" 
+                       class="form-control @error('name') is-invalid @enderror" 
+                       placeholder="Full Name" required autofocus />
             </div>
-          </div>
+            @error('name')
+                <div class="text-danger small mt-1"><strong>{{ $message }}</strong></div>
+            @enderror
         </div>
-        @error('password_confirmation')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-          @enderror
-      <hr>
-      <button type="submit" class="btn btn-primary w-100">Register</button>
-      <div>Already have account? <a href="/login">Login</a></div>
+
+        <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-envelope text-muted"></i></span>
+                <input type="email" name="email" value="{{ old('email') }}" 
+                       class="form-control @error('email') is-invalid @enderror" 
+                       placeholder="Email Address" required />
+            </div>
+            @error('email')
+                <div class="text-danger small mt-1"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+
+        <div class="mb-3" x-data="{ show: false }">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-lock text-muted"></i></span>
+                <input :type="show ? 'text' : 'password'" name="password" 
+                       class="form-control @error('password') is-invalid @enderror" 
+                       placeholder="Password" required />
+                <button class="btn btn-outline-secondary border-start-0" type="button" @click="show = !show">
+                    <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+            </div>
+            @error('password')
+                <div class="text-danger small mt-1"><strong>{{ $message }}</strong></div>
+            @enderror
+        </div>
+
+        <div class="mb-4" x-data="{ show: false }">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-check-double text-muted"></i></span>
+                <input :type="show ? 'text' : 'password'" name="password_confirmation" 
+                       class="form-control" 
+                       placeholder="Confirm Password" required />
+                <button class="btn btn-outline-secondary border-start-0" type="button" @click="show = !show">
+                    <i :class="show ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm mb-3">
+            Register <i class="fas fa-user-plus ms-2"></i>
+        </button>
+
+        <div class="text-center mt-3">
+            <p class="mb-0">Already have an account? <a href="/login" class="text-primary font-weight-bold text-decoration-none">Login</a></p>
+        </div>
     </form>
-    
-                        </div>
-                    </div>
-                     <div class="col-md-3">
-                    </div>
-                </div>
-            </div>
-        </div>
-      </div>
-        
-@endsection
+</x-auth>

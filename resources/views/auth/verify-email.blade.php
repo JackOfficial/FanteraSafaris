@@ -1,67 +1,44 @@
-@extends('layouts.auth')
-@section('title', 'Verify Email | FanteraSafaris') 
-@section('content')
-<div class="container-fluid about py-2">
-    <div class="container py-5">
-        <div class="row g-5">
-            <div class="col-md-3"></div>
+<x-auth :title="'Verify Email | Fantera Safaris'">
+    <div class="text-center">
+        <div class="mb-4">
+            <i class="fas fa-envelope-open-text text-warning fa-4x"></i>
+        </div>
 
-            <div class="col-md-6">
-                <!-- Logo -->
-                <img class="mb-4 d-block mx-auto" style="width: 100px;"
-                     src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="FanteraSafaris Logo">
+        <h3 class="mb-3" style="font-weight: 700;">Verify Your Email</h3>
+        
+        <p class="text-muted mb-4">
+            Thanks for signing up! Before getting started, please verify your email address 
+            by clicking the link we just sent to your inbox.
+        </p>
 
-                <!-- Card -->
-                <div class="card rounded shadow">
-                    <div class="card-header text-center">
-                        <strong>Email Verification Required</strong>
-                    </div>
-
-                    <div class="card-body text-center">
-
-                        <!-- Success status -->
-                        @if (session('status') == 'verification-link-sent')
-                            <div class="alert alert-success">
-                                A new email verification link has been sent to your email address.
-                            </div>
-                        @endif
-
-                        <!-- Main message -->
-                        <p class="mb-3">
-                            Thanks for signing up! Before continuing, please verify your email address
-                            by clicking the link we just sent to your inbox.
-                        </p>
-
-                        <p class="text-muted small">
-                            If you don’t see the email, please check your spam or junk folder.
-                        </p>
-
-                        <hr>
-
-                        <!-- Resend form -->
-                        <p class="mb-2">
-                            Didn’t receive the email?
-                        </p>
-
-                        <form method="POST" action="/email/verification-notification">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-primary">
-                                Resend Verification Email
-                            </button>
-                        </form>
-
-                        <div class="mt-4">
-                            <a href="/login" class="text-decoration-none">
-                                Back to Login
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
+        @if (session('status') == 'verification-link-sent')
+            <div class="alert alert-success small py-2 mb-4">
+                <i class="fas fa-check-circle me-2"></i>
+                A new verification link has been sent to your email.
             </div>
+        @endif
 
-            <div class="col-md-3"></div>
+        <div class="bg-light p-3 rounded mb-4">
+            <p class="small text-muted mb-0">
+                <i class="fas fa-info-circle me-1"></i>
+                Don't see it? Check your <strong>spam or junk folder</strong>.
+            </div>
+        </div>
+
+        <form method="POST" action="/email/verification-notification">
+            @csrf
+            <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm mb-3">
+                Resend Verification Email
+            </button>
+        </form>
+
+        <div class="mt-4">
+            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-link text-muted small text-decoration-none p-0">
+                    <i class="fas fa-sign-out-alt me-1"></i> Log Out
+                </button>
+            </form>
         </div>
     </div>
-</div>
-@endsection
+</x-layouts.auth>
