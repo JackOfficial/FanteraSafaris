@@ -85,7 +85,7 @@
         <div class="container">
             <div class="row no-gutters align-items-center">
                 <div class="col-md-5 p-md-5 img img-2 d-flex justify-content-center align-items-center shadow-lg" 
-                     style="background-image: url({{ asset('front/images/about.jpg') }}); border-radius: 30px; height: 500px;">
+                     style="background-image: url({{ asset('front/images/about_us.jpg') }}); border-radius: 30px; height: 500px;">
                 </div>
                 <div class="col-md-7 wrap-about py-md-5 ftco-animate pl-md-5">
                     <div class="heading-section mb-5">
@@ -113,7 +113,7 @@
                     <div class="destination-slider owl-carousel ftco-animate">
                         <div class="item">
                             <div class="destination shadow-sm transition-hover" style="border-radius: 15px; overflow: hidden;">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/destination-1.jpg') }}); height: 350px;"></a>
+                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Bwindi.jpg') }}); height: 350px;"></a>
                                 <div class="text p-3 bg-white">
                                     <h3 class="font-weight-bold"><a href="#">Bwindi Forest, Uganda</a></h3>
                                     <span class="listing text-warning font-weight-bold">Gorilla Encounters</span>
@@ -122,7 +122,7 @@
                         </div>
                         <div class="item">
                             <div class="destination shadow-sm transition-hover" style="border-radius: 15px; overflow: hidden;">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/destination-2.jpg') }}); height: 350px;"></a>
+                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Maasai mara.jpg') }}); height: 350px;"></a>
                                 <div class="text p-3 bg-white">
                                     <h3 class="font-weight-bold"><a href="#">Maasai Mara, Kenya</a></h3>
                                     <span class="listing text-warning font-weight-bold">Great Migration</span>
