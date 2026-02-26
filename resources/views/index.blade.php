@@ -77,6 +77,47 @@
         </div>
       </div>
     </section>
+
+    <section class="ftco-section ftco-no-pt ftc-no-pb">
+    <div class="container">
+        <div class="row no-gutters">
+            <div class="col-md-5 p-md-5 img img-2 d-flex justify-content-center align-items-center shadow" 
+                 style="background-image: url({{ asset('front/images/about.jpg') }}); border-radius: 20px;">
+                </div>
+            <div class="col-md-7 wrap-about py-md-5 ftco-animate">
+                <div class="heading-section mb-5 pl-md-5">
+                    <span class="subheading" style="color: #ffc107; font-weight: 700; letter-spacing: 2px;">ESTABLISHED 2018</span>
+                    <h2 class="mb-4" style="font-family: 'Playfair Display', serif;">Adventure is <strong>Our DNA</strong></h2>
+                    
+                    <p class="lead">We don’t just organize trips; we curate life-defining moments. Based in the heart of East Africa, our team was born on these trails.</p>
+                    
+                    <p>Whether it’s the heavy breath of a Silverback Gorilla in the Bwindi mist or the golden sunset over the Maasai Mara, we ensure your journey is ethical, immersive, and luxurious. We handle the logistics; you handle the memories.</p>
+                    
+                    <div class="row mt-5">
+                        <div class="col-lg-6">
+                            <div class="services-2 d-flex">
+                                <div class="icon mt-2 mr-3"><span class="flaticon-world text-warning"></span></div>
+                                <div class="text">
+                                    <h3>Local Expertise</h3>
+                                    <p>100% locally owned and operated with deep community ties.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="services-2 d-flex">
+                                <div class="icon mt-2 mr-3"><span class="flaticon-mountains text-warning"></span></div>
+                                <div class="text">
+                                    <h3>Tailor-Made</h3>
+                                    <p>Every itinerary is 100% customizable to your pace and preference.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
     
     <section class="ftco-section ftco-destination">
         <div class="container">
@@ -120,6 +161,38 @@
             </div>
         </div>
     </section>
+
+    <section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-start mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate">
+                <span class="subheading" style="color: #ffc107; font-weight: 700; letter-spacing: 2px;">POPULAR TOURS</span>
+                <h2 class="mb-4" style="font-family: 'Playfair Display', serif;"><strong>Featured</strong> Safari Packages</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 ftco-animate">
+                <div class="destination shadow-sm" style="border-radius: 15px; overflow: hidden; border: 1px solid #eee;">
+                    <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/safari-1.jpg') }}); height: 250px;">
+                        <div class="icon d-flex justify-content-center align-items-center">
+                            <span class="icon-link"></span>
+                        </div>
+                    </a>
+                    <div class="text p-3 bg-white">
+                        <span class="price" style="font-size: 18px; color: #ffc107; font-weight: 700;">From $1,200</span>
+                        <h3 class="font-weight-bold mt-2"><a href="#">5 Days Queen Elizabeth & Bwindi</a></h3>
+                        <p class="location"><span class="icon-map-o"></span> Uganda</p>
+                        <hr>
+                        <p class="bottom-area d-flex">
+                            <span><i class="icon-calendar"></i> 5 Days</span>
+                            <span class="ml-auto"><a href="#" class="btn btn-warning btn-sm">View Details</a></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
     <section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url({{ asset('front/images/bg_1.jpg') }}); background-attachment: fixed;">
         <div class="container">
@@ -226,6 +299,49 @@
         </div>
       </div>
       </div>
+  </div>
+</section>
+
+<section class="ftco-intro shadow" style="background-color: #1a1a1a; padding: 60px 0; border-top: 5px solid #ffc107;">
+    <div class="container">
+        <div class="row no-gutters align-items-center">
+            <div class="col-md-9 text-center text-md-left">
+                <h2 style="color: #fff; font-family: 'Playfair Display', serif; font-size: 32px;">Ready to start your <strong>unforgettable</strong> journey?</h2>
+                <p class="mb-md-0" style="color: rgba(255,255,255,0.7); font-size: 18px;">Contact our expert safari planners today and get a free custom itinerary.</p>
+            </div>
+            <div class="col-md-3 text-center text-md-right mt-4 mt-md-0">
+                <a href="/contact" class="btn btn-warning py-3 px-5 shadow-lg" style="border-radius: 50px; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;">
+                    Inquire Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section-parallax mt-5">
+  <div class="parallax-img d-flex align-items-center" style="background-image: url({{ asset('front/images/bg_newsletter.jpg') }}); background-attachment: fixed; padding: 120px 0;">
+    <div class="overlay" style="background: rgba(0,0,0,0.4); position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div>
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="row d-flex justify-content-center">
+        <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
+          <span class="subheading" style="color: #ffc107;">STAY UPDATED</span>
+          <h2 style="font-family: 'Playfair Display', serif; font-size: 40px;">Get The <strong>Safari Insider</strong> Guide</h2>
+          <p>Join our community of explorers. Get seasonal trekking updates, packing lists, and exclusive last-minute deals delivered to your inbox.</p>
+          
+          <div class="row d-flex justify-content-center mt-5">
+            <div class="col-md-10">
+              <form action="#" class="subscribe-form">
+                <div class="form-group d-flex shadow-lg" style="border-radius: 50px; overflow: hidden; background: #fff; padding: 5px;">
+                  <input type="email" class="form-control px-4" placeholder="Enter your email address" style="border: none; height: 55px; box-shadow: none;">
+                  <button type="submit" class="btn btn-warning px-4" style="border-radius: 50px; font-weight: 700; text-transform: uppercase;">Subscribe</button>
+                </div>
+              </form>
+              <small class="text-white-50 mt-3 d-block">We respect your privacy. Unsubscribe at any time.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
