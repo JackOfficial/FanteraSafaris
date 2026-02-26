@@ -170,6 +170,65 @@
         </div>
     </section>
 
+    <section class="ftco-section testimony-section">
+  <div class="container">
+    <div class="row justify-content-center mb-5 pb-3">
+      <div class="col-md-7 text-center heading-section ftco-animate">
+        <span class="subheading" style="color: #ffc107; font-weight: 700; letter-spacing: 2px;">TESTIMONIALS</span>
+        <h2 class="mb-4" style="font-family: 'Playfair Display', serif;">What Our <strong>Explorers</strong> Say</h2>
+      </div>
+    </div>
+    <div class="row ftco-animate">
+      <div class="col-md-12">
+        <div class="carousel-testimony owl-carousel">
+          <div class="item">
+            <div class="testimony-wrap p-4 text-center bg-light" style="border-radius: 20px;">
+              <div class="user-img mb-5" style="background-image: url({{ asset('front/images/person_1.jpg') }}); border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <span class="quote d-flex align-items-center justify-content-center">
+                  <i class="icon-quote-left text-white"></i>
+                </span>
+              </div>
+              <div class="text">
+                <p class="mb-5 italic">"The 10-day Uganda-Rwanda safari was life-changing. Everything from the lodge selection to our guide's knowledge was flawless."</p>
+                <p class="name font-weight-bold">Sarah Jenkins</p>
+                <span class="position">London, UK</span>
+              </div>
+            </div>
+          </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <section class="ftco-section bg-light">
+  <div class="container">
+    <div class="row justify-content-start mb-5 pb-3">
+      <div class="col-md-7 heading-section ftco-animate">
+        <span class="subheading" style="color: #ffc107; font-weight: 700; letter-spacing: 2px;">JOURNAL</span>
+        <h2 class="mb-4" style="font-family: 'Playfair Display', serif;"><strong>Recent</strong> Safari Stories</h2>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <div class="col-md-4 d-flex ftco-animate">
+        <div class="blog-entry align-self-stretch shadow-sm bg-white" style="border-radius: 15px; overflow: hidden;">
+          <a href="#" class="block-20" style="background-image: url('{{ asset('front/images/image_1.jpg') }}');">
+          </a>
+          <div class="text p-4 d-block">
+            <div class="meta mb-3">
+              <div><a href="#" class="text-muted">August 12, 2026</a></div>
+              <div><a href="#" class="text-muted">Admin</a></div>
+            </div>
+            <h3 class="heading"><a href="#">Tips for Your First Gorilla Trekking Experience</a></h3>
+            <p>The mist-covered mountains of Bwindi hold secrets only the brave discover...</p>
+            <p><a href="#" class="btn btn-link text-warning p-0">Read More <span class="ion-ios-arrow-forward"></span></a></p>
+          </div>
+        </div>
+      </div>
+      </div>
+  </div>
+</section>
+
     @push('scripts')
     <script>
         // Custom search bar interaction or additional home-specific JS
