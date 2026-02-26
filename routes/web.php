@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\SocialLoginController;
+use App\Http\Controllers\SafariController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -54,6 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::post('/comment', [PageController::class, 'post']);
     // Route::post('/deleteComment/{id}', [PageController::class, 'deleteComment']);
 });
+
+Route::get('/safaris', [SafariController::class, 'index'])->name('safaris.index');
 
 // Social login routes
 Route::get('/auth/redirect/{provider}', [SocialLoginController::class, 'redirect']);
