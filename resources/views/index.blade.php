@@ -103,17 +103,13 @@
                 <div class="col-md-12">
                     <div class="destination-slider owl-carousel ftco-animate">
                         <div class="item">
-                            <div class="destination">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Bwindi.jpg') }}');">
-                                    <div class="icon d-flex justify-content-center align-items-center">
-                                        <span class="icon-search2"></span>
-                                    </div>
-                                </a>
-                                <div class="text p-3">
-                                    <h3><a href="#">Bwindi Impenetrable, Uganda</a></h3>
-                                    <span class="listing">Home of the Gorillas</span>
-                                </div>
-                            </div>
+                            <x-destination
+                            image="front/images/Bwindi.jpg"
+                            title="Bwindi Impenetrable, Uganda"
+                            listing="Home of the Gorillas"
+                            >
+
+                            </x-destination>
                         </div>
                         </div>
                 </div>
