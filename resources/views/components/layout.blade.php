@@ -23,11 +23,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     @include('partials.styles') 
-    {{ $styles ?? '' }} </head>
+    {{ $styles ?? '' }} 
+</head>
 <body>
     @include('partials.nav')
 
-    {{ $slot }} @include('partials.footer')
+    {{ $slot }} 
+    
+    @include('partials.footer')
     
     @include('partials.scripts')
     {{ $scripts ?? '' }} </body>

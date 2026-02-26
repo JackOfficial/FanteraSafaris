@@ -1,4 +1,4 @@
-<x-layouts-app 
+<x-layout
     title="Luxury Uganda Safaris & East Africa Tours | Fantera Safaris"
     metaDescription="Experience authentic African wildness with Fantera Safaris. Specialized Gorilla trekking in Uganda, Rwanda primates, and Serengeti migrations."
 >
@@ -196,4 +196,4 @@
         </script>
     </x-slot:scripts>
 
-</x-layouts-app>
+</x-layout>
