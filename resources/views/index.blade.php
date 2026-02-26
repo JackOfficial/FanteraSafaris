@@ -1,6 +1,7 @@
 <x-layout
-    title="Luxury Uganda Safaris & East Africa Tours | Fantera Safaris"
+    title="Luxury Uganda Safaris & East Africa Tours"
     metaDescription="Experience authentic African wildness with Fantera Safaris. Specialized Gorilla trekking in Uganda, Rwanda primates, and Serengeti migrations."
+    :ogImage="asset('front/images/Bwindi.jpg')"
 >
     <section class="hero-wrap d-flex align-items-center" style="background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('{{ asset('front/images/Bwindi.jpg') }}') center center/cover no-repeat; height: 100vh;">
         <div class="container">
@@ -21,8 +22,8 @@
 
                 <div class="col-lg-5 mt-5 mt-lg-0">
                     <div class="bg-white p-4 rounded shadow">
-                        <h5 class="font-weight-bold mb-3 text-center">Plan Your Safari</h5>
-                        <form>
+                        <h5 class="font-weight-bold mb-3 text-center text-dark">Plan Your Safari</h5>
+                        <form action="#">
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Full Name">
                             </div>
@@ -38,7 +39,7 @@
                                     <option>Tanzania</option>
                                 </select>
                             </div>
-                            <button class="btn btn-warning btn-block font-weight-bold">
+                            <button type="submit" class="btn btn-warning btn-block font-weight-bold">
                                 Start Planning
                             </button>
                         </form>
@@ -82,7 +83,7 @@
                     <div class="media block-6 services d-block text-center">
                         <div class="d-flex justify-content-center"><div class="icon"><span class="flaticon-support"></span></div></div>
                         <div class="media-body p-2 mt-2">
-                            <h3 class="heading mb-3">24/7 Concierge Support</h3>
+                            <h3 class="heading mb-3">24/7 Support</h3>
                             <p>From arrival at Entebbe to your final departure, we are with you every step.</p>
                         </div>
                     </div>      
@@ -104,32 +105,11 @@
                     <div class="destination-slider owl-carousel ftco-animate">
                         <div class="item">
                             <x-destination
-                            image="front/images/Bwindi.jpg"
-                            title="Bwindi Impenetrable, Uganda"
-                            listing="Home of the Gorillas"
-                            >
-
-                            </x-destination>
+                                image="front/images/Bwindi.jpg"
+                                title="Bwindi Impenetrable, Uganda"
+                                listing="Home of the Gorillas"
+                            ></x-destination>
                         </div>
-                        </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="ftco-section ftco-no-pt ftco-no-pb">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 d-flex align-items-stretch">
-                    <div class="img img-video d-flex align-self-stretch align-items-center justify-content-center" style="background-image:url({{ asset('front/images/about_us.jpg') }});">
-                    </div>
-                </div>
-                <div class="col-md-6 py-md-5 mt-md-5">
-                    <div class="heading-section mb-5 ftco-animate">
-                        <span class="subheading">Since 2014</span>
-                        <h2 class="mb-4">The Fantera Safaris Philosophy</h2>
-                        <p>We don't just organize trips; we curate soul-stirring encounters with the wild.</p>
-                        <p><a href="#" class="btn btn-primary px-4 py-3">Learn More About Us</a></p>
                     </div>
                 </div>
             </div>
@@ -155,31 +135,6 @@
                                 </div>
                             </div>
                         </div>
-                        </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="ftco-section testimony-section bg-light">
-        <div class="container">
-            <div class="row justify-content-start">
-                <div class="col-md-5 heading-section ftco-animate">
-                    <span class="subheading">FanteraSafaris</span>
-                    <h2 class="mb-4 pb-3"><strong>Why</strong> Book With Us?</h2>
-                    <p>Authentic East African adventure starting right here.</p>
-                </div>
-                </div>
-        </div>
-    </section>
-
-    <section class="ftco-section-parallax">
-        <div class="parallax-img d-flex align-items-center" style="background-image: url({{ asset('front/images/bg_2.jpg') }}); padding: 100px 0;">
-            <div class="container">
-                <div class="row d-flex justify-content-center">
-                    <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
-                        <h2>Follow the Adventure</h2>
-                        <p><a href="#" class="btn btn-white btn-outline-white px-4 py-3">@FanteraSafaris</a></p>
                     </div>
                 </div>
             </div>
@@ -188,8 +143,9 @@
 
     <x-slot:scripts>
         <script>
-            // Initialize owl carousel or animations here
+            $(document).ready(function(){
+                // Your Owl Carousel or animation triggers here
+            });
         </script>
     </x-slot:scripts>
-
 </x-layout>
