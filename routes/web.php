@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\SafariController;
@@ -81,6 +82,7 @@ Route::middleware(['auth', 'role:super-admin|safari-manager'])
         Route::get('/dashboard', fn() => view('admin.index'))->name('dashboard');
         Route::resource('users', UserController::class);
         Route::resource('posts', PostController::class);
+        Route::resource('categories', CategoryController::class);
         
         // Fleet Management
         Route::controller(FleetController::class)->group(function () {
