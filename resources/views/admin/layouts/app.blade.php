@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'FameOceans Admin')</title>
 
-    <link href="{{ asset('images/FameOceans Logo.png') }}" rel="icon">
+    <link href="{{ asset('front/images/FanteraSafaris_logo.png') }}" rel="icon">
     
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -18,9 +18,7 @@
     <link rel="stylesheet" href="{{ asset('back/dist/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('back/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
 
-    <link rel="stylesheet" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
-
-    @yield('styles')
+    @stack('styles')
     @livewireStyles
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -28,7 +26,7 @@
 
     <!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
-        <img class="animation__shake" src="{{ asset('images/logo.png') }}" alt="FameOceans Logo" height="60" width="60">
+        <img class="animation__shake" src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="FameOceans Logo" height="60" width="60">
     </div>
 
     <!-- Navbar -->
@@ -83,8 +81,7 @@
 <script src="{{ asset('back/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('back/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 <script src="{{ asset('back/dist/js/adminlte.min.js') }}"></script>
-<script src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
-@yield('scripts')
+@stack('scripts')
 @livewireScripts
 </body>
 </html>
