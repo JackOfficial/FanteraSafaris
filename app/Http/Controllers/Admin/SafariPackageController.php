@@ -16,9 +16,8 @@ class SafariPackageController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
         $packages = SafariPackage::latest()->paginate(10);
-        return view('admin.packages.index', compact('packages', 'categories'));
+        return view('admin.packages.index', compact('packages'));
     }
 
     /**
@@ -26,7 +25,8 @@ class SafariPackageController extends Controller
      */
     public function create()
     {
-        return view('admin.packages.create');
+         $categories = Category::all();
+        return view('admin.packages.create', compact('categories'));
     }
 
     /**
