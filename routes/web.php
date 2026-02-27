@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SafariPackageController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
@@ -105,6 +106,10 @@ Route::middleware(['auth', 'role:super-admin|admin|safari-manager'])
 
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::resource('packages', SafariPackageController::class);
+
+        // Settings
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
         
         // Fleet Management
         Route::controller(FleetController::class)->group(function () {
