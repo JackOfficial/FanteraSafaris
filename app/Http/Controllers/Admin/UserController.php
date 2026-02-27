@@ -67,13 +67,18 @@ class UserController extends Controller
     /**
      * Show the form for editing a user's role or details.
      */
-    public function edit(User $user)
-    {
-        $roles = Role::all();
-        $userRole = $user->roles->pluck('name')->first();
-        
-        return view('admin.users.edit', compact('user', 'roles', 'userRole'));
-    }
+public function edit(User $user)
+{
+    // Fetch all roles and permissions from the database
+    $roles = Role::all();
+    $permissions = \Spatie\Permission\Models\Permission::all(); 
+
+    // Get the first role name (if you only allow one role per user)
+    $userRole = $user->roles->pluck('name')->first();
+    
+    // Pass everything to the view
+    return view('admin.users.edit', compact('user', 'roles', 'permissions', 'userRole'));
+}
 
     /**
      * Update the user and sync their roles.
