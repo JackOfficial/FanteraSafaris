@@ -4,5 +4,5 @@
 
 @section('content')
     {{-- Call the Volt Component --}}
-    <livewire:admin.safari.create-package />
+    <livewire:admin.create-package />
 @endsection
