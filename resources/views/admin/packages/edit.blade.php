@@ -31,7 +31,7 @@
 <section class="content">
     <div class="container-fluid">
         {{-- CALLING THE SINGLE VOLT COMPONENT HERE --}}
-        <livewire:admin.safari-editor :package="$package" />
+        <livewire:admin.edit-package :package="$package" />
     </div>
 </section>
 @endsection
