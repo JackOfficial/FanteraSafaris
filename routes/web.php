@@ -6,6 +6,8 @@ use App\Http\Controllers\SafariController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () { return view('index'); })->name('home');
+Route::get('/', function () { return view('index'); });
 Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
 
@@ -51,7 +53,15 @@ Route::prefix('auth')->group(function () {
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // Future Client-specific routes (e.g., My Bookings)
 });
@@ -70,13 +80,13 @@ Route::middleware(['auth', 'role:super-admin|safari-manager'])
         
         Route::get('/dashboard', fn() => view('admin.index'))->name('dashboard');
         Route::resource('users', UserController::class);
+        Route::resource('posts', PostController::class);
         
         // Fleet Management
         Route::controller(FleetController::class)->group(function () {
             Route::get('/fleet', 'index')->name('fleet.index');
             Route::post('/fleet/{vehicle}/assign', 'assign')->name('fleet.assign');
         });
-
 
 });
 
