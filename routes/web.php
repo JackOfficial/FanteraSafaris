@@ -61,3 +61,14 @@ Route::get('/safaris', [SafariController::class, 'index'])->name('safaris.index'
 // Social login routes
 Route::get('/auth/redirect/{provider}', [SocialLoginController::class, 'redirect']);
 Route::get('/auth/callback/{provider}', [SocialLoginController::class, 'callback']);
+
+// Routes for Safari Managers & Admins only
+Route::middleware(['auth', 'role:safari-manager|super-admin'])->group(function () {
+    Route::get('/fleet', [FleetController::class, 'index'])->name('fleet.index');
+    Route::post('/fleet/{vehicle}/assign', [FleetController::class, 'assign'])->name('fleet.assign');
+});
+
+// Routes for Reservation Agents
+Route::middleware(['auth', 'role:reservation-agent'])->group(function () {
+    Route::resource('bookings', BookingController::class);
+});

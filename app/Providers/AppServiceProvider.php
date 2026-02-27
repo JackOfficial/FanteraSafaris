@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Gate;
+use App\Models\Booking;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +29,17 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         Schema::defaultStringLength(191);
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('super-admin') ? true : null;
+        });
+
+        Gate::define('view-assigned-safari', function (User $user, Booking $booking) {
+    // If they are a manager, they can see all.
+    if ($user->hasRole('safari-manager')) return true;
+
+    // If they are a guide, they only see it if they are assigned to it.
+    return $user->id === $booking->guide_id;
+});
     }
 
     protected function configureDefaults(): void
