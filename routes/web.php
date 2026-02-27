@@ -9,6 +9,8 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,6 +37,10 @@ Route::view('/package', 'packages.show')->name('packages.show');
 // Blog Content
 Route::view('/blog', 'blog')->name('blog.index');
 Route::view('/blog-single', 'blog-single')->name('blog.show');
+
+// Public Contact Form Routes
+Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +89,11 @@ Route::middleware(['auth', 'role:super-admin|safari-manager'])
         Route::resource('users', UserController::class);
         Route::resource('posts', PostController::class);
         Route::resource('categories', CategoryController::class);
+        // Inquiry/Message Routes
+        Route::get('/messages', [MessageController::class, 'index'])->name('messages.inbox');
+        Route::get('/messages/{message}', [MessageController::class, 'show'])->name('messages.show');
+        Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+        Route::post('/messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
         
         // Fleet Management
         Route::controller(FleetController::class)->group(function () {

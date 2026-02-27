@@ -40,6 +40,13 @@ class AppServiceProvider extends ServiceProvider
     // If they are a guide, they only see it if they are assigned to it.
     return $user->id === $booking->guide_id;
 });
+
+view()->composer('admin.layouts.sidebar', function ($view) {
+        $unreadCount = \App\Models\ContactMessage::where('is_read', false)->count();
+        $view->with('unreadCount', $unreadCount);
+    });
+
+
     }
 
     protected function configureDefaults(): void
