@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SafariPackage;
-use App\Models\SafariCategory; // Use the specific model
-use App\Models\Photo;
+use App\Models\SafariCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -15,38 +14,40 @@ class SafariPackageController extends Controller
 {
     public function index()
     {
-        // Eager load category and featured photo for performance
-        $packages = SafariPackage::with(['category', 'photos' => function($q) {
-            $q->where('type', 'featured');
-        }])->latest()->paginate(10);
+        // Eager loading 'category' and 'photo' (morphOne) for better performance
+        $packages = SafariPackage::with(['category', 'photo'])
+            ->latest()
+            ->paginate(10);
         
         return view('admin.packages.index', compact('packages'));
     }
 
     public function create()
     {
-        $categories = SafariCategory::all(); // Updated model
+        $categories = SafariCategory::orderBy('name')->get();
         return view('admin.packages.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:safari_packages,name',
             'safari_category_id' => 'required|exists:safari_categories,id',
-            'price' => 'required|numeric',
-            'duration_days' => 'required|integer',
-            'description' => 'required',
+            'price' => 'required|numeric|min:0',
+            'duration_days' => 'required|integer|min:1',
+            'description' => 'required|string',
             'location' => 'required|string',
             'status' => 'required|in:draft,published',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'itinerary' => 'required|array',
             'itinerary.*.day_number' => 'required|integer',
             'itinerary.*.title' => 'required|string|max:255',
             'itinerary.*.activities' => 'required|string',
+            'itinerary.*.meals' => 'nullable|string',
+            'itinerary.*.accommodation' => 'nullable|string',
         ]);
 
-        DB::transaction(function () use ($validated, $request) {
+        return DB::transaction(function () use ($validated, $request) {
             // 1. Create the Package
             $package = SafariPackage::create([
                 'name' => $validated['name'],
@@ -59,46 +60,51 @@ class SafariPackageController extends Controller
                 'status' => $validated['status'],
             ]);
 
-            // 2. Handle Morphable Photo
+            // 2. Handle Polymorphic Featured Photo
             if ($request->hasFile('featured_image')) {
-                $path = $request->file('featured_image')->store('safaris', 'public');
-                $package->photos()->create([
+                $path = $request->file('featured_image')->store('safaris/featured', 'public');
+                $package->photo()->create([
                     'path' => $path,
                     'type' => 'featured',
                 ]);
             }
 
-            // 3. Handle Itinerary
+            // 3. Handle Itinerary creation
             foreach ($validated['itinerary'] as $day) {
                 $package->itineraries()->create($day);
             }
-        });
 
-        return redirect()->route('admin.packages.index')->with('success', 'Safari package and itinerary created!');
+            return redirect()->route('admin.packages.index')
+                ->with('success', 'Safari package and itinerary created successfully!');
+        });
     }
 
     public function edit(SafariPackage $package)
     {
-        $package->load(['itineraries', 'photos']); // Load morph relation
-        $categories = SafariCategory::all();
+        // Load relationships: itineraries (sorted) and all polymorphic photos
+        $package->load(['itineraries' => fn($q) => $q->orderBy('day_number'), 'photos', 'category']);
+        $categories = SafariCategory::orderBy('name')->get();
+        
         return view('admin.packages.edit', compact('package', 'categories'));
     }
 
     public function update(Request $request, SafariPackage $package)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:safari_packages,name,' . $package->id,
             'safari_category_id' => 'required|exists:safari_categories,id',
             'price' => 'required|numeric',
             'duration_days' => 'required|integer',
             'description' => 'required',
             'location' => 'required|string',
             'status' => 'required|in:draft,published',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'itinerary' => 'required|array',
             'itinerary.*.day_number' => 'required|integer',
             'itinerary.*.title' => 'required|string|max:255',
             'itinerary.*.activities' => 'required|string',
+            'itinerary.*.meals' => 'nullable|string',
+            'itinerary.*.accommodation' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($validated, $request, $package) {
@@ -113,49 +119,47 @@ class SafariPackageController extends Controller
                 'status' => $validated['status'],
             ]);
 
-            // Handle Photo Update (Delete old featured if new one is uploaded)
+            // Handle Photo Update
             if ($request->hasFile('featured_image')) {
-                $oldPhoto = $package->photos()->where('type', 'featured')->first();
+                // Delete existing featured photo if it exists
+                $oldPhoto = $package->photo()->where('type', 'featured')->first();
                 if ($oldPhoto) {
                     Storage::disk('public')->delete($oldPhoto->path);
                     $oldPhoto->delete();
                 }
 
-                $path = $request->file('featured_image')->store('safaris', 'public');
-                $package->photos()->create([
+                $path = $request->file('featured_image')->store('safaris/featured', 'public');
+                $package->photo()->create([
                     'path' => $path,
                     'type' => 'featured',
                 ]);
             }
 
-            // Sync Itinerary
-            $currentDayNumbers = collect($validated['itinerary'])->pluck('day_number');
-            $package->itineraries()->whereNotIn('day_number', $currentDayNumbers)->delete();
-
+            // Sync Itinerary: Clear existing and re-create to ensure order and clean data
+            $package->itineraries()->delete();
             foreach ($validated['itinerary'] as $dayData) {
-                $package->itineraries()->updateOrCreate(
-                    ['day_number' => $dayData['day_number']],
-                    [
-                        'title' => $dayData['title'],
-                        'activities' => $dayData['activities'],
-                        'meals' => $dayData['meals'] ?? null,
-                    ]
-                );
+                $package->itineraries()->create($dayData);
             }
         });
 
-        return redirect()->route('admin.packages.index')->with('success', 'Safari package updated successfully!');
+        return redirect()->route('admin.packages.index')
+            ->with('success', 'Safari package updated successfully!');
     }
 
     public function destroy(SafariPackage $package)
     {
-        // Cleanup physical files from polymorphic photos before deleting
-        foreach($package->photos as $photo) {
-            Storage::disk('public')->delete($photo->path);
-            $photo->delete();
-        }
+        return DB::transaction(function () use ($package) {
+            // Cleanup all polymorphic photos (featured + gallery)
+            foreach($package->photos as $photo) {
+                Storage::disk('public')->delete($photo->path);
+                $photo->delete();
+            }
 
-        $package->delete();
-        return redirect()->route('admin.packages.index')->with('success', 'Package and its media deleted.');
+            // Soft delete the package (since your migration has softDeletes)
+            $package->delete();
+
+            return redirect()->route('admin.packages.index')
+                ->with('success', 'Package and associated media deleted.');
+        });
     }
 }

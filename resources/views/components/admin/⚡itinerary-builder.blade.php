@@ -4,18 +4,20 @@ use Livewire\Component;
 
 new class extends Component
 {
-   public $days = [];
+    public $days = [];
 
     protected $rules = [
         'days.*.title' => 'required|min:3',
         'days.*.activities' => 'required|min:10',
         'days.*.meals' => 'nullable|string',
+        'days.*.accommodation' => 'nullable|string',
     ];
 
     public function mount($existingDays = [])
     {
         if (!empty($existingDays)) {
-            $this->days = $existingDays;
+            // Ensure days are sorted by day_number
+            $this->days = collect($existingDays)->sortBy('day_number')->values()->toArray();
         } else {
             $this->addDay();
         }
@@ -28,104 +30,130 @@ new class extends Component
             'title' => '',
             'activities' => '',
             'accommodation' => '',
-            'meals' => ''
+            'meals' => 'Breakfast, Lunch, Dinner' // Pre-fill common East African standard
         ];
     }
 
     public function removeDay($index)
     {
         unset($this->days[$index]);
-        $this->days = array_values($this->days);
+        $this->days = array_values($this->days); // Reset array keys
+        
+        // Re-index day numbers
         foreach ($this->days as $key => $day) {
             $this->days[$key]['day_number'] = $key + 1;
         }
-    }
-
-    public function updated($propertyName)
-    {
-        $this->validateOnly($propertyName);
     }
 };
 ?>
 
 <div class="card shadow-sm border-0">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
         <div>
-            <h5 class="mb-0"><i class="fas fa-route me-2"></i>Safari Itinerary Builder</h5>
-            <small class="text-light-50">Use the rich text editor for detailed activities</small>
+            <h5 class="mb-0 font-weight-bold"><i class="fas fa-map-signs mr-2 text-pink"></i>Safari Itinerary Builder</h5>
+            <small class="text-white-50">Define the daily journey for your guests</small>
         </div>
         
-        <button type="button" wire:click="addDay" wire:loading.attr="disabled" class="btn btn-primary shadow-sm">
-            <span wire:loading.remove wire:target="addDay"><i class="fas fa-plus-circle me-1"></i> Add Next Day</span>
-            <span wire:loading wire:target="addDay"><i class="fas fa-spinner fa-spin me-1"></i> Adding...</span>
+        <button type="button" wire:click="addDay" class="btn btn-primary btn-sm shadow-sm rounded-pill px-3">
+            <i class="fas fa-plus mr-1"></i> Add Next Day
         </button>
     </div>
     
     <div class="card-body bg-light">
-        <div wire:loading wire:target="removeDay" class="text-center py-3 text-danger">
-            <i class="fas fa-sync fa-spin me-2"></i> Updating itinerary order...
-        </div>
-
         @foreach($days as $index => $day)
-            <div class="card mb-4 border-start border-primary border-4 shadow-sm" 
-                 wire:key="itinerary-day-{{ $index }}-{{ count($days) }}"
-                 wire:loading.class="opacity-50" wire:target="removeDay({{ $index }})">
+            {{-- CRITICAL: Use a very specific wire:key that includes the index --}}
+            <div class="card mb-4 border-left border-primary border-width-3 shadow-sm" 
+                 wire:key="day-container-{{ $index }}">
+                
                 <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="badge bg-primary fs-6 px-3 py-2">Day {{ $day['day_number'] }}</span>
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <span class="badge badge-primary px-3 py-2" style="font-size: 0.9rem;">
+                            DAY {{ $day['day_number'] }}
+                        </span>
                         
                         @if(count($days) > 1)
-                            <button type="button" wire:click="removeDay({{ $index }})" wire:loading.attr="disabled"
-                                    wire:confirm="Are you sure you want to remove Day {{ $day['day_number'] }}?"
-                                    class="btn btn-outline-danger btn-sm border-0">
-                                <i class="fas fa-trash-alt" wire:loading.remove wire:target="removeDay({{ $index }})"></i>
-                                <i class="fas fa-spinner fa-spin" wire:loading wire:target="removeDay({{ $index }})"></i>
+                            <button type="button" 
+                                    wire:click="removeDay({{ $index }})" 
+                                    wire:confirm="Remove Day {{ $day['day_number'] }}?"
+                                    class="btn btn-outline-danger btn-xs border-0">
+                                <i class="fas fa-times-circle"></i> Remove Day
                             </button>
                         @endif
                     </div>
 
-                    <div class="row g-3">
-                        <div class="col-md-8">
-                            <label class="form-label fw-bold">Daily Title</label>
-                            <input type="text" name="itinerary[{{ $index }}][title]" 
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label class="form-label font-weight-bold small text-uppercase">Daily Heading</label>
+                            <input type="text" 
+                                   name="itinerary[{{ $index }}][title]" 
                                    wire:model.blur="days.{{ $index }}.title" 
+                                   placeholder="e.g. Arrival and Sunset Boat Cruise"
                                    class="form-control @error("days.$index.title") is-invalid @enderror">
                         </div>
                         
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Meals</label>
-                            <input type="text" name="itinerary[{{ $index }}][meals]" 
-                                   wire:model.blur="days.{{ $index }}.meals" class="form-control">
+                        <div class="col-md-5 mb-3">
+                            <label class="form-label font-weight-bold small text-uppercase">Meals Included</label>
+                            <input type="text" 
+                                   name="itinerary[{{ $index }}][meals]" 
+                                   wire:model.blur="days.{{ $index }}.meals" 
+                                   class="form-control">
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label font-weight-bold small text-uppercase">Activities & Description</label>
+                            {{-- Trix Integration with Alpine --}}
+                            <div wire:ignore 
+                                 x-data="{ 
+                                    value: @entangle('days.'.$index.'.activities'),
+                                    isSetByEditor: false
+                                 }" 
+                                 x-init="
+                                    $refs.trix.editor.loadHTML(value);
+                                    $watch('value', (v) => {
+                                        if (!isSetByEditor) {
+                                            $refs.trix.editor.loadHTML(v);
+                                        }
+                                        isSetByEditor = false;
+                                    });
+                                 "
+                                 @trix-change="
+                                    isSetByEditor = true;
+                                    value = $event.target.value;
+                                 "
+                                 class="trix-container">
+                                <input id="trix-{{ $index }}" type="hidden">
+                                <trix-editor input="trix-{{ $index }}" x-ref="trix" class="bg-white border rounded min-height-150"></trix-editor>
+                            </div>
+                            @error("days.$index.activities") <small class="text-danger font-weight-bold">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-bold">Activities & Highlights</label>
-                            <div wire:ignore 
-                                 x-data="{ 
-                                    content: @entangle('days.'.$index.'.activities'),
-                                    isFocused: false 
-                                 }" 
-                                 x-init="$refs.trix.editor.loadHTML(content)"
-                                 @trix-change="content = $event.target.value"
-                                 class="trix-container">
-                                <input id="trix-{{ $index }}" type="hidden" name="itinerary[{{ $index }}][activities]">
-                                <trix-editor input="trix-{{ $index }}" x-ref="trix" class="bg-white rounded shadow-sm"></trix-editor>
-                            </div>
-                            @error("days.$index.activities") <small class="text-danger">{{ $message }}</small> @enderror
+                            <label class="form-label font-weight-bold small text-uppercase text-muted">Accommodation</label>
+                            <input type="text" 
+                                   name="itinerary[{{ $index }}][accommodation]" 
+                                   wire:model.blur="days.{{ $index }}.accommodation" 
+                                   placeholder="e.g. Mweya Safari Lodge"
+                                   class="form-control form-control-sm">
                         </div>
                     </div>
                     
+                    {{-- Hidden inputs for traditional form submission --}}
                     <input type="hidden" name="itinerary[{{ $index }}][day_number]" value="{{ $day['day_number'] }}">
+                    <input type="hidden" name="itinerary[{{ $index }}][activities]" value="{{ $day['activities'] }}">
                 </div>
             </div>
         @endforeach
     </div>
 
-    <div class="card-footer bg-white py-3 text-end">
-        <button type="button" wire:click="addDay" wire:loading.attr="disabled" class="btn btn-sm btn-outline-primary">
-            <i class="fas fa-plus me-1" wire:loading.remove wire:target="addDay"></i>
-            <i class="fas fa-circle-notch fa-spin me-1" wire:loading wire:target="addDay"></i>
-            Add Day {{ count($days) + 1 }}
+    <div class="card-footer bg-white py-3 text-center">
+        <button type="button" wire:click="addDay" class="btn btn-outline-primary rounded-pill px-4">
+            <i class="fas fa-plus-circle mr-1"></i> Add Day {{ count($days) + 1 }}
         </button>
     </div>
+
+    <style>
+        .min-height-150 { min-height: 150px !important; }
+        .border-width-3 { border-left-width: 5px !important; }
+        trix-toolbar .trix-button-group--file-tools { display: none !important; }
+    </style>
 </div>
