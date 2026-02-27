@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\SafariController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,12 +69,15 @@ Route::middleware(['auth', 'role:super-admin|safari-manager'])
     ->group(function () {
         
         Route::get('/dashboard', fn() => view('admin.index'))->name('dashboard');
+        Route::resource('users', UserController::class);
         
         // Fleet Management
         Route::controller(FleetController::class)->group(function () {
             Route::get('/fleet', 'index')->name('fleet.index');
             Route::post('/fleet/{vehicle}/assign', 'assign')->name('fleet.assign');
         });
+
+
 });
 
 // Reservation Agents: Bookings & Customer Service
