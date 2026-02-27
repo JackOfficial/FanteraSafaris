@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SafariCategoryController;
 use App\Http\Controllers\Admin\SafariPackageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\ContactController;
@@ -92,6 +93,8 @@ Route::middleware(['auth', 'role:super-admin|admin|safari-manager'])
         Route::resource('users', UserController::class);
         Route::resource('posts', PostController::class);
         Route::resource('categories', CategoryController::class);
+        Route::resource('safari-categories', SafariCategoryController::class);
+        
         // Inquiry/Message Routes
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.inbox');
         Route::get('/messages/{message}', [MessageController::class, 'show'])->name('messages.show');

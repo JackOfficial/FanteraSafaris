@@ -9,19 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('itineraries', function (Blueprint $table) {
-            $table->id();
+  public function up(): void
+{
+    Schema::create('itineraries', function (Blueprint $table) {
+        $table->id();
         $table->foreignId('safari_package_id')->constrained()->onDelete('cascade');
-        $table->integer('day_number'); // e.g., Day 1, Day 2
-        $table->string('title'); // e.g., Arrival in Entebbe
+        $table->integer('day_number'); 
+        $table->string('title'); 
         $table->text('activities');
         $table->string('accommodation')->nullable();
-        $table->string('meals')->nullable(); // e.g., B, L, D
+        $table->string('meals')->nullable(); 
         $table->timestamps();
-        });
-    }
+
+        // Add this for high-performance sorting
+        $table->index(['safari_package_id', 'day_number']);
+    });
+}
 
     /**
      * Reverse the migrations.

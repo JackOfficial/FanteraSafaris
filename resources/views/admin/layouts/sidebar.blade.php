@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-pink elevation-4">
     <a href="{{ route('admin.dashboard') }}" class="brand-link px-3">
-        <img src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="FameOceans" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <img src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="Fantera Safaris" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">Fantera Safaris</span>
     </a>
 
@@ -42,11 +42,28 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('admin.packages.index') }}" class="nav-link {{ request()->routeIs('admin.packages.*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('admin.packages.*', 'admin.safari-categories.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('admin.packages.*', 'admin.safari-categories.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-map-marked-alt"></i>
-                        <p>Safari Packages</p>
+                        <p>
+                            Safaris
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.packages.index') }}" class="nav-link {{ request()->routeIs('admin.packages.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>All Packages</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.safari-categories.index') }}" class="nav-link {{ request()->routeIs('admin.safari-categories.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Safari Categories</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="nav-header text-uppercase small opacity-50">Content & Blog</li>
@@ -69,7 +86,7 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Categories</p>
+                                <p>Blog Categories</p>
                             </a>
                         </li>
                     </ul>
