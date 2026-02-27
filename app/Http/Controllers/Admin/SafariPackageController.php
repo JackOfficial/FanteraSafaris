@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SafariPackage;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +16,9 @@ class SafariPackageController extends Controller
      */
     public function index()
     {
+        $categories = Category::all();
         $packages = SafariPackage::latest()->paginate(10);
-        return view('admin.packages.index', compact('packages'));
+        return view('admin.packages.index', compact('packages', 'categories'));
     }
 
     /**
@@ -69,7 +71,8 @@ class SafariPackageController extends Controller
     {
         // Load the itineraries so the Livewire component can receive them
         $package->load('itineraries');
-        return view('admin.packages.edit', compact('package'));
+        $categories = Category::all();
+        return view('admin.packages.edit', compact('package', 'categories'));
     }
 
     /**
