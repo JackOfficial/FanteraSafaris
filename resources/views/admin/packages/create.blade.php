@@ -9,7 +9,7 @@
             <div class="col-sm-6">
                 <h1>Create New Safari</h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-6 text-right">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('admin.packages.index') }}">Packages</a></li>
@@ -35,6 +35,12 @@
                                 <label for="name">Package Name</label>
                                 <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="e.g. 5-Day Serengeti Great Migration" required>
                                 @error('name') <span class="text-danger small">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="location">Location</label>
+                                <input type="text" name="location" id="location" class="form-control @error('location') is-invalid @enderror" value="{{ old('location') }}" placeholder="e.g. Maasai Mara, Kenya" required>
+                                @error('location') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="form-group mb-3">
@@ -66,17 +72,44 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card card-outline card-info shadow-sm">
+                        <div class="card-header">
+                            <h3 class="card-title font-weight-bold">Itinerary Planning</h3>
+                        </div>
+                        <div class="card-body">
+                           <p class="text-muted small">Add your itinerary days below. Each day needs a title and activities list.</p>
+                           <div id="itinerary-wrapper">
+                               <div class="border rounded p-3 mb-3 bg-light">
+                                   <div class="row">
+                                       <div class="col-md-2">
+                                           <label>Day</label>
+                                           <input type="number" name="itinerary[0][day_number]" value="1" class="form-control" readonly>
+                                       </div>
+                                       <div class="col-md-10">
+                                           <label>Title</label>
+                                           <input type="text" name="itinerary[0][title]" class="form-control" placeholder="Arrival and Welcome">
+                                       </div>
+                                   </div>
+                                   <div class="mt-2">
+                                       <label>Activities</label>
+                                       <textarea name="itinerary[0][activities]" class="form-control" rows="2"></textarea>
+                                   </div>
+                               </div>
+                           </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card shadow-sm">
+                    <div class="card shadow-sm mb-4">
                         <div class="card-header bg-light">
                             <h3 class="card-title font-weight-bold">Featured Image</h3>
                         </div>
                         <div class="card-body">
                             <div class="form-group mb-0 text-center">
                                 <div x-data="{ photoName: null, photoPreview: null }" class="col-span-6 sm:col-span-4">
-                                    <input type="file" name="image" class="d-none" x-ref="photo"
+                                    <input type="file" name="featured_image" class="d-none" x-ref="photo"
                                         @change="
                                             photoName = $refs.photo.files[0].name;
                                             const reader = new FileReader();
@@ -87,18 +120,18 @@
                                         ">
                                     
                                     <div class="mt-2" x-show="! photoPreview">
-                                        <img src="{{ asset('images/placeholder-safari.jpg') }}" class="img-fluid rounded border shadow-sm" style="max-height: 200px;">
+                                        <img src="{{ asset('front/images/placeholder-safari.jpg') }}" class="img-fluid rounded border shadow-sm" style="max-height: 200px; width: 100%; object-fit: cover;">
                                     </div>
 
                                     <div class="mt-2" x-show="photoPreview" style="display: none;">
-                                        <img :src="photoPreview" class="img-fluid rounded border shadow-sm" style="max-height: 200px;">
+                                        <img :src="photoPreview" class="img-fluid rounded border shadow-sm" style="max-height: 200px; width: 100%; object-fit: cover;">
                                     </div>
 
                                     <button type="button" class="btn btn-outline-primary btn-sm mt-3" @click.prevent="$refs.photo.click()">
-                                        <i class="fas fa-image mr-1"></i> Select Safari Photo
+                                        <i class="fas fa-image mr-1"></i> Upload Photo
                                     </button>
                                 </div>
-                                @error('image') <span class="text-danger d-block mt-2 small">{{ $message }}</span> @enderror
+                                @error('featured_image') <span class="text-danger d-block mt-2 small">{{ $message }}</span> @enderror
                             </div>
                         </div>
                     </div>
@@ -106,28 +139,31 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <div class="form-group mb-3">
-                                <label for="category_id">Category</label>
-                                <select name="category_id" id="category_id" class="form-control">
+                                <label for="safari_category_id">Safari Category</label>
+                                <select name="safari_category_id" id="safari_category_id" class="form-control @error('safari_category_id') is-invalid @enderror" required>
                                     <option value="">Select Category</option>
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}" {{ old('safari_category_id') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
                                     @endforeach
                                 </select>
+                                @error('safari_category_id') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
 
-                            <div class="form-group mb-0">
-                                <label>Visibility</label>
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" name="is_active" class="custom-control-input" id="isActive" checked>
-                                    <label class="custom-control-label" for="isActive">Published</label>
-                                </div>
+                            <div class="form-group mb-3">
+                                <label for="status">Publication Status</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                    <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
+                                </select>
                             </div>
                         </div>
                         <div class="card-footer bg-light border-top-0">
-                            <button type="submit" class="btn btn-pink btn-block font-weight-bold">
-                                <i class="fas fa-save mr-1"></i> Save Safari
+                            <button type="submit" class="btn btn-pink btn-block font-weight-bold py-2">
+                                <i class="fas fa-save mr-1"></i> Create Safari Package
                             </button>
-                            <a href="{{ route('admin.packages.index') }}" class="btn btn-link btn-block btn-sm text-muted">Cancel</a>
+                            <a href="{{ route('admin.packages.index') }}" class="btn btn-link btn-block btn-sm text-muted">Go Back</a>
                         </div>
                     </div>
                 </div>

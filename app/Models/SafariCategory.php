@@ -16,4 +16,9 @@ class SafariCategory extends Model
     {
         return $this->hasMany(SafariPackage::class, 'safari_category_id');
     }
+
+    public function photo()
+{
+    return $this->morphOne(Photo::class, 'imageable');
+}
 }

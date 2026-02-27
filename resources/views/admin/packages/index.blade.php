@@ -22,12 +22,12 @@
 <section class="content">
     <div class="container-fluid">
         <div class="card shadow-sm border-0">
-            <div class="card-header bg-white py-3">
-                <h3 class="card-title font-weight-bold">
+            <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+                <h3 class="card-title font-weight-bold mb-0">
                     <i class="fas fa-map-marked-alt mr-2 text-pink"></i> All Safari Packages
                 </h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.packages.create') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('admin.packages.create') }}" class="btn btn-primary btn-sm rounded-pill px-3">
                         <i class="fas fa-plus mr-1"></i> Add New Package
                     </a>
                 </div>
@@ -35,19 +35,21 @@
 
             <div class="card-body p-0 table-responsive">
                 @if(session('success'))
-                    <div class="alert alert-success m-3 alert-dismissible fade show">
-                        {{ session('success') }}
+                    <div class="alert alert-success m-3 alert-dismissible fade show border-0 shadow-sm">
+                        <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                     </div>
                 @endif
 
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
+                    <thead class="bg-light text-muted small text-uppercase">
                         <tr>
-                            <th class="px-4">Package Name</th>
-                            <th>Price</th>
-                            <th>Duration</th>
-                            <th class="text-right px-4">Actions</th>
+                            <th class="px-4 border-0">Package</th>
+                            <th class="border-0">Category</th>
+                            <th class="border-0">Price</th>
+                            <th class="border-0">Duration</th>
+                            <th class="border-0">Status</th>
+                            <th class="text-right px-4 border-0">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,43 +57,67 @@
                             <tr>
                                 <td class="px-4">
                                     <div class="d-flex align-items-center">
-                                        <div class="mr-3 bg-light rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                            <i class="fas fa-suitcase text-muted"></i>
+                                        @php $featured = $package->photos->firstWhere('type', 'featured'); @endphp
+                                        <div class="mr-3">
+                                            @if($featured)
+                                                <img src="{{ asset('storage/' . $featured->path) }}" 
+                                                     alt="Safari Image" class="rounded shadow-sm" 
+                                                     style="width: 50px; height: 50px; object-fit: cover;">
+                                            @else
+                                                <div class="bg-light rounded d-flex align-items-center justify-content-center border" style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-camera text-muted"></i>
+                                                </div>
+                                            @endif
                                         </div>
-                                        <strong>{{ $package->name }}</strong>
+                                        <div>
+                                            <div class="font-weight-bold text-dark">{{ $package->name }}</div>
+                                            <small class="text-muted"><i class="fas fa-map-marker-alt mr-1"></i> {{ $package->location }}</small>
+                                        </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="text-success font-weight-bold">
-                                        ${{ number_format($package->price) }}
+                                    <span class="badge badge-light border text-secondary px-2">
+                                        {{ $package->category->name ?? 'Uncategorized' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge badge-outline-secondary">
+                                    <span class="text-dark font-weight-bold">
+                                        {{ $package->formatted_price }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-muted small">
                                         <i class="far fa-clock mr-1"></i> {{ $package->duration_days }} Days
                                     </span>
                                 </td>
+                                <td>
+                                    @if($package->status === 'published')
+                                        <span class="badge badge-success px-2 py-1" style="font-size: 0.75rem;">Live</span>
+                                    @else
+                                        <span class="badge badge-warning px-2 py-1" style="font-size: 0.75rem;">Draft</span>
+                                    @endif
+                                </td>
                                 <td class="text-right px-4">
-                                    <div class="btn-group">
-                                        <a href="{{ route('admin.packages.edit', $package) }}" class="btn btn-sm btn-info text-white" title="Edit">
-                                            <i class="fas fa-edit"></i>
+                                    <div class="btn-group shadow-sm rounded">
+                                        <a href="{{ route('admin.packages.edit', $package) }}" class="btn btn-sm btn-white border" title="Edit">
+                                            <i class="fas fa-edit text-info"></i>
                                         </a>
-                                        
-                                        <form action="{{ route('admin.packages.destroy', $package) }}" method="POST" class="d-inline">
-                                            @csrf 
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this safari package?')" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                        <button type="button" class="btn btn-sm btn-white border text-danger" 
+                                                onclick="if(confirm('Delete this safari?')) document.getElementById('delete-{{ $package->id }}').submit();">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <form id="delete-{{ $package->id }}" action="{{ route('admin.packages.destroy', $package) }}" method="POST" class="d-none">
+                                            @csrf @method('DELETE')
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-5">
-                                    <p class="text-muted">No safari packages found.</p>
-                                    <a href="{{ route('admin.packages.create') }}" class="btn btn-primary">Create your first package</a>
+                                <td colspan="6" class="text-center py-5">
+                                    <img src="https://illustrations.popsy.co/gray/map.svg" alt="No Data" class="mb-3" style="width: 150px;">
+                                    <p class="text-muted">No safari packages found in the database.</p>
+                                    <a href="{{ route('admin.packages.create') }}" class="btn btn-primary btn-sm px-4">Create First Package</a>
                                 </td>
                             </tr>
                         @endforelse
@@ -100,7 +126,7 @@
             </div>
             
             @if($packages->hasPages())
-                <div class="card-footer bg-white border-top-0">
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-center">
                     {{ $packages->links() }}
                 </div>
             @endif

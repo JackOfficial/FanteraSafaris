@@ -48,6 +48,17 @@ class SafariPackage extends Model
     return $this->belongsTo(SafariCategory::class, 'safari_category_id');
 }
 
+public function photos()
+{
+    return $this->morphMany(Photo::class, 'imageable');
+}
+
+// Helper to get just the featured image
+public function featuredPhoto()
+{
+    return $this->morphOne(Photo::class, 'imageable')->where('type', 'featured');
+}
+
     public function itineraries(): HasMany
     {
         return $this->hasMany(Itinerary::class)->orderBy('day_number');
