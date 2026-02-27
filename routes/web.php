@@ -82,7 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 */
 
 // Admin & Safari Managers: Inventory, Fleet, & Operations
-Route::middleware(['auth', 'role:super-admin|safari-manager'])
+Route::middleware(['auth', 'role:super-admin|admin|safari-manager'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -96,6 +96,12 @@ Route::middleware(['auth', 'role:super-admin|safari-manager'])
         Route::get('/messages/{message}', [MessageController::class, 'show'])->name('messages.show');
         Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
         Route::post('/messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
+
+           // Bookings Management
+    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::patch('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.updateStatus');
+    Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy');
 
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::resource('packages', SafariPackageController::class);

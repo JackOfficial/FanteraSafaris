@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -12,7 +13,10 @@ class BookingController extends Controller
      */
     public function index()
     {
-        //
+       // Fetch bookings with their related safari package info
+        $bookings = Booking::with('safariPackage')->latest()->paginate(15);
+        
+        return view('admin.bookings.index', compact('bookings'));
     }
 
     /**
@@ -34,9 +38,9 @@ class BookingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+   public function show(Booking $booking)
     {
-        //
+        return view('admin.bookings.show', compact('booking'));
     }
 
     /**
