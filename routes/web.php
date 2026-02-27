@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SafariPackageController;
 use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
@@ -94,6 +96,9 @@ Route::middleware(['auth', 'role:super-admin|safari-manager'])
         Route::get('/messages/{message}', [MessageController::class, 'show'])->name('messages.show');
         Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
         Route::post('/messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
+
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::resource('packages', SafariPackageController::class);
         
         // Fleet Management
         Route::controller(FleetController::class)->group(function () {

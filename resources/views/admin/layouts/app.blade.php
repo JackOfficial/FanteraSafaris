@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="{{ asset('back/dist/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('back/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
 
+    <link rel="stylesheet" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+
     @yield('styles')
     @livewireStyles
 </head>
@@ -81,6 +83,7 @@
 <script src="{{ asset('back/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('back/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 <script src="{{ asset('back/dist/js/adminlte.min.js') }}"></script>
+<script src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
 @yield('scripts')
 @livewireScripts
 </body>
