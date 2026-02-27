@@ -15,18 +15,6 @@
 @endpush
 
 @section('content')
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6"><h1 class="font-weight-bold">Edit Safari Package</h1></div>
-            <div class="col-sm-6 text-right">
-                <a href="{{ route('admin.packages.index') }}" class="btn btn-default btn-sm mr-2">
-                    <i class="fas fa-arrow-left mr-1"></i> Back
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
 
 <section class="content">
     <div class="container-fluid">
