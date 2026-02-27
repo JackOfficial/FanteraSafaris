@@ -94,13 +94,22 @@ new class extends Component
                         <td>
                             <span class="badge badge-info">{{ $user->getRoleNames()->first() ?? 'User' }}</span>
                         </td>
-                        <td class="text-right">
-                            <button wire:click="deleteUser({{ $user->id }})" 
-                                    wire:confirm="Delete this user?"
-                                    class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
+                       <td class="text-right">
+    <div class="btn-group">
+        {{-- The missing Edit Link --}}
+        <a href="{{ route('admin.users.edit', $user->id) }}" 
+           class="btn btn-sm btn-info mr-1">
+            <i class="fas fa-edit"></i>
+        </a>
+
+        {{-- The Delete Button --}}
+        <button wire:click="deleteUser({{ $user->id }})" 
+                wire:confirm="Are you sure you want to delete {{ $user->name }}?"
+                class="btn btn-sm btn-danger">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</td>
                     </tr>
                 @empty
                     <tr>
