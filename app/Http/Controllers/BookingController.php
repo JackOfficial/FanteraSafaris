@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Booking;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class SafariController extends Controller
+class BookingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,18 +13,6 @@ class SafariController extends Controller
     public function index()
     {
         //
-    }
-
-    public function guideItinerary()
-    {
-        // For Fantera Safaris: Fetch only bookings assigned to this guide
-        // Assumes you have a 'guide_id' column in your bookings table
-        $itineraries = Booking::where('guide_id', Auth::id())
-            ->where('status', 'confirmed')
-            ->orderBy('start_date', 'asc')
-            ->get();
-
-        return view('guide.itinerary', compact('itineraries'));
     }
 
     /**

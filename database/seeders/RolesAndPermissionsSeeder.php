@@ -35,17 +35,17 @@ class RolesAndPermissionsSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // --- 2. Create Roles & Assign Permissions ---
 
         // Super Admin: Can do everything
-        $superAdmin = Role::create(['name' => 'super-admin']);
+        $superAdmin = Role::firstOrCreate(['name' => 'super-admin']);
         // Gets all permissions via Gate::before in AuthServiceProvider (recommended)
 
         // Safari Manager: Inventory and Logistics
-        $manager = Role::create(['name' => 'safari-manager']);
+        $manager = Role::firstOrCreate(['name' => 'safari-manager']);
         $manager->givePermissionTo([
             'manage inventory',
             'set pricing',
@@ -55,14 +55,14 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         // Reservation Agent: Handles customers
-        $agent = Role::create(['name' => 'reservation-agent']);
+        $agent = Role::firstOrCreate(['name' => 'reservation-agent']);
         $agent->givePermissionTo([
             'view bookings',
             'edit bookings'
         ]);
 
         // Tour Guide: Only sees their assigned tasks
-        $guide = Role::create(['name' => 'tour-guide']);
+        $guide = Role::firstOrCreate(['name' => 'tour-guide']);
         $guide->givePermissionTo(['view bookings']);
     }
 }

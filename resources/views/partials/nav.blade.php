@@ -1,13 +1,10 @@
-<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar" style="transition: all 0.3s ease;">
+<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
   <div class="container">
     <a class="navbar-brand font-weight-bold d-flex align-items-center" href="/">
-        <img src="{{ asset('front/images/FanteraSafaris_logo.png') }}" 
-             alt="Fantera Safaris" 
-             class="img-fluid safari-logo" 
-             style="max-height: 50px; width: auto; transition: transform 0.3s;">
+        <img src="{{ asset('front/images/FanteraSafaris_logo.png') }}" alt="Fantera Safaris" class="img-fluid safari-logo" style="max-height: 50px;">
     </a>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav">
       <span class="oi oi-menu"></span> Menu
     </button>
     
@@ -16,6 +13,13 @@
         <li class="nav-item {{ request()->is('/') ? 'active' : '' }}"><a href="/" class="nav-link">Home</a></li>
         <li class="nav-item {{ request()->is('tour*') ? 'active' : '' }}"><a href="/tour" class="nav-link">Destinations</a></li>
         <li class="nav-item {{ request()->is('packages*') ? 'active' : '' }}"><a href="/packages" class="nav-link">Safari Packages</a></li>
+
+        @hasanyrole('super-admin|safari-manager')
+          <li class="nav-item {{ request()->is('admin/fleet*') ? 'active' : '' }}">
+            <a href="{{ route('admin.fleet.index') }}" class="nav-link text-warning">Fleet</a>
+          </li>
+        @endhasanyrole
+
         <li class="nav-item {{ request()->is('contact*') ? 'active' : '' }}"><a href="/contact" class="nav-link">Contact</a></li>
 
         <li class="nav-item d-none d-lg-block mx-2">
@@ -24,13 +28,31 @@
 
         @auth
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle font-weight-bold text-primary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle font-weight-bold text-primary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
               <i class="fas fa-user-circle mr-1"></i> {{ explode(' ', Auth::user()->name)[0] }}
             </a>
             <div class="dropdown-menu dropdown-menu-right border-0 shadow animate__animated animate__fadeIn" style="border-radius: 12px;">
-              <a class="dropdown-item py-2" href="/dashboard"><i class="fas fa-th-large mr-2 text-muted"></i> My Bookings</a>
+              
+              @hasanyrole('super-admin|safari-manager')
+                <a class="dropdown-item py-2" href="{{ route('admin.dashboard') }}">
+                  <i class="fas fa-chart-line mr-2 text-primary"></i> Admin Panel
+                </a>
+              @else
+                <a class="dropdown-item py-2" href="/dashboard">
+                  <i class="fas fa-th-large mr-2 text-muted"></i> My Bookings
+                </a>
+              @endhasanyrole
+
+              @role('tour-guide')
+                <a class="dropdown-item py-2" href="{{ route('guide.itinerary') }}">
+                  <i class="fas fa-map-marked-alt mr-2 text-success"></i> My Itineraries
+                </a>
+              @endrole
+
               <a class="dropdown-item py-2" href="/user/profile"><i class="fas fa-cog mr-2 text-muted"></i> Settings</a>
+              
               <div class="dropdown-divider"></div>
+              
               <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="dropdown-item py-2 text-danger">
@@ -44,7 +66,7 @@
               <a href="/login" class="nav-link">Login</a>
           </li>
           <li class="nav-item ml-lg-2">
-              <a href="/register" class="btn btn-outline-primary px-4 py-2" style="border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+              <a href="/register" class="btn btn-outline-primary px-4 py-2" style="border-radius: 50px; font-size: 13px; font-weight: 700;">
                   Join Us
               </a>
           </li>

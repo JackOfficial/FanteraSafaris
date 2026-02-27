@@ -3,72 +3,98 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\SafariController;
+use App\Http\Controllers\FleetController;
+use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('index');
-});
+/*
+|--------------------------------------------------------------------------
+| Public Routes (Guest & Visitors)
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/about', function () {
-    return view('about');
-});
+Route::get('/', function () { return view('index'); })->name('home');
+Route::view('/about', 'about')->name('about');
+Route::view('/contact', 'contact')->name('contact');
 
-Route::get('/blog', function () {
-    return view('blog');
-});
-
-Route::get('/contact', function () {
-    return view('contact');
-});
-
-Route::get('/hotel', function () {
-    return view('hotel');
-});
-
-Route::get('/tour', function () {
-    return view('tours.index');
-});
-
-Route::get('/tour-details', function () {
-    return view('tours.show');
-});
-
-Route::get('/packages', function () {
-    return view('packages.index');
-});
-
-Route::get('/package', function () {
-    return view('packages.show');
-});
-
-Route::get('/hotel-single', function () {
-    return view('hotel-single');
-});
-
-Route::get('/blog-single', function () {
-    return view('blog-single');
-});
-
-//Authenticated user routes
-Route::middleware(['auth', 'verified'])->group(function () { 
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-    // Route::post('/comment', [PageController::class, 'post']);
-    // Route::post('/deleteComment/{id}', [PageController::class, 'deleteComment']);
-});
-
+// Safari & Tour Catalog
 Route::get('/safaris', [SafariController::class, 'index'])->name('safaris.index');
+Route::view('/tour', 'tours.index')->name('tours.index');
+Route::view('/tour-details', 'tours.show')->name('tours.show');
 
-// Social login routes
-Route::get('/auth/redirect/{provider}', [SocialLoginController::class, 'redirect']);
-Route::get('/auth/callback/{provider}', [SocialLoginController::class, 'callback']);
+// Hotels & Packages
+Route::view('/hotel', 'hotel')->name('hotel.index');
+Route::view('/hotel-single', 'hotel-single')->name('hotel.show');
+Route::view('/packages', 'packages.index')->name('packages.index');
+Route::view('/package', 'packages.show')->name('packages.show');
 
-// Routes for Safari Managers & Admins only
-Route::middleware(['auth', 'role:safari-manager|super-admin'])->group(function () {
-    Route::get('/fleet', [FleetController::class, 'index'])->name('fleet.index');
-    Route::post('/fleet/{vehicle}/assign', [FleetController::class, 'assign'])->name('fleet.assign');
+// Blog Content
+Route::view('/blog', 'blog')->name('blog.index');
+Route::view('/blog-single', 'blog-single')->name('blog.show');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication & Socialite
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('auth')->group(function () {
+    Route::get('/redirect/{provider}', [SocialLoginController::class, 'redirect'])->name('auth.redirect');
+    Route::get('/callback/{provider}', [SocialLoginController::class, 'callback'])->name('auth.callback');
 });
 
-// Routes for Reservation Agents
-Route::middleware(['auth', 'role:reservation-agent'])->group(function () {
-    Route::resource('bookings', BookingController::class);
+/*
+|--------------------------------------------------------------------------
+| Authenticated Client Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+    
+    // Future Client-specific routes (e.g., My Bookings)
+});
+
+/*
+|--------------------------------------------------------------------------
+| Staff & Admin Routes (Role Protected)
+|--------------------------------------------------------------------------
+*/
+
+// Admin & Safari Managers: Inventory, Fleet, & Operations
+Route::middleware(['auth', 'role:super-admin|safari-manager'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        
+        Route::get('/dashboard', fn() => view('admin.index'))->name('dashboard');
+        
+        // Fleet Management
+        Route::controller(FleetController::class)->group(function () {
+            Route::get('/fleet', 'index')->name('fleet.index');
+            Route::post('/fleet/{vehicle}/assign', 'assign')->name('fleet.assign');
+        });
+});
+
+// Reservation Agents: Bookings & Customer Service
+Route::middleware(['auth', 'role:reservation-agent|super-admin'])
+    ->prefix('reservations')
+    ->name('reservations.')
+    ->group(function () {
+        Route::resource('bookings', BookingController::class);
+});
+
+// Tour Guide Routes: Itineraries & Assigned Trips
+Route::middleware(['auth', 'role:tour-guide|super-admin']) // Super Admin added for troubleshooting
+    ->prefix('guide')
+    ->name('guide.')
+    ->group(function () {
+        
+        // The main itinerary dashboard for guides
+        Route::get('/itinerary', [SafariController::class, 'guideItinerary'])
+            ->name('itinerary');
+            
+        // Example: Route to start a specific trip (useful for field operations)
+        Route::patch('/itinerary/{booking}/start', [SafariController::class, 'startTrip'])
+            ->name('itinerary.start');
 });
