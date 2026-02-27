@@ -57,7 +57,7 @@
     <!-- Content Wrapper -->
     <div class="content-wrapper">
         {{-- @yield('content') --}}
-        {{ $slot }}
+        @yield('content')
     </div>
     <!-- /.content-wrapper -->
 
