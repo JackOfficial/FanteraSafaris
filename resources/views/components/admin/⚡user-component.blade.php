@@ -11,7 +11,7 @@ new class extends Component
     use WithPagination;
 
     public $search = '';
-    public $roleFilter = ''; // New property for filtering by role
+    public $roleFilter = '';
     protected $paginationTheme = 'bootstrap';
 
     public function updatingSearch() { $this->resetPage(); }
@@ -41,6 +41,8 @@ new class extends Component
     public function users()
     {
         return User::with(['roles', 'permissions'])
+            // We count bookings to show activity at a glance
+            ->withCount(['bookings as total_bookings']) 
             ->when($this->roleFilter, function($query) {
                 $query->role($this->roleFilter);
             })
@@ -59,11 +61,11 @@ new class extends Component
         <div class="row align-items-center">
             <div class="col-md-4">
                 <h3 class="card-title font-weight-bold">
-                    <i class="fas fa-users mr-2 text-pink"></i> System Users
+                    <i class="fas fa-users-cog mr-2 text-pink"></i> User Management
                 </h3>
             </div>
             <div class="col-md-8 d-flex justify-content-end gap-2">
-                <select wire:model.live="roleFilter" class="form-control w-25 mr-2">
+                <select wire:model.live="roleFilter" class="form-control w-25">
                     <option value="">All Roles</option>
                     @foreach($this->roles as $role)
                         <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
@@ -74,7 +76,7 @@ new class extends Component
                     <input type="text" wire:model.live.debounce.300ms="search" 
                            class="form-control" placeholder="Search name or email...">
                     <div class="input-group-append">
-                        <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                        <span class="input-group-text bg-white border-left-0"><i class="fas fa-search text-muted"></i></span>
                     </div>
                 </div>
             </div>
@@ -82,16 +84,16 @@ new class extends Component
     </div>
 
     <div class="card-body p-0">
-        @include('admin.partials.alerts') {{-- Optional: move alerts to partial --}}
+        @include('admin.partials.alerts')
 
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="bg-light text-uppercase small font-weight-bold">
+                <thead class="bg-light text-uppercase small font-weight-bold text-muted">
                     <tr>
-                        <th>User</th>
-                        <th>Login Method</th>
-                        <th>Status</th>
-                        <th>Roles & Permissions</th>
+                        <th>User Profile</th>
+                        <th>Access Level</th>
+                        <th>Activity & Status</th>
+                        <th>Safari Stats</th>
                         <th class="text-right">Actions</th>
                     </tr>
                 </thead>
@@ -100,68 +102,87 @@ new class extends Component
                         <tr wire:key="user-{{ $user->id }}">
                             <td>
                                 <div class="d-flex align-items-center">
-                                    {{-- Image Priority: 1. Uploaded Photo | 2. Google Avatar | 3. UI-Avatar --}}
                                     @php
                                         $photoUrl = $user->photo ? asset($user->photo) : 
                                                    ($user->avatar ? $user->avatar : 
                                                    'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=f8bbd0&color=880e4f');
                                     @endphp
-                                    <img src="{{ $photoUrl }}" class="img-circle mr-3 shadow-sm border" width="40" height="40" style="object-fit: cover;">
+                                    <img src="{{ $photoUrl }}" class="img-circle mr-3 shadow-sm border" width="45" height="45" style="object-fit: cover;">
                                     <div>
-                                        <div class="font-weight-bold">{{ $user->name }}</div>
-                                        <div class="small text-muted text-truncate" style="max-width: 150px;">{{ $user->email }}</div>
+                                        <div class="font-weight-bold text-dark">{{ $user->name }}</div>
+                                        <div class="small text-muted">
+                                            @if($user->provider === 'google')
+                                                <i class="fab fa-google text-danger mr-1"></i> Google Account
+                                            @else
+                                                <i class="fas fa-envelope-open text-primary mr-1"></i> {{ $user->email }}
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="align-middle">
-                                @if($user->provider === 'google')
-                                    <span class="badge badge-light border text-dark">
-                                        <i class="fab fa-google text-danger mr-1"></i> Google
-                                    </span>
-                                @else
-                                    <span class="badge badge-light border text-dark">
-                                        <i class="fas fa-envelope text-primary mr-1"></i> Email/Pass
-                                    </span>
+                                @foreach($user->roles as $role)
+                                    <span class="badge badge-pink px-2 py-1 mb-1 shadow-sm">{{ ucfirst($role->name) }}</span>
+                                @endforeach
+                                @if($user->permissions->count() > 0)
+                                    <div class="text-xs text-info font-weight-bold"><i class="fas fa-shield-alt"></i> {{ $user->permissions->count() }} Custom Permissions</div>
                                 @endif
                             </td>
                             <td class="align-middle">
                                 @if($user->status)
-                                    <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i> Active</span>
+                                    <span class="badge badge-success mb-1"><i class="fas fa-check-circle"></i> Active</span>
                                 @else
-                                    <span class="badge badge-secondary"><i class="fas fa-times-circle mr-1"></i> Inactive</span>
+                                    <span class="badge badge-secondary mb-1"><i class="fas fa-ban"></i> Suspended</span>
                                 @endif
+                                
+                                <div class="small text-muted">
+                                    <i class="fas fa-history mr-1"></i> 
+                                    @if($user->last_login_at)
+                                        Seen {{ $user->last_login_at->diffForHumans() }}
+                                    @else
+                                        Never logged in
+                                    @endif
+                                </div>
                             </td>
                             <td class="align-middle">
-                                @foreach($user->roles as $role)
-                                    <span class="badge badge-pink px-2 py-1 mb-1">{{ ucfirst($role->name) }}</span>
-                                @endforeach
-                                @if($user->permissions->count() > 0)
-                                    <div class="text-xs text-muted"><i class="fas fa-key fa-xs"></i> {{ $user->permissions->count() }} custom perms</div>
-                                @endif
+                                <div class="d-flex align-items-center">
+                                    <div class="mr-3">
+                                        <span class="h6 mb-0 font-weight-bold">{{ $user->total_bookings }}</span>
+                                        <div class="small text-muted text-uppercase" style="font-size: 0.65rem;">Bookings</div>
+                                    </div>
+                                    @if($user->total_bookings > 0)
+                                        <i class="fas fa-map-marked-alt text-pink opacity-50"></i>
+                                    @endif
+                                </div>
                             </td>
                             <td class="text-right align-middle px-3">
-                                <div class="btn-group">
-                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-outline-info mr-1">
-                                        <i class="fas fa-edit"></i>
+                                <div class="btn-group shadow-sm">
+                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-white text-info border" title="Edit User">
+                                        <i class="fas fa-user-edit"></i>
                                     </a>
                                     <button wire:click="deleteUser({{ $user->id }})" 
-                                            wire:confirm="Delete {{ $user->name }}?" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash"></i>
+                                            wire:confirm="Permanent deletion for {{ $user->name }}?" class="btn btn-sm btn-white text-danger border" title="Delete User">
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="text-center py-5 text-muted">No users found.</td></tr>
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <img src="https://illustrations.popsy.co/pink/search-not-found.svg" width="150" class="mb-3">
+                                <p class="text-muted">No safari members found matching your criteria.</p>
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
     
-    <div class="card-footer bg-white d-flex justify-content-between align-items-center">
-        <div class="small text-muted text-uppercase font-weight-bold">
-            Total Users: {{ $this->users->total() }}
+    <div class="card-footer bg-white d-flex justify-content-between align-items-center border-top">
+        <div class="text-muted small">
+            Displaying <b>{{ $this->users->count() }}</b> of <b>{{ $this->users->total() }}</b> total registered users
         </div>
         <div>{{ $this->users->links() }}</div>
     </div>
