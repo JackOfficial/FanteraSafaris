@@ -1,6 +1,6 @@
 <?php
 
-use Livewire\Component;
+use Livewire\Component; // Using Volt syntax based on your setup
 use App\Models\User;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
@@ -32,13 +32,13 @@ new class extends Component
     }
 
     /**
-     * Using a Computed property is the modern way to handle 
-     * dynamic data in render-less components.
+     * Eager loading roles and permissions here is crucial for performance.
      */
     #[Computed]
     public function users()
     {
-        return User::where(function($query) {
+        return User::with(['roles', 'permissions']) // Eager load Spatie relations
+            ->where(function($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
                       ->orWhere('email', 'like', '%' . $this->search . '%');
             })
@@ -57,70 +57,114 @@ new class extends Component
                 </h3>
             </div>
             <div class="col-md-6 text-right">
-                <input type="text" 
-                       wire:model.live.debounce.300ms="search" 
-                       class="form-control d-inline-block w-75" 
-                       placeholder="Search users...">
+                <div class="input-group">
+                    <input type="text" 
+                           wire:model.live.debounce.300ms="search" 
+                           class="form-control" 
+                           placeholder="Search by name, email, or role...">
+                    <div class="input-group-append">
+                        <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="card-body p-0">
         @if (session()->has('success'))
-            <div class="alert alert-success m-3">{{ session('success') }}</div>
+            <div class="alert alert-success m-3 alert-dismissible fade show">
+                {{ session('success') }}
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+            </div>
+        @endif
+        
+        @if (session()->has('error'))
+            <div class="alert alert-danger m-3 alert-dismissible fade show">
+                {{ session('error') }}
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+            </div>
         @endif
 
-        <table class="table table-hover mb-0">
-            <thead class="bg-light">
-                <tr>
-                    <th>User Details</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th class="text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{-- Accessing the computed property via $this->users --}}
-                @forelse($this->users as $user)
-                    <tr wire:key="user-{{ $user->id }}">
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}" 
-                                     class="img-circle mr-2" width="35">
-                                <strong>{{ $user->name }}</strong>
-                            </div>
-                        </td>
-                        <td>{{ $user->email }}</td>
-                        <td>
-                            <span class="badge badge-info">{{ $user->getRoleNames()->first() ?? 'User' }}</span>
-                        </td>
-                       <td class="text-right">
-    <div class="btn-group">
-        {{-- The missing Edit Link --}}
-        <a href="{{ route('admin.users.edit', $user->id) }}" 
-           class="btn btn-sm btn-info mr-1">
-            <i class="fas fa-edit"></i>
-        </a>
-
-        {{-- The Delete Button --}}
-        <button wire:click="deleteUser({{ $user->id }})" 
-                wire:confirm="Are you sure you want to delete {{ $user->name }}?"
-                class="btn btn-sm btn-danger">
-            <i class="fas fa-trash"></i>
-        </button>
-    </div>
-</td>
-                    </tr>
-                @empty
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="bg-light">
                     <tr>
-                        <td colspan="4" class="text-center py-4">No users found.</td>
+                        <th style="width: 30%">User Details</th>
+                        <th>Email</th>
+                        <th>Roles & Privileges</th>
+                        <th class="text-right">Actions</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse($this->users as $user)
+                        <tr wire:key="user-{{ $user->id }}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {{-- Use stored photo if exists, else fallback to UI Avatars --}}
+                                    <img src="{{ $user->photo ? asset($user->photo) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=f8bbd0&color=880e4f' }}" 
+                                         class="img-circle mr-3 border shadow-sm" width="40" height="40" style="object-fit: cover;">
+                                    <div>
+                                        <div class="font-weight-bold">{{ $user->name }}</div>
+                                        <small class="text-muted">Joined {{ $user->created_at->format('M Y') }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle">{{ $user->email }}</td>
+                            <td class="align-middle">
+                                {{-- Show All Roles --}}
+                                @foreach($user->roles as $role)
+                                    <span class="badge badge-pink px-2 py-1 mb-1">{{ ucfirst($role->name) }}</span>
+                                @endforeach
+
+                                {{-- Show Direct Permissions --}}
+                                @if($user->permissions->count() > 0)
+                                    <div class="mt-1">
+                                        @foreach($user->permissions as $permission)
+                                            <span class="badge badge-light border text-xs text-muted" title="Direct Permission">
+                                                <i class="fas fa-unlock-alt fa-xs"></i> {{ $permission->name }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                
+                                @if($user->roles->isEmpty() && $user->permissions->isEmpty())
+                                    <span class="text-muted small italic">No access assigned</span>
+                                @endif
+                            </td>
+                            <td class="text-right align-middle px-3">
+                                <div class="btn-group">
+                                    <a href="{{ route('admin.users.edit', $user->id) }}" 
+                                       class="btn btn-sm btn-outline-info mr-1" title="Edit User">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <button wire:click="deleteUser({{ $user->id }})" 
+                                            wire:confirm="Are you sure you want to delete {{ $user->name }}? This action cannot be undone."
+                                            class="btn btn-sm btn-outline-danger" title="Delete User">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <i class="fas fa-search fa-3x text-light mb-3"></i>
+                                <p class="text-muted">No users found matching your search.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
     
-    <div class="card-footer bg-white">
-        {{ $this->users->links() }}
+    <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+        <div class="small text-muted">
+            Showing {{ $this->users->firstItem() }} to {{ $this->users->lastItem() }} of {{ $this->users->total() }} users
+        </div>
+        <div>
+            {{ $this->users->links() }}
+        </div>
     </div>
 </div>

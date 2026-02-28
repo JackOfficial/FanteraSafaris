@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
         // We eager load roles to avoid N+1 query issues
-        $users = User::with('roles')->latest()->paginate(10);
+        $users = User::with(['roles', 'permissions'])->latest()->paginate(10);
         
         return view('admin.users.index', compact('users'));
     }
