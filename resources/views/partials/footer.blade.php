@@ -54,9 +54,9 @@
                 <span class="text">Plot 47, Kampala Road, Uganda</span>
               </li>
               <li class="mb-2">
-                <a href="tel:+256708239010" class="text-white-50 d-flex align-items-center">
+                <a href="tel:+256751115949" class="text-white-50 d-flex align-items-center">
                   <i class="fas fa-phone mr-3 text-warning"></i>
-                  <span>+256 708 239010</span>
+                  <span>+256 751 115949</span>
                 </a>
               </li>
               <li class="mb-2">

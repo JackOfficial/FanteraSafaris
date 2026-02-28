@@ -73,7 +73,7 @@
         @endauth
 
         <li class="nav-item cta ml-lg-3 mt-3 mt-lg-0">
-            <a href="https://wa.me/256708239010" class="nav-link bg-success border-0 text-white shadow-sm d-flex align-items-center justify-content-center" style="border-radius: 50px; padding: 10px 20px !important;">
+            <a href="https://wa.me/256751115949" class="nav-link bg-success border-0 text-white shadow-sm d-flex align-items-center justify-content-center" style="border-radius: 50px; padding: 10px 20px !important;">
                 <i class="fab fa-whatsapp mr-2" style="font-size: 18px;"></i> 
                 <span>Plan Your Trip</span>
             </a>
