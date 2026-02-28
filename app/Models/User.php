@@ -66,21 +66,17 @@ class User extends Authenticatable implements MustVerifyEmail
      * Get all bookings for the user.
      * This works for both Clients (user_id) and Guides (guide_id).
      */
-    public function bookings(): HasMany
-    {
-        // If the user is a Client, they are linked via 'user_id'
-        // If you want this to work for Guides too, we can create a separate method 
-        // or keep it generic. Usually, 'bookings' refers to the person who booked.
-        return $this->hasMany(Booking::class, 'user_id');
-    }
+    // Bookings made by this user (as a Client)
+public function bookings(): HasMany
+{
+    return $this->hasMany(Booking::class, 'user_id');
+}
 
-    /**
-     * If the user is a Guide, get the safaris they are assigned to lead.
-     */
-    public function assignedSafaris(): HasMany
-    {
-        return $this->hasMany(Booking::class, 'guide_id');
-    }
+// Safaris assigned to this user (as a Guide)
+public function assignedSafaris(): HasMany
+{
+    return $this->hasMany(Booking::class, 'guide_id');
+}
 
     /**
      * Get the user's initials
