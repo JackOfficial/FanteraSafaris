@@ -83,25 +83,54 @@ public function edit(User $user)
     /**
      * Update the user and sync their roles.
      */
-    public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'role' => ['required', 'exists:roles,name'],
-        ]);
+   public function update(Request $request, User $user)
+{
+    // 1. Validation
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
+        'roles' => ['nullable', 'array'], // Changed to 'roles' to match the multiple-select
+        'roles.*' => ['exists:roles,name'],
+        'password' => ['nullable', 'string', 'min:8', 'confirmed'], // Handle optional password
+        'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'], // Handle photo
+    ]);
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
+    // 2. Prepare Data
+    $data = [
+        'name'  => $request->name,
+        'email' => $request->email,
+        'status' => $request->has('status') ? 1 : 0, // Matches the switch in the blade
+    ];
 
-        // syncRoles removes all existing roles and replaces them with the new one
-        $user->syncRoles([$request->role]);
-
-        return redirect()->route('admin.users.index')
-            ->with('success', 'User updated successfully.');
+    // 3. Only update password if user typed one in
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
     }
+
+    // 4. Handle Profile Photo Upload
+    if ($request->hasFile('photo')) {
+        // Optional: Delete old photo from storage if it exists
+        if ($user->photo && file_exists(public_path($user->photo))) {
+            unlink(public_path($user->photo));
+        }
+        
+        $path = $request->file('photo')->store('users/avatars', 'public');
+        $data['photo'] = 'storage/' . $path;
+    }
+
+    // 5. Update the User
+    $user->update($data);
+
+    // 6. Sync Roles & Permissions
+    // We only let Super Admins change roles to prevent "privilege escalation"
+    if (auth()->user()->hasRole('super-admin')) {
+        $user->syncRoles($request->roles ?? []);
+        $user->syncPermissions($request->permissions ?? []);
+    }
+
+    return redirect()->route('admin.users.index')
+        ->with('success', "User '{$user->name}' updated successfully.");
+}
 
     /**
      * Remove a user (e.g., a guide who left the company).
