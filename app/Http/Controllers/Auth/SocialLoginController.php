@@ -39,7 +39,7 @@ class SocialLoginController extends Controller
                 $user->assignRole('super-admin');
             } else {
                 // Default all other Google sign-ups to 'client' or 'user'
-                $user->assignRole('user'); 
+                $user->assignRole('client'); 
             }
         }
 
