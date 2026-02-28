@@ -41,8 +41,11 @@ new class extends Component
     public function users()
     {
         return User::with(['roles', 'permissions'])
-            // We count bookings to show activity at a glance
-            ->withCount(['bookings as total_bookings']) 
+            // Eager load counts for both possible relationships
+            ->withCount([
+                'bookings as client_bookings_count', 
+                'assignedSafaris as guide_trips_count'
+            ])
             ->when($this->roleFilter, function($query) {
                 $query->role($this->roleFilter);
             })
@@ -146,22 +149,29 @@ new class extends Component
                             </td>
                             <td class="align-middle">
                                 <div class="d-flex align-items-center">
-                                    <div class="mr-3">
-                                        <span class="h6 mb-0 font-weight-bold">{{ $user->total_bookings }}</span>
-                                        <div class="small text-muted text-uppercase" style="font-size: 0.65rem;">Bookings</div>
-                                    </div>
-                                    @if($user->total_bookings > 0)
-                                        <i class="fas fa-map-marked-alt text-pink opacity-50"></i>
+                                    {{-- Custom Logic for Guides vs Clients --}}
+                                    @if($user->hasRole('guide'))
+                                        <div class="mr-3">
+                                            <span class="h6 mb-0 font-weight-bold text-primary">{{ $user->guide_trips_count }}</span>
+                                            <div class="small text-muted text-uppercase" style="font-size: 0.65rem;">Trips Led</div>
+                                        </div>
+                                        <i class="fas fa-compass text-primary opacity-50"></i>
+                                    @else
+                                        <div class="mr-3">
+                                            <span class="h6 mb-0 font-weight-bold text-pink">{{ $user->client_bookings_count }}</span>
+                                            <div class="small text-muted text-uppercase" style="font-size: 0.65rem;">Bookings</div>
+                                        </div>
+                                        <i class="fas fa-suitcase-rolling text-pink opacity-50"></i>
                                     @endif
                                 </div>
                             </td>
                             <td class="text-right align-middle px-3">
-                                <div class="btn-group shadow-sm">
-                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-white text-info border" title="Edit User">
+                                <div class="btn-group shadow-sm border rounded">
+                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-white text-info border-0" title="Edit User">
                                         <i class="fas fa-user-edit"></i>
                                     </a>
                                     <button wire:click="deleteUser({{ $user->id }})" 
-                                            wire:confirm="Permanent deletion for {{ $user->name }}?" class="btn btn-sm btn-white text-danger border" title="Delete User">
+                                            wire:confirm="Permanent deletion for {{ $user->name }}?" class="btn btn-sm btn-white text-danger border-0" title="Delete User">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
