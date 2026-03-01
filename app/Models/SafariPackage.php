@@ -20,6 +20,7 @@ class SafariPackage extends Model
         'summary', 
         'description', 
         'price', 
+        'discount_rate',
         'duration_days', 
         'difficulty', 
         'is_featured', 
