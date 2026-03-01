@@ -62,19 +62,18 @@ new class extends Component {
     public function duplicateDay($index)
     {
         $newDay = $this->itinerary[$index];
-        
-        // Insert the duplicate right after the current index
         array_splice($this->itinerary, $index + 1, 0, [$newDay]);
-        
-        // Fix all day numbers sequentially
-        foreach ($this->itinerary as $k => $v) { 
-            $this->itinerary[$k]['day_number'] = $k + 1; 
-        }
+        $this->reorderDays();
     }
 
     public function removeDay($index)
     {
         unset($this->itinerary[$index]);
+        $this->reorderDays();
+    }
+
+    protected function reorderDays()
+    {
         $this->itinerary = array_values($this->itinerary);
         foreach ($this->itinerary as $k => $v) { 
             $this->itinerary[$k]['day_number'] = $k + 1; 
@@ -82,61 +81,64 @@ new class extends Component {
     }
 
     public function save()
-{
-    $this->validate([
-        'name' => 'required|string|max:255|unique:safari_packages,name,' . $this->package->id,
-        'price' => 'required|numeric',
-        'duration_days' => 'required|integer',
-        'destination_id' => 'required|exists:destinations,id',
-        'description' => 'required',
-        'gallery_images.*' => 'image|max:2048',
-    ]);
-
-    DB::transaction(function () {
-        $this->package->update([
-            'name' => $this->name, 
-            'slug' => Str::slug($this->name),
-            'price' => $this->price, 
-            'duration_days' => $this->duration_days,
-            'destination_id' => $this->destination_id, 
-            'status' => $this->status,
-            'safari_category_id' => $this->safari_category_id, 
-            'description' => $this->description,
+    {
+        $this->validate([
+            'name' => 'required|string|max:255|unique:safari_packages,name,' . $this->package->id,
+            'price' => 'required|numeric',
+            'duration_days' => 'required|integer',
+            'destination_id' => 'required|exists:destinations,id',
+            'description' => 'required',
+            'gallery_images.*' => 'image|max:2048',
         ]);
 
-        if ($this->featured_image) {
-            $old = $this->package->photos()->where('type', 'featured')->first();
-            if ($old) { 
-                Storage::disk('public')->delete($old->path); 
-                $old->delete(); 
+        DB::transaction(function () {
+            // Auto-sync duration_days based on itinerary count
+            $this->duration_days = count($this->itinerary);
+
+            $this->package->update([
+                'name' => $this->name, 
+                'slug' => Str::slug($this->name),
+                'price' => $this->price, 
+                'duration_days' => $this->duration_days,
+                'destination_id' => $this->destination_id, 
+                'status' => $this->status,
+                'safari_category_id' => $this->safari_category_id, 
+                'description' => $this->description,
+            ]);
+
+            // Photo Logic
+            if ($this->featured_image) {
+                $old = $this->package->photos()->where('type', 'featured')->first();
+                if ($old) { 
+                    Storage::disk('public')->delete($old->path); 
+                    $old->delete(); 
+                }
+                $path = $this->featured_image->store('safaris/featured', 'public');
+                $this->package->photos()->create(['path' => $path, 'type' => 'featured']);
             }
-            $path = $this->featured_image->store('safaris/featured', 'public');
-            $this->package->photos()->create(['path' => $path, 'type' => 'featured']);
-        }
 
-        foreach ($this->gallery_images as $image) {
-            $path = $image->store('safaris/gallery', 'public');
-            $this->package->photos()->create(['path' => $path, 'type' => 'gallery']);
-        }
+            foreach ($this->gallery_images as $image) {
+                $path = $image->store('safaris/gallery', 'public');
+                $this->package->photos()->create(['path' => $path, 'type' => 'gallery']);
+            }
 
-        // Wipe old itinerary and recreate
-        $this->package->itineraries()->delete();
-        
-        foreach ($this->itinerary as $day) { 
-            // Explicitly mapping keys to ensure day_number is sent to the DB
-            $this->package->itineraries()->create([
-                'day_number'    => $day['day_number'],
-                'title'         => $day['title'],
-                'activities'    => $day['activities'],
-                'meals'         => $day['meals'],
-                'accommodation' => $day['accommodation'],
-            ]); 
-        }
-    });
+            // Itinerary Logic - Recreate with key safety
+            $this->package->itineraries()->delete();
+            
+            foreach ($this->itinerary as $index => $day) { 
+                $this->package->itineraries()->create([
+                    'day_number'    => $day['day_number'] ?? ($index + 1),
+                    'title'         => $day['title'] ?? '',
+                    'activities'    => $day['activities'] ?? '',
+                    'meals'         => $day['meals'] ?? '',
+                    'accommodation' => $day['accommodation'] ?? '',
+                ]); 
+            }
+        });
 
-    session()->flash('success', 'Safari updated successfully!');
-    return redirect()->route('admin.packages.index');
-}
+        session()->flash('success', 'Safari updated successfully!');
+        return redirect()->route('admin.packages.index');
+    }
 }; ?>
 
 <div x-data="{ activeDay: 0 }">
