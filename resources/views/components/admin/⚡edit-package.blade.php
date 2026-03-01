@@ -82,49 +82,61 @@ new class extends Component {
     }
 
     public function save()
-    {
-        $this->validate([
-            'name' => 'required|string|max:255|unique:safari_packages,name,' . $this->package->id,
-            'price' => 'required|numeric',
-            'duration_days' => 'required|integer',
-            'destination_id' => 'required|exists:destinations,id',
-            'description' => 'required',
-            'gallery_images.*' => 'image|max:2048',
+{
+    $this->validate([
+        'name' => 'required|string|max:255|unique:safari_packages,name,' . $this->package->id,
+        'price' => 'required|numeric',
+        'duration_days' => 'required|integer',
+        'destination_id' => 'required|exists:destinations,id',
+        'description' => 'required',
+        'gallery_images.*' => 'image|max:2048',
+    ]);
+
+    DB::transaction(function () {
+        $this->package->update([
+            'name' => $this->name, 
+            'slug' => Str::slug($this->name),
+            'price' => $this->price, 
+            'duration_days' => $this->duration_days,
+            'destination_id' => $this->destination_id, 
+            'status' => $this->status,
+            'safari_category_id' => $this->safari_category_id, 
+            'description' => $this->description,
         ]);
 
-        DB::transaction(function () {
-            $this->package->update([
-                'name' => $this->name, 
-                'slug' => Str::slug($this->name),
-                'price' => $this->price, 
-                'duration_days' => $this->duration_days,
-                'destination_id' => $this->destination_id, 
-                'status' => $this->status,
-                'safari_category_id' => $this->safari_category_id, 
-                'description' => $this->description,
-            ]);
-
-            if ($this->featured_image) {
-                $old = $this->package->photos()->where('type', 'featured')->first();
-                if ($old) { Storage::disk('public')->delete($old->path); $old->delete(); }
-                $path = $this->featured_image->store('safaris/featured', 'public');
-                $this->package->photos()->create(['path' => $path, 'type' => 'featured']);
+        if ($this->featured_image) {
+            $old = $this->package->photos()->where('type', 'featured')->first();
+            if ($old) { 
+                Storage::disk('public')->delete($old->path); 
+                $old->delete(); 
             }
+            $path = $this->featured_image->store('safaris/featured', 'public');
+            $this->package->photos()->create(['path' => $path, 'type' => 'featured']);
+        }
 
-            foreach ($this->gallery_images as $image) {
-                $path = $image->store('safaris/gallery', 'public');
-                $this->package->photos()->create(['path' => $path, 'type' => 'gallery']);
-            }
+        foreach ($this->gallery_images as $image) {
+            $path = $image->store('safaris/gallery', 'public');
+            $this->package->photos()->create(['path' => $path, 'type' => 'gallery']);
+        }
 
-            $this->package->itineraries()->delete();
-            foreach ($this->itinerary as $day) { 
-                $this->package->itineraries()->create($day); 
-            }
-        });
+        // Wipe old itinerary and recreate
+        $this->package->itineraries()->delete();
+        
+        foreach ($this->itinerary as $day) { 
+            // Explicitly mapping keys to ensure day_number is sent to the DB
+            $this->package->itineraries()->create([
+                'day_number'    => $day['day_number'],
+                'title'         => $day['title'],
+                'activities'    => $day['activities'],
+                'meals'         => $day['meals'],
+                'accommodation' => $day['accommodation'],
+            ]); 
+        }
+    });
 
-        session()->flash('success', 'Safari updated successfully!');
-        return redirect()->route('admin.packages.index');
-    }
+    session()->flash('success', 'Safari updated successfully!');
+    return redirect()->route('admin.packages.index');
+}
 }; ?>
 
 <div x-data="{ activeDay: 0 }">
