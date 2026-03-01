@@ -175,12 +175,12 @@
                             </div>
 
                             <h3 class="h5 font-weight-bold mb-3">
-                                <a href="#" class="text-dark">{{ $package->title }}</a>
+                                <a href="#" class="text-dark">{{ $package->title ?? 'N/A' }}</a>
                             </h3>
 
                             {{-- Assuming a relationship exists between Package and Destination --}}
                             <p class="text-muted small mb-3">
-                                <i class="icon-map-o mr-2"></i> {{ $package->location_label ?? $package->destination->name }}
+                                <i class="icon-map-o mr-2"></i> {{ $package->destination->name ?? 'N/A' }}
                             </p>
 
                             <a href="#" class="btn btn-warning btn-block py-2" style="border-radius: 10px; font-weight: 700;">
