@@ -3,8 +3,6 @@
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\SafariPackage;
-use App\Models\SafariCategory;
-use App\Models\Destination;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +12,6 @@ new class extends Component {
 
     public SafariPackage $package;
     
-    // Form Properties
     public $name, $price, $duration_days, $destination_id, $status, $safari_category_id, $description;
     public $featured_image; 
     public $gallery_images = []; 
@@ -136,6 +133,12 @@ new class extends Component {
             .itinerary-header { cursor: pointer; background: #f8f9fa; transition: 0.2s; border-bottom: 1px solid #eee; }
             .itinerary-header:hover { background: #fff0f5; }
             [x-cloak] { display: none !important; }
+
+            /* Custom Slim Pink Scrollbar */
+            .itinerary-scroll-container::-webkit-scrollbar { width: 6px; }
+            .itinerary-scroll-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+            .itinerary-scroll-container::-webkit-scrollbar-thumb { background: #e83e8c; border-radius: 10px; }
+            .itinerary-scroll-container::-webkit-scrollbar-thumb:hover { background: #d81b60; }
         </style>
     @endpush
 
@@ -144,7 +147,7 @@ new class extends Component {
             <div class="row mb-3">
                 <div class="col-sm-6"><h1 class="font-weight-bold">Edit Safari Package</h1></div>
                 <div class="col-sm-6 text-right">
-                    <a href="{{ route('admin.packages.index') }}" class="btn btn-default btn-sm mr-2">Cancel</a>
+                    <a href="{{ route('admin.packages.index') }}" class="btn btn-default btn-sm mr-2 shadow-sm">Cancel</a>
                 </div>
             </div>
         </div>
@@ -202,33 +205,17 @@ new class extends Component {
                         </div>
 
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">Safari Gallery</h5></div>
+                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">Gallery Images</h5></div>
                             <div class="card-body">
-                                <label class="small font-weight-bold text-muted">EXISTING PHOTOS</label>
                                 <div class="gallery-grid mb-3">
                                     @foreach($package->photos->where('type', 'gallery') as $photo)
                                         <div class="gallery-item" wire:key="photo-{{ $photo->id }}">
                                             <img src="{{ asset('storage/' . $photo->path) }}">
-                                            <div class="delete-overlay" wire:click="deletePhoto({{ $photo->id }})" title="Remove photo">
-                                                <i class="fas fa-times"></i>
-                                            </div>
+                                            <div class="delete-overlay" wire:click="deletePhoto({{ $photo->id }})"><i class="fas fa-times"></i></div>
                                         </div>
                                     @endforeach
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="small font-weight-bold text-muted">UPLOAD NEW PHOTOS</label>
-                                    <input type="file" wire:model="gallery_images" multiple class="form-control-file">
-                                    <div wire:loading wire:target="gallery_images" class="small text-pink mt-1">Processing images...</div>
-                                </div>
-                                
-                                @if ($gallery_images)
-                                    <div class="gallery-grid mt-2">
-                                        @foreach($gallery_images as $temp)
-                                            <div class="gallery-item shadow-sm"><img src="{{ $temp->temporaryUrl() }}"></div>
-                                        @endforeach
-                                    </div>
-                                @endif
+                                <input type="file" wire:model="gallery_images" multiple class="form-control-file border p-1 rounded">
                             </div>
                         </div>
                     </div>
@@ -236,18 +223,76 @@ new class extends Component {
                     {{-- Right Column --}}
                     <div class="col-md-7">
                         <div class="card shadow-sm mb-4">
-                            <div class="card-body text-center">
+                            <div class="card-body text-center p-2">
                                 <div x-data="{ photoPreview: null }">
                                     <input type="file" wire:model="featured_image" class="d-none" x-ref="photo"
                                         @change="const reader = new FileReader(); reader.onload = (e) => { photoPreview = e.target.result; }; reader.readAsDataURL($refs.photo.files[0]);">
-                                    
                                     <img :src="photoPreview ? photoPreview : '{{ $package->photos->firstWhere('type', 'featured') ? asset('storage/' . $package->photos->firstWhere('type', 'featured')->path) : asset('front/images/placeholder.jpg') }}'" 
-                                         class="featured-preview border shadow-sm img-thumbnail"
-                                         @click="$refs.photo.click()">
-                                    
-                                    <p class="small text-muted mt-2">Click image to change cover photo</p>
+                                         class="featured-preview border" @click="$refs.photo.click()">
+                                    <p class="small text-muted mt-2 mb-0">Click image to change cover photo</p>
                                 </div>
                             </div>
+                        </div>
+
+                        {{-- SCROLLABLE ITINERARY --}}
+                        <div class="itinerary-builder">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="font-weight-bold mb-0">Itinerary Builder</h5>
+                                <span class="badge badge-pink px-3">{{ count($itinerary) }} Days</span>
+                            </div>
+
+                            <div class="itinerary-scroll-container mb-3 shadow-inner" 
+                                 style="max-height: 480px; overflow-y: auto; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
+                                
+                                @foreach($itinerary as $index => $day)
+                                    <div class="card mb-2 border-pink shadow-sm" wire:key="edit-itinerary-{{ $index }}">
+                                        <div class="card-header itinerary-header p-3 d-flex justify-content-between align-items-center" 
+                                             @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge badge-pink mr-3">DAY {{ $day['day_number'] }}</span>
+                                                <span class="small font-weight-bold text-dark text-uppercase">
+                                                    {{ $itinerary[$index]['title'] ?: 'Enter day title...' }}
+                                                </span>
+                                            </div>
+                                            {{-- ICON AT THE END --}}
+                                            <i class="fas fa-chevron-down text-muted" 
+                                               :class="activeDay === {{ $index }} ? 'fa-rotate-180 text-pink' : ''" 
+                                               style="transition: 0.3s"></i>
+                                        </div>
+
+                                        <div class="card-body p-3 bg-white" x-show="activeDay === {{ $index }}" x-cloak>
+                                            <div class="form-group mb-3">
+                                                <label class="small font-weight-bold text-muted">DAY TITLE</label>
+                                                <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control font-weight-bold">
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <label class="small font-weight-bold text-muted">ACTIVITIES</label>
+                                                <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label class="small font-weight-bold text-muted">MEALS</label>
+                                                    <input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="small font-weight-bold text-muted">ACCOMMODATION</label>
+                                                    <input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm">
+                                                </div>
+                                            </div>
+                                            <div class="text-right mt-3">
+                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-xs btn-outline-danger">
+                                                    <i class="fas fa-trash mr-1"></i> Remove Day
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            
+                            <button type="button" wire:click="addDay" @click="activeDay = {{ count($itinerary) }}" 
+                                    class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold">
+                                <i class="fas fa-plus-circle mr-2"></i> ADD DAY
+                            </button>
                         </div>
 
                         <div class="card shadow-sm mb-4">
@@ -261,44 +306,8 @@ new class extends Component {
                             </div>
                         </div>
 
-                        {{-- ACCORDION ITINERARY --}}
-                        <div class="itinerary-builder">
-                            <h5 class="font-weight-bold mb-3">Itinerary Builder</h5>
-                            @foreach($itinerary as $index => $day)
-                                <div class="card mb-2 border-pink shadow-sm" wire:key="edit-itinerary-{{ $index }}">
-                                    <div class="card-header itinerary-header p-2 d-flex justify-content-between align-items-center" 
-                                         @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge badge-pink mr-2">DAY {{ $day['day_number'] }}</span>
-                                            <span class="small font-weight-bold text-dark text-uppercase">
-                                                {{ $itinerary[$index]['title'] ?: 'Untitled Day' }}
-                                            </span>
-                                        </div>
-                                        <i class="fas fa-chevron-down text-muted" :class="activeDay === {{ $index }} ? 'fa-rotate-180' : ''" style="transition: 0.3s"></i>
-                                    </div>
-
-                                    <div class="card-body p-3" x-show="activeDay === {{ $index }}" x-cloak>
-                                        <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control mb-2 font-weight-bold" placeholder="Day Title">
-                                        <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control mb-2" rows="3" placeholder="Activities..."></textarea>
-                                        <div class="row">
-                                            <div class="col-6"><input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm" placeholder="Meals"></div>
-                                            <div class="col-6"><input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm" placeholder="Lodging"></div>
-                                        </div>
-                                        <hr>
-                                        <div class="text-right">
-                                            <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-sm btn-outline-danger">Remove Day</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                            
-                            <button type="button" wire:click="addDay" @click="activeDay = {{ count($itinerary) }}" class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold">
-                                <i class="fas fa-plus-circle mr-2"></i> ADD DAY
-                            </button>
-                        </div>
-
-                        <button type="submit" class="btn btn-pink btn-lg btn-block shadow-lg py-3 font-weight-bold">
-                            <span wire:loading.remove wire:target="save">UPDATE SAFARI PACKAGE</span>
+                        <button type="submit" class="btn btn-pink btn-lg btn-block shadow-lg py-3 font-weight-bold mb-5">
+                            <span wire:loading.remove wire:target="save">UPDATE PACKAGE</span>
                             <span wire:loading wire:target="save"><i class="fas fa-spinner fa-spin mr-2"></i> SAVING...</span>
                         </button>
                     </div>
