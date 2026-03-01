@@ -178,7 +178,7 @@
                                     ${{ number_format($package->price) }}
                                 </span>
                                 <span class="ml-auto text-muted">
-                                    <i class="icon-calendar mr-1"></i> {{ $package->duration }} Days
+                                    <i class="icon-calendar mr-1"></i> {{ $package->days }} Days
                                 </span>
                             </div>
 
