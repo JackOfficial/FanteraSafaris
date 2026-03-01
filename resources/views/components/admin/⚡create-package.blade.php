@@ -328,13 +328,13 @@ new class extends Component {
                         <div class="form-group mb-3">
                             <label class="small text-muted">DAY TITLE</label>
                             <input type="text" 
-                                   wire:model.live="itinerary.{{ $index }}.title" 
+                                   wire:model.defer="itinerary.{{ $index }}.title" 
                                    class="form-control border-0 bg-light rounded-pill px-3">
                         </div>
                         
                         <div class="form-group mb-4">
                             <label class="small text-muted">ACTIVITIES</label>
-                            <textarea wire:model.live="itinerary.{{ $index }}.activities" 
+                            <textarea wire:model.defer="itinerary.{{ $index }}.activities" 
                                       class="form-control border-0 bg-light rounded-lg" 
                                       rows="3"></textarea>
                         </div>
@@ -342,11 +342,11 @@ new class extends Component {
                         <div class="row">
                             <div class="col-md-6 mb-2">
                                 <label class="small text-muted">Meals</label>
-                                <input type="text" wire:model.live="itinerary.{{ $index }}.meals" class="form-control form-control-sm bg-light border-0">
+                                <input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm bg-light border-0">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="small text-muted">Accommodation</label>
-                                <input type="text" wire:model.live="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm bg-light border-0">
+                                <input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm bg-light border-0">
                             </div>
                         </div>
 
