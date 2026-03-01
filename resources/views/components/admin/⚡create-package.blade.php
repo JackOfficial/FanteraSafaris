@@ -59,13 +59,14 @@ new class extends Component {
         $this->reorderDays();
     }
 
-    protected function reorderDays()
-    {
-        $this->itinerary = array_values($this->itinerary);
-        foreach ($this->itinerary as $k => $v) {
-            $this->itinerary[$k]['day_number'] = $k + 1;
-        }
+  protected function reorderDays()
+{
+    // array_values strictly resets the 0, 1, 2 indices
+    $this->itinerary = array_values($this->itinerary);
+    foreach ($this->itinerary as $k => $v) {
+        $this->itinerary[$k]['day_number'] = $k + 1;
     }
+}
 
     public function save()
     {
