@@ -115,13 +115,13 @@
                         <div class="item">
                             <div class="destination shadow-sm transition-hover" style="border-radius: 15px; overflow: hidden;">
                                 {{-- Link to a destination details page --}}
-                                <a href="{{ route('destinations.show', $destination->slug) }}" 
+                                <a href="#" 
                                    class="img d-flex justify-content-center align-items-center" 
                                    style="background-image: url({{ asset('storage/' . $destination->image) }}); height: 350px;">
                                 </a>
                                 <div class="text p-3 bg-white">
                                     <h3 class="font-weight-bold">
-                                        <a href="{{ route('destinations.show', $destination->slug) }}">
+                                        <a href="#">
                                             {{ $destination->name }}, {{ $destination->country }}
                                         </a>
                                     </h3>
@@ -154,7 +154,7 @@
                 <div class="col-md-4 ftco-animate mb-4">
                     <div class="destination shadow-sm transition-hover" style="border-radius: 20px; overflow: hidden; background: #fff;">
                         {{-- Package Image with dynamic badge --}}
-                        <a href="{{ route('safaris.show', $package->slug) }}" 
+                        <a href="#" 
                            class="img d-flex justify-content-center align-items-center" 
                            style="background-image: url({{ asset('storage/' . $package->image) }}); height: 280px; position: relative;">
                             
@@ -175,7 +175,7 @@
                             </div>
 
                             <h3 class="h5 font-weight-bold mb-3">
-                                <a href="{{ route('safaris.show', $package->slug) }}" class="text-dark">{{ $package->title }}</a>
+                                <a href="#" class="text-dark">{{ $package->title }}</a>
                             </h3>
 
                             {{-- Assuming a relationship exists between Package and Destination --}}
@@ -183,7 +183,7 @@
                                 <i class="icon-map-o mr-2"></i> {{ $package->location_label ?? $package->destination->name }}
                             </p>
 
-                            <a href="{{ route('safaris.show', $package->slug) }}" class="btn btn-warning btn-block py-2" style="border-radius: 10px; font-weight: 700;">
+                            <a href="#" class="btn btn-warning btn-block py-2" style="border-radius: 10px; font-weight: 700;">
                                 Explore Package
                             </a>
                         </div>
