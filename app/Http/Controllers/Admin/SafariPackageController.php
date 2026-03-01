@@ -94,7 +94,7 @@ class SafariPackageController extends Controller
 
    public function edit(SafariPackage $package)
 {
-    return view('admin.packages.edit', compact('package', 'categories'));
+    return view('admin.packages.edit', compact('package'));
 }
 
     public function update(Request $request, SafariPackage $package)
