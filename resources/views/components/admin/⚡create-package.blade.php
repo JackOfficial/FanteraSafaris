@@ -135,16 +135,32 @@ new class extends Component {
             .itinerary-header:hover { background: #fdf2f7; }
             .btn-pink { background-color: #e83e8c; color: white; transition: 0.3s; }
             .btn-pink:hover { background-color: #be185d; color: white; transform: translateY(-1px); }
+            .btn-outline-pink { border-color: #e83e8c; color: #e83e8c; }
+            .btn-outline-pink:hover { background-color: #e83e8c; color: #white; }
             .text-pink { color: #e83e8c !important; }
             .bg-pink { background-color: #e83e8c !important; }
             .card-pink { border-top: 4px solid #e83e8c; }
             [x-cloak] { display: none !important; }
             .object-fit-cover { object-fit: cover; }
             .transition-all { transition: all 0.3s ease; }
-            .rounded-lg { border-radius: 0.75rem !important; }
-            .upload-zone.dragging { border-color: #e83e8c !important; background: #fff5f8 !important; }
             
-            /* Skeleton Loading Animation */
+            /* Custom Scrollbar for Itinerary */
+            .itinerary-scroll-container {
+                max-height: 500px;
+                overflow-y: auto;
+                padding-right: 5px;
+            }
+            .itinerary-scroll-container::-webkit-scrollbar { width: 6px; }
+            .itinerary-scroll-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+            .itinerary-scroll-container::-webkit-scrollbar-thumb { background: #e83e8c; border-radius: 10px; }
+            .itinerary-scroll-container::-webkit-scrollbar-thumb:hover { background: #be185d; }
+
+            /* Modern Multi-select Styles */
+            .multiselect-badge { background: #e83e8c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-flex; align-items: center; margin: 2px; }
+            .multiselect-dropdown { position: absolute; z-index: 1000; background: white; border: 1px solid #ddd; width: 100%; max-height: 200px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; }
+            .multiselect-option { padding: 8px 12px; cursor: pointer; transition: 0.2s; }
+            .multiselect-option:hover { background: #fdf2f7; color: #e83e8c; }
+            
             .skeleton {
                 background: #eee;
                 background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
@@ -186,7 +202,7 @@ new class extends Component {
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="small font-weight-bold">BASE PRICE ($)</label>
-                                        <input type="number" wire:model.live="price" class="form-control @error('price') is-invalid @enderror">
+                                        <input type="number" wire:model.live="price" class="form-control">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="small font-weight-bold">DISCOUNT (%)</label>
@@ -194,19 +210,45 @@ new class extends Component {
                                     </div>
                                 </div>
 
-                                <div class="price-preview-box mb-3" x-show="basePrice > 0">
-                                    <label class="small font-weight-bold text-pink">Pricing Preview:</label>
-                                    <div class="d-flex justify-content-between small"><span>Solo:</span> <strong>$<span x-text="basePrice"></span></strong></div>
-                                    <div class="d-flex justify-content-between small"><span>Couple:</span> <strong>$<span x-text="calculate(2)"></span></strong></div>
-                                </div>
-
-                                <div class="form-group mb-3">
+                                {{-- Multi-Select Destinations --}}
+                                <div class="form-group mb-3" x-data="{
+                                    open: false,
+                                    search: '',
+                                    options: @js(\App\Models\Destination::orderBy('name')->get()->map(fn($d) => ['id' => $d->id, 'name' => $d->name])),
+                                    selected: @entangle('destination_ids'),
+                                    get filteredOptions() {
+                                        return this.options.filter(i => i.name.toLowerCase().includes(this.search.toLowerCase()) && !this.selected.includes(i.id));
+                                    },
+                                    get selectedNames() {
+                                        return this.options.filter(i => this.selected.includes(i.id));
+                                    },
+                                    toggle(id) {
+                                        if (this.selected.includes(id)) {
+                                            this.selected = this.selected.filter(i => i !== id);
+                                        } else {
+                                            this.selected.push(id);
+                                        }
+                                    }
+                                }" @click.away="open = false">
                                     <label class="small font-weight-bold">DESTINATIONS</label>
-                                    <select wire:model="destination_ids" class="form-control @error('destination_ids') is-invalid @enderror" multiple style="min-height: 100px;">
-                                        @foreach(\App\Models\Destination::orderBy('name')->get() as $dest)
-                                            <option value="{{ $dest->id }}">{{ $dest->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="form-control h-auto d-flex flex-wrap align-items-center p-1 @error('destination_ids') is-invalid @enderror" @click="open = true" style="cursor: text; min-height: 45px;">
+                                        <template x-for="item in selectedNames" :key="item.id">
+                                            <span class="multiselect-badge">
+                                                <span x-text="item.name"></span>
+                                                <i class="fas fa-times ml-2" @click.stop="toggle(item.id)" style="cursor:pointer"></i>
+                                            </span>
+                                        </template>
+                                        <input type="text" x-model="search" class="border-0 flex-grow-1 m-1" placeholder="Search..." @focus="open = true" style="outline:none; min-width: 100px;">
+                                    </div>
+                                    <div x-show="open" class="multiselect-dropdown" x-cloak>
+                                        <template x-for="option in filteredOptions" :key="option.id">
+                                            <div class="multiselect-option" @click="toggle(option.id); search = '';">
+                                                <span x-text="option.name"></span>
+                                            </div>
+                                        </template>
+                                        <div x-show="filteredOptions.length === 0" class="p-2 text-muted small text-center">No more destinations found.</div>
+                                    </div>
+                                    @error('destination_ids') <small class="text-danger">{{ $message }}</small> @enderror
                                 </div>
 
                                 <div class="row">
@@ -233,121 +275,69 @@ new class extends Component {
 
                     {{-- Right Column --}}
                     <div class="col-md-7">
-                        {{-- 1. Main Cover Image with Drag & Drop --}}
+                        {{-- Cover Image --}}
                         <div class="card shadow-sm mb-4">
                             <div class="card-header bg-white font-weight-bold small text-uppercase">Cover Photo</div>
                             <div class="card-body p-3">
-                                <div x-data="{ 
-                                    isOver: false, 
-                                    preview: null,
-                                    handleDrop(e) {
-                                        this.isOver = false;
-                                        const file = e.dataTransfer.files[0];
-                                        if (file) {
-                                            @this.upload('featured_image', file);
-                                            const reader = new FileReader();
-                                            reader.onload = (e) => { this.preview = e.target.result; };
-                                            reader.readAsDataURL(file);
-                                        }
-                                    }
-                                }">
-                                    <input type="file" id="cover_input" wire:model="featured_image" class="d-none" 
-                                           @change="const file = $event.target.files[0]; if(file){ const reader = new FileReader(); reader.onload = (e) => { preview = e.target.result; }; reader.readAsDataURL(file); }">
-                                    
-                                    <div class="featured-upload-box" 
-                                         :class="isOver ? 'dragging' : ''"
-                                         @dragover.prevent="isOver = true"
-                                         @dragleave.prevent="isOver = false"
-                                         @drop.prevent="handleDrop($event)"
-                                         onclick="document.getElementById('cover_input').click()">
-                                        
-                                        <div wire:loading wire:target="featured_image" class="text-center">
-                                            <div class="spinner-border text-pink"></div>
-                                        </div>
-
-                                        <div wire:loading.remove wire:target="featured_image" class="w-100 h-100 d-flex align-items-center justify-content-center">
-                                            <template x-if="preview">
-                                                <img :src="preview" class="w-100 h-100 object-fit-cover">
-                                            </template>
-                                            <template x-if="!preview">
-                                                <div class="text-center text-muted">
-                                                    <i class="fas fa-image fa-3x mb-2 text-pink"></i>
-                                                    <p class="mb-0 font-weight-bold">Drag cover photo here</p>
-                                                </div>
-                                            </template>
+                                <div x-data="{ isOver: false, preview: null }">
+                                    <input type="file" id="cover_input" wire:model="featured_image" class="d-none" @change="const file = $event.target.files[0]; if(file){ const reader = new FileReader(); reader.onload = (e) => { preview = e.target.result; }; reader.readAsDataURL(file); }">
+                                    <div class="featured-upload-box" :class="isOver ? 'dragging' : ''" @dragover.prevent="isOver = true" @dragleave.prevent="isOver = false" @drop.prevent="isOver = false; @this.upload('featured_image', $event.dataTransfer.files[0])" onclick="document.getElementById('cover_input').click()">
+                                        <div wire:loading wire:target="featured_image"><div class="spinner-border text-pink"></div></div>
+                                        <div wire:loading.remove wire:target="featured_image">
+                                            <template x-if="preview"><img :src="preview" class="w-100 h-100 object-fit-cover"></template>
+                                            <template x-if="!preview"><div class="text-center text-muted"><i class="fas fa-image fa-3x mb-2 text-pink"></i><p class="mb-0 font-weight-bold">Drag cover photo here</p></div></template>
                                         </div>
                                     </div>
-                                    @error('featured_image') <small class="text-danger d-block mt-2">{{ $message }}</small> @enderror
                                 </div>
                             </div>
                         </div>
 
-                        {{-- 2. Gallery Images with Drag & Drop & Skeleton --}}
+                        {{-- Gallery --}}
                         <div class="card shadow-sm mb-4">
                             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                                 <h6 class="mb-0 font-weight-bold small text-uppercase">Gallery Images</h6>
                                 <small class="text-muted">{{ count($gallery_images) }}/10</small>
                             </div>
                             <div class="card-body bg-light-50" x-data="{ isOver: false }">
-                                <div class="upload-zone p-4 mb-3 text-center border rounded-lg transition-all"
-                                     :class="isOver ? 'dragging' : ''"
-                                     style="border: 2px dashed #cbd5e0; background: #fff; cursor: pointer;"
-                                     @dragover.prevent="isOver = true"
-                                     @dragleave.prevent="isOver = false"
-                                     @drop.prevent="isOver = false; @this.uploadMultiple('gallery_images', $event.dataTransfer.files)"
-                                     onclick="document.getElementById('gallery_input').click()">
-                                    
+                                <div class="upload-zone p-4 mb-3 text-center border rounded-lg" :class="isOver ? 'dragging' : ''" style="border: 2px dashed #cbd5e0; background: #fff; cursor: pointer;" @dragover.prevent="isOver = true" @dragleave.prevent="isOver = false" @drop.prevent="isOver = false; @this.uploadMultiple('gallery_images', $event.dataTransfer.files)" onclick="document.getElementById('gallery_input').click()">
                                     <i class="fas fa-images text-pink fa-2x mb-2"></i>
-                                    <p class="mb-0 small font-weight-bold">Drop multiple images here or click</p>
+                                    <p class="mb-0 small font-weight-bold">Drop images here</p>
                                     <input type="file" id="gallery_input" wire:model="gallery_images" multiple class="d-none">
                                 </div>
-
-                                {{-- Image Grid --}}
-                                <div class="row row-cols-3 row-cols-md-4 g-2">
+                                <div class="row row-cols-4 g-2">
                                     @foreach($gallery_images as $index => $image)
-                                        <div class="col mb-2" wire:key="gallery-{{ $index }}">
-                                            <div class="position-relative rounded overflow-hidden shadow-sm" style="height: 80px;">
-                                                <img src="{{ $image->temporaryUrl() }}" class="w-100 h-100 object-fit-cover">
-                                                <button type="button" wire:click="removeGalleryImage({{ $index }})" class="btn btn-danger btn-xs position-absolute" style="top:2px; right:2px;">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
+                                        <div class="col mb-2"><div class="position-relative rounded overflow-hidden" style="height: 80px;"><img src="{{ $image->temporaryUrl() }}" class="w-100 h-100 object-fit-cover"><button type="button" wire:click="removeGalleryImage({{ $index }})" class="btn btn-danger btn-xs position-absolute" style="top:2px; right:2px;"><i class="fas fa-times"></i></button></div></div>
                                     @endforeach
-
-                                    {{-- Loading Skeletons --}}
-                                    <div class="col mb-2" wire:loading wire:target="gallery_images">
-                                        <div class="skeleton" style="height: 80px;"></div>
-                                    </div>
-                                    <div class="col mb-2" wire:loading wire:target="gallery_images">
-                                        <div class="skeleton" style="height: 80px;"></div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Itinerary Journey --}}
+                        {{-- Itinerary with Scrollbar --}}
                         <div class="itinerary-section mb-4">
                             <h5 class="font-weight-bold mb-3">Itinerary Journey</h5>
-                            @foreach($itinerary as $index => $day)
-                                <div class="card mb-2 border-0 shadow-sm overflow-hidden">
-                                    <div class="itinerary-header p-3 d-flex align-items-center" @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
-                                        <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">{{ $day['day_number'] }}</div>
-                                        <div class="flex-grow-1 font-weight-bold small text-uppercase">{{ $day['title'] ?: 'New Day' }}</div>
-                                        <i class="fas fa-chevron-down text-muted" :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"></i>
-                                    </div>
-                                    <div class="card-body bg-light border-top" x-show="activeDay === {{ $index }}" x-cloak>
-                                        <input type="text" wire:model.defer="itinerary.{{ $index }}.title" class="form-control mb-2" placeholder="Title">
-                                        <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control mb-2" rows="2" placeholder="Activities"></textarea>
-                                        <div class="row">
-                                            <div class="col-6"><input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control small" placeholder="Lodge"></div>
-                                            <div class="col-6"><input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control small" placeholder="Meals"></div>
+                            <div class="itinerary-scroll-container">
+                                @foreach($itinerary as $index => $day)
+                                    <div class="card mb-2 border-0 shadow-sm overflow-hidden">
+                                        <div class="itinerary-header p-3 d-flex align-items-center" @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
+                                            <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">{{ $day['day_number'] }}</div>
+                                            <div class="flex-grow-1 font-weight-bold small text-uppercase">{{ $day['title'] ?: 'New Day' }}</div>
+                                            <i class="fas fa-chevron-down text-muted" :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"></i>
                                         </div>
-                                        <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-link btn-sm text-danger px-0 mt-2">Delete Day</button>
+                                        <div class="card-body bg-light border-top" x-show="activeDay === {{ $index }}" x-cloak>
+                                            <input type="text" wire:model.defer="itinerary.{{ $index }}.title" class="form-control mb-2" placeholder="Title">
+                                            <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control mb-2" rows="2" placeholder="Activities"></textarea>
+                                            <div class="row">
+                                                <div class="col-6"><input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control small" placeholder="Lodge"></div>
+                                                <div class="col-6"><input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control small" placeholder="Meals"></div>
+                                            </div>
+                                            <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-link btn-sm text-danger px-0 mt-2">Delete Day</button>
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
-                            <button type="button" wire:click="addDay" class="btn btn-outline-pink btn-block mt-2">Add Another Day</button>
+                                @endforeach
+                            </div>
+                            <button type="button" wire:click="addDay" class="btn btn-outline-pink btn-block mt-3 font-weight-bold">
+                                <i class="fas fa-plus-circle mr-2"></i>Add Another Day
+                            </button>
                         </div>
 
                         {{-- Description --}}
