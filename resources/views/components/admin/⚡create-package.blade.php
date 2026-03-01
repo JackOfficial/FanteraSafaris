@@ -38,6 +38,10 @@ new class extends Component {
         $this->reorderDays();
     }
 
+    public function removeGalleryImage($index) {
+        array_splice($this->gallery_images, $index, 1);
+    }
+
     protected function reorderDays() {
         $this->itinerary = array_values($this->itinerary);
         foreach ($this->itinerary as $k => $v) {
@@ -123,6 +127,7 @@ new class extends Component {
             .btn-pink:hover { background-color: #be185d; color: white; transform: translateY(-1px); }
             .text-pink { color: #e83e8c !important; }
             .card-pink { border-top: 4px solid #e83e8c; }
+            .gallery-item { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
             [x-cloak] { display: none !important; }
         </style>
     @endpush
@@ -217,9 +222,10 @@ new class extends Component {
 
                     {{-- Right Column: Media & Itinerary --}}
                     <div class="col-md-7">
-                        {{-- Cover Image --}}
+                        {{-- 1. Main Cover Image --}}
                         <div class="card shadow-sm mb-4">
-                            <div class="card-body p-2">
+                            <div class="card-header bg-white"><h6 class="mb-0 font-weight-bold text-uppercase small">Package Cover Photo</h6></div>
+                            <div class="card-body p-3">
                                 <div x-data="{ preview: null }">
                                     <input type="file" wire:model="featured_image" class="d-none" x-ref="photo"
                                            @change="const file = $refs.photo.files[0]; if(file){ const reader = new FileReader(); reader.onload = (e) => { preview = e.target.result; }; reader.readAsDataURL(file); }">
@@ -229,14 +235,45 @@ new class extends Component {
                                         </template>
                                         <template x-if="!preview">
                                             <div class="text-center text-muted">
-                                                <i class="fas fa-cloud-upload-alt fa-3x mb-2 text-pink"></i>
-                                                <h6 class="font-weight-bold">Upload Featured Cover Image</h6>
-                                                <p class="small">Recommended: 1200x800px (Max 2MB)</p>
+                                                <i class="fas fa-mountain fa-3x mb-2 text-pink"></i>
+                                                <h6 class="font-weight-bold">Click to Upload Cover</h6>
+                                                <p class="small">Main image for the website.</p>
                                             </div>
                                         </template>
                                     </div>
                                     @error('featured_image') <small class="text-danger mt-1 d-block">{{ $message }}</small> @enderror
                                 </div>
+                            </div>
+                        </div>
+
+                        {{-- 2. Gallery Images --}}
+                        <div class="card shadow-sm mb-4 border-0">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0 font-weight-bold text-uppercase small">Package Gallery</h6>
+                                @if($gallery_images)
+                                    <button type="button" wire:click="$set('gallery_images', [])" class="btn btn-xs btn-outline-danger border-0 small">Clear All</button>
+                                @endif
+                            </div>
+                            <div class="card-body">
+                                <div class="upload-zone p-3 mb-3 text-center border rounded bg-light" style="border-style: dashed !important; cursor: pointer;" onclick="document.getElementById('gallery_input').click()">
+                                    <i class="fas fa-images text-muted mb-2"></i>
+                                    <p class="small mb-0 text-muted">Click to add multiple gallery photos</p>
+                                    <input type="file" id="gallery_input" wire:model="gallery_images" multiple class="d-none">
+                                </div>
+
+                                @if($gallery_images)
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach($gallery_images as $index => $image)
+                                            <div class="position-relative mr-2 mb-2">
+                                                <img src="{{ $image->temporaryUrl() }}" class="gallery-item">
+                                                <button type="button" wire:click="removeGalleryImage({{ $index }})" class="btn btn-danger btn-xs position-absolute rounded-circle" style="top:-5px; right:-5px; width:20px; height:20px; padding:0;">
+                                                    <i class="fas fa-times" style="font-size:10px;"></i>
+                                                </button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                @error('gallery_images.*') <small class="text-danger d-block mt-2">{{ $message }}</small> @enderror
                             </div>
                         </div>
 
@@ -302,7 +339,7 @@ new class extends Component {
                             <div class="card-header bg-white font-weight-bold text-uppercase small">General Overview & Inclusions</div>
                             <div class="card-body">
                                 <div wire:ignore x-data="{ value: @entangle('description') }" @trix-change="value = $event.target.value">
-                                    <trix-editor class="trix-content border-0 bg-light rounded shadow-inner" placeholder="Detailed package description, what's included and what's not..."></trix-editor>
+                                    <trix-editor class="trix-content border-0 bg-light rounded shadow-inner" placeholder="Detailed package description..."></trix-editor>
                                 </div>
                                 @error('description') <small class="text-danger">{{ $message }}</small> @enderror
                             </div>
