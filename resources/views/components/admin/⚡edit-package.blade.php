@@ -33,8 +33,9 @@ new class extends Component {
         $this->selected_destinations = $this->package->destinations->pluck('id')->map(fn($id) => (string)$id)->toArray();
         $this->selected_categories = $this->package->categories->pluck('id')->map(fn($id) => (string)$id)->toArray();
         
+        // We add a 'temp_id' to every row so Livewire can track it reliably in the loop
         $this->itinerary = $this->package->itineraries->sortBy('day_number')->values()->map(fn($day) => [
-            'id' => $day->id, // Persistent ID for keying
+            'temp_id' => Str::random(8),
             'day_number' => $day->day_number,
             'title' => $day->title,
             'activities' => $day->activities,
@@ -56,7 +57,7 @@ new class extends Component {
     public function addDay()
     {
         $this->itinerary[] = [
-            'id' => 'new-' . time() . rand(1,100), // Temp unique ID
+            'temp_id' => Str::random(8),
             'day_number' => count($this->itinerary) + 1,
             'title' => '', 
             'activities' => '', 
@@ -68,7 +69,7 @@ new class extends Component {
     public function duplicateDay($index)
     {
         $newDay = $this->itinerary[$index];
-        $newDay['id'] = 'dup-' . time() . rand(1,100);
+        $newDay['temp_id'] = Str::random(8); // Give the duplicate its own identity
         array_splice($this->itinerary, $index + 1, 0, [$newDay]);
         $this->reorderDays();
     }
@@ -123,11 +124,12 @@ new class extends Component {
                 $this->package->photos()->create(['path' => $path, 'type' => 'gallery']);
             }
 
-            // Sync Itineraries
+            // Clean up and save Itineraries
             $this->package->itineraries()->delete();
             foreach ($this->itinerary as $day) { 
-                unset($day['id']); // Remove temp ID before DB insert
-                $this->package->itineraries()->create($day); 
+                // Remove the helper temp_id before database insertion
+                $data = collect($day)->except('temp_id')->toArray();
+                $this->package->itineraries()->create($data); 
             }
         });
 
@@ -137,7 +139,7 @@ new class extends Component {
 }; ?>
 
 <div x-data="{ 
-    activeDay: 0,
+    expandedId: null,
     price: @entangle('price'),
     discountRate: 0,
     destinations: @entangle('selected_destinations'),
@@ -265,21 +267,36 @@ new class extends Component {
                     </div>
 
                     {{-- Right Column: Itinerary --}}
-                    <div class="col-md-7" x-data="{ expanded: 0 }">
-                        {{-- Featured Photo omitted for brevity, same as yours --}}
+                    <div class="col-md-7">
+                        {{-- Featured Photo Card --}}
+                        <div class="card shadow-sm border-0 mb-4 overflow-hidden" style="border-radius: 15px;">
+                            <div class="card-body p-2 position-relative">
+                                <div x-data="{ photoPreview: null }">
+                                    <input type="file" wire:model="featured_image" class="d-none" x-ref="photo"
+                                        @change="const reader = new FileReader(); reader.onload = (e) => { photoPreview = e.target.result; }; reader.readAsDataURL($refs.photo.files[0]);">
+                                    <img :src="photoPreview ? photoPreview : '{{ $package->photos->firstWhere('type', 'featured') ? asset('storage/' . $package->photos->firstWhere('type', 'featured')->path) : asset('front/images/placeholder.jpg') }}'" 
+                                         class="featured-preview" @click="$refs.photo.click()">
+                                    <div class="position-absolute" style="bottom: 20px; right: 20px;">
+                                        <button type="button" class="btn btn-sm btn-light shadow rounded-pill px-3" @click="$refs.photo.click()">
+                                            <i class="fas fa-camera mr-1"></i> Change Cover
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                        {{-- Itinerary Timeline --}}
+                        {{-- Itinerary Section --}}
                         <div class="mb-4">
                             <h4 class="font-weight-bold mb-4">Journey Itinerary</h4>
                             <div class="itinerary-timeline">
                                 @forelse($itinerary as $index => $day)
                                     <div class="card card-itinerary shadow-sm" 
-                                         :class="expanded === {{ $index }} ? 'active' : ''" 
-                                         wire:key="itinerary-day-{{ $day['id'] }}">
+                                         wire:key="itinerary-row-{{ $day['temp_id'] }}"
+                                         :class="expandedId === '{{ $day['temp_id'] }}' ? 'active' : ''">
                                         
                                         <div class="itinerary-day-node"></div>
                                         
-                                        <div class="card-header itinerary-header" @click="expanded = (expanded === {{ $index }} ? null : {{ $index }})">
+                                        <div class="card-header itinerary-header" @click="expandedId = (expandedId === '{{ $day['temp_id'] }}' ? null : '{{ $day['temp_id'] }}')">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <div class="d-flex align-items-center">
                                                     <div class="text-center mr-3" style="min-width: 45px;">
@@ -287,15 +304,15 @@ new class extends Component {
                                                         <div class="small text-muted font-weight-bold" style="font-size: 9px; margin-top: -5px;">DAY</div>
                                                     </div>
                                                     <div>
-                                                        <h6 class="mb-0 font-weight-bold text-dark">{{ $day['title'] ?: 'Untitled Day' }}</h6>
+                                                        <h6 class="mb-0 font-weight-bold text-dark">{{ $day['title'] ?: 'New Safari Day' }}</h6>
                                                         <span class="small text-muted"><i class="fas fa-bed mr-1"></i> {{ Str::limit($day['accommodation'] ?: 'TBD', 25) }}</span>
                                                     </div>
                                                 </div>
-                                                <i class="fas fa-chevron-down text-muted transition" :style="expanded === {{ $index }} ? 'transform: rotate(180deg)' : ''"></i>
+                                                <i class="fas fa-chevron-down text-muted transition-all" :style="expandedId === '{{ $day['temp_id'] }}' ? 'transform: rotate(180deg)' : ''"></i>
                                             </div>
                                         </div>
 
-                                        <div class="card-body p-4 border-top" x-show="expanded === {{ $index }}" x-collapse x-cloak>
+                                        <div class="card-body p-4 border-top" x-show="expandedId === '{{ $day['temp_id'] }}'" x-collapse x-cloak>
                                             <div class="form-group mb-3">
                                                 <label class="small font-weight-bold text-muted">DAY TITLE</label>
                                                 <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control border-0 bg-light rounded-pill px-3">
@@ -319,26 +336,58 @@ new class extends Component {
                                                 </div>
                                             </div>
                                             <div class="d-flex justify-content-end mt-3 pt-3 border-top">
-                                                <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-xs btn-link text-muted mr-3">Duplicate</button>
-                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-xs btn-link text-danger">Delete</button>
+                                                <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-sm btn-link text-muted">Duplicate</button>
+                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-sm btn-link text-danger">Delete Day</button>
                                             </div>
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="p-5 text-center bg-light rounded-lg border-dashed">
-                                        <p class="text-muted">No days added yet.</p>
+                                    <div class="p-5 text-center bg-white border rounded-lg">
+                                        <p class="text-muted mb-0">No days added yet.</p>
                                     </div>
                                 @endforelse
                             </div>
-                            <button type="button" wire:click="addDay" class="btn btn-block btn-outline-pink border-2 py-3 rounded-pill font-weight-bold">
+                            
+                            <button type="button" wire:click="addDay" class="btn btn-block btn-outline-pink border-2 py-3 rounded-pill font-weight-bold mt-3" style="border-style: dashed;">
                                 <i class="fas fa-plus-circle mr-2"></i> ADD DAY {{ count($itinerary) + 1 }}
                             </button>
                         </div>
 
-                        {{-- Trix and Footer omitted for brevity, keep yours --}}
+                        {{-- Trix Editor --}}
+                        <div class="card shadow-sm border-0 mb-5" style="border-radius: 15px;">
+                            <div class="card-header bg-white py-3"><h5 class="mb-0 font-weight-bold">Detailed Overview</h5></div>
+                            <div class="card-body">
+                                <div wire:ignore x-data="{ value: @entangle('description'), isSet: false }" 
+                                     x-init="$refs.trix.editor.loadHTML(value); $watch('value', v => { if (!isSet) $refs.trix.editor.loadHTML(v); isSet = false; })" 
+                                     @trix-change="isSet = true; value = $event.target.value">
+                                    <trix-editor x-ref="trix" class="trix-content border-0 bg-light p-3 rounded"></trix-editor>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Floating Bar --}}
+                        <div class="sticky-action-bar d-flex align-items-center justify-content-between shadow-lg">
+                            <div class="d-none d-md-block">
+                                <span class="text-muted small">Current status: <strong>{{ strtoupper($status) }}</strong></span>
+                            </div>
+                            <div class="d-flex">
+                                <select wire:model="status" class="form-control-sm border-0 bg-light rounded-pill px-3 mr-3" style="width: 120px;">
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                </select>
+                                <button type="submit" class="btn btn-pink rounded-pill px-5 font-weight-bold shadow-sm">
+                                    <span wire:loading.remove>SAVE CHANGES</span>
+                                    <span wire:loading><i class="fas fa-spinner fa-spin"></i></span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
     </section>
+
+    @push('scripts')
+        <script src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
+    @endpush
 </div>
