@@ -346,7 +346,7 @@ new class extends Component {
                                 DAY TITLE
                             </label>
                             <input type="text"
-                                   wire:model.blur="itinerary.{{ $index }}.title"
+                                   wire:model.live="itinerary.{{ $index }}.title"
                                    class="form-control border-0 bg-light rounded-pill px-3">
                         </div>
 
@@ -354,7 +354,7 @@ new class extends Component {
                             <label class="small font-weight-bold text-muted">
                                 ACTIVITIES
                             </label>
-                            <textarea wire:model.blur="itinerary.{{ $index }}.activities"
+                            <textarea wire:model.live="itinerary.{{ $index }}.activities"
                                       class="form-control border-0 bg-light rounded-lg"
                                       rows="3"></textarea>
                         </div>
@@ -362,13 +362,13 @@ new class extends Component {
                         <div class="row">
                             <div class="col-md-6 mb-2">
                                 <input type="text"
-                                       wire:model.blur="itinerary.{{ $index }}.meals"
+                                       wire:model.live="itinerary.{{ $index }}.meals"
                                        class="form-control form-control-sm bg-light border-0"
                                        placeholder="Meals">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <input type="text"
-                                       wire:model.blur="itinerary.{{ $index }}.accommodation"
+                                       wire:model.live="itinerary.{{ $index }}.accommodation"
                                        class="form-control form-control-sm bg-light border-0"
                                        placeholder="Accommodation">
                             </div>
