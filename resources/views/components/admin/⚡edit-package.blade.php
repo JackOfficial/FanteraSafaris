@@ -11,6 +11,8 @@ new class extends Component {
     use WithFileUploads;
 
     public SafariPackage $package;
+
+    public $openDay = null;
     
     public $name, $price, $duration_days, $status, $description;
     public $selected_destinations = []; 
@@ -54,18 +56,6 @@ new class extends Component {
         }
     }
 
-    public function addDay()
-    {
-        $this->itinerary[] = [
-            'temp_id' => Str::random(8),
-            'day_number' => count($this->itinerary) + 1,
-            'title' => '', 
-            'activities' => '', 
-            'meals' => 'Breakfast, Lunch, Dinner', 
-            'accommodation' => ''
-        ];
-    }
-
     // In your Livewire component class
 public function updatedGalleryImages()
 {
@@ -74,27 +64,47 @@ public function updatedGalleryImages()
     $this->dispatch('clear-previews');
 }
 
-    public function duplicateDay($index)
-    {
-        $newDay = $this->itinerary[$index];
-        $newDay['temp_id'] = Str::random(8); // Give the duplicate its own identity
-        array_splice($this->itinerary, $index + 1, 0, [$newDay]);
-        $this->reorderDays();
-    }
+ public function addDay()
+{
+    $newId = Str::random(8);
 
-    public function removeDay($index)
-    {
-        unset($this->itinerary[$index]);
-        $this->reorderDays();
-    }
+    $this->itinerary[] = [
+        'temp_id' => $newId,
+        'day_number' => count($this->itinerary) + 1,
+        'title' => '',
+        'activities' => '',
+        'meals' => 'Breakfast, Lunch, Dinner',
+        'accommodation' => ''
+    ];
 
-    protected function reorderDays()
-    {
-        $this->itinerary = array_values($this->itinerary);
-        foreach ($this->itinerary as $k => $v) { 
-            $this->itinerary[$k]['day_number'] = $k + 1; 
-        }
+    // Alpine will auto-expand the new day
+    $this->dispatch('day-added', id: $newId);
+}
+
+public function duplicateDay($index)
+{
+    $newDay = $this->itinerary[$index];
+    $newDay['temp_id'] = Str::random(8);
+    array_splice($this->itinerary, $index + 1, 0, [$newDay]);
+    $this->reorderDays();
+
+    // Open the duplicated day in Alpine
+    $this->dispatch('day-added', id: $newDay['temp_id']);
+}
+
+public function removeDay($index)
+{
+    unset($this->itinerary[$index]);
+    $this->reorderDays();
+}
+
+protected function reorderDays()
+{
+    $this->itinerary = array_values($this->itinerary);
+    foreach ($this->itinerary as $k => $v) {
+        $this->itinerary[$k]['day_number'] = $k + 1;
     }
+}
 
     public function save()
     {
@@ -344,92 +354,74 @@ public function updatedGalleryImages()
 <div class="mb-4">
     <h4 class="font-weight-bold mb-4">Journey Itinerary</h4>
 
-    {{-- 
-        FIX: We initialize 'open' based on the last day if it's new, 
-        and we use a more reliable 'wire:key' strategy.
-    --}}
     <div x-data="{ 
             open: null,
-            toggleDay(id) {
-                this.open = (this.open === id) ? null : id;
-            }
-         }" 
+            toggleDay(id) { this.open = (this.open === id ? null : id); } 
+         }"
          @day-added.window="open = $event.detail.id"
          class="itinerary-timeline">
 
         @forelse($itinerary as $index => $day)
-            {{-- 
-                CRITICAL: wire:key must be on the outermost element 
-                of the loop to prevent Alpine state loss. 
-            --}}
-            <div class="card card-itinerary shadow-sm"
+            <div class="card card-itinerary shadow-sm mb-3"
                  wire:key="itinerary-item-{{ $day['temp_id'] }}"
                  :class="open === '{{ $day['temp_id'] }}' ? 'active shadow-md' : ''">
 
                 <div class="itinerary-day-node"></div>
 
                 {{-- HEADER --}}
-                <div class="card-header itinerary-header border-0"
+                <div class="card-header itinerary-header border-0 cursor-pointer"
                      @click="toggleDay('{{ $day['temp_id'] }}')">
 
-                    <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <div class="text-center mr-3" style="min-width:45px;">
                                 <span class="text-pink font-weight-bold h4 mb-0">{{ $day['day_number'] }}</span>
-                                <div class="small text-muted font-weight-bold" style="font-size:9px;">DAY</div>
+                                <div class="small text-muted" style="font-size:9px;">DAY</div>
                             </div>
-
                             <div>
-                                <h6 class="mb-0 font-weight-bold">
-                                    {{ $day['title'] ?: 'New Safari Day' }}
-                                </h6>
-                                <span class="small text-muted">
-                                    {{ Str::limit($day['accommodation'] ?: 'TBD', 30) }}
-                                </span>
+                                <h6 class="mb-0 font-weight-bold">{{ $day['title'] ?: 'New Safari Day' }}</h6>
+                                <span class="small text-muted">{{ Str::limit($day['accommodation'] ?: 'TBD', 30) }}</span>
                             </div>
                         </div>
-
-                        {{-- Icon Rotation --}}
                         <i class="fas fa-chevron-down text-muted transition-all"
-                           :style="open === '{{ $day['temp_id'] }}' ? 'transform: rotate(180deg)' : ''">
-                        </i>
+                           :style="open === '{{ $day['temp_id'] }}' ? 'transform: rotate(180deg)' : ''"></i>
                     </div>
                 </div>
 
-                {{-- BODY: Using x-show with x-collapse for a smoother feel --}}
-                <div x-show="open === '{{ $day['temp_id'] }}'" 
-                     x-collapse 
-                     x-cloak>
+                {{-- BODY --}}
+                <div x-show="open === '{{ $day['temp_id'] }}'" x-collapse x-cloak>
                     <div class="card-body border-top bg-white">
                         <div class="form-group mb-3">
-                            <label class="small font-weight-bold text-muted">DAY TITLE</label>
-                            {{-- Use wire:model.blur to reduce server requests while typing --}}
+                            <label class="small text-muted">DAY TITLE</label>
                             <input type="text"
                                    wire:model.blur="itinerary.{{ $index }}.title"
                                    class="form-control border-0 bg-light rounded-pill px-3">
                         </div>
 
                         <div class="form-group mb-4">
-                            <label class="small font-weight-bold text-muted">ACTIVITIES</label>
+                            <label class="small text-muted">ACTIVITIES</label>
                             <textarea wire:model.blur="itinerary.{{ $index }}.activities"
-                                      class="form-control border-0 bg-light rounded-lg"
-                                      rows="3"></textarea>
+                                      class="form-control border-0 bg-light rounded-lg" rows="3"></textarea>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-2">
                                 <label class="small text-muted">Meals</label>
-                                <input type="text" wire:model.blur="itinerary.{{ $index }}.meals" class="form-control form-control-sm bg-light border-0">
+                                <input type="text" wire:model.blur="itinerary.{{ $index }}.meals"
+                                       class="form-control form-control-sm bg-light border-0">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="small text-muted">Accommodation</label>
-                                <input type="text" wire:model.blur="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm bg-light border-0">
+                                <input type="text" wire:model.blur="itinerary.{{ $index }}.accommodation"
+                                       class="form-control form-control-sm bg-light border-0">
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end mt-3 pt-3 border-top">
-                            <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-sm btn-link text-muted">Duplicate</button>
-                            <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-sm btn-link text-danger">Delete Day</button>
+                            <button type="button" wire:click="duplicateDay({{ $index }})"
+                                    class="btn btn-sm btn-link text-muted">Duplicate</button>
+                            <button type="button" wire:click="removeDay({{ $index }})"
+                                    class="btn btn-sm btn-link text-danger">Delete Day</button>
                         </div>
                     </div>
                 </div>
@@ -441,7 +433,6 @@ public function updatedGalleryImages()
         @endforelse
     </div>
 
-    {{-- Add Day Button --}}
     <button type="button"
             wire:click="addDay"
             class="btn btn-block btn-outline-pink py-3 rounded-pill font-weight-bold mt-3 shadow-sm"
