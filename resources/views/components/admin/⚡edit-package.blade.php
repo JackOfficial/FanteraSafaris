@@ -286,72 +286,131 @@ new class extends Component {
                         </div>
 
                         {{-- Itinerary Section --}}
-                        <div class="mb-4">
-                            <h4 class="font-weight-bold mb-4">Journey Itinerary</h4>
-                            <div class="itinerary-timeline">
-                                @forelse($itinerary as $index => $day)
-                                    <div class="card card-itinerary shadow-sm" 
-                                         wire:key="itinerary-row-{{ $day['temp_id'] }}"
-                                         :class="expandedId === '{{ $day['temp_id'] }}' ? 'active' : ''">
-                                        
-                                        <div class="itinerary-day-node"></div>
-                                        
-                                        <div class="card-header itinerary-header" @click="expandedId = (expandedId === '{{ $day['temp_id'] }}' ? null : '{{ $day['temp_id'] }}')">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="text-center mr-3" style="min-width: 45px;">
-                                                        <span class="text-pink font-weight-bold h4 mb-0">{{ $day['day_number'] }}</span>
-                                                        <div class="small text-muted font-weight-bold" style="font-size: 9px; margin-top: -5px;">DAY</div>
-                                                    </div>
-                                                    <div>
-                                                        <h6 class="mb-0 font-weight-bold text-dark">{{ $day['title'] ?: 'New Safari Day' }}</h6>
-                                                        <span class="small text-muted"><i class="fas fa-bed mr-1"></i> {{ Str::limit($day['accommodation'] ?: 'TBD', 25) }}</span>
-                                                    </div>
-                                                </div>
-                                                <i class="fas fa-chevron-down text-muted transition-all" :style="expandedId === '{{ $day['temp_id'] }}' ? 'transform: rotate(180deg)' : ''"></i>
-                                            </div>
-                                        </div>
+                     {{-- Itinerary Section --}}
+<div class="mb-4">
 
-                                        <div class="card-body p-4 border-top" x-show="expandedId === '{{ $day['temp_id'] }}'" x-collapse x-cloak>
-                                            <div class="form-group mb-3">
-                                                <label class="small font-weight-bold text-muted">DAY TITLE</label>
-                                                <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control border-0 bg-light rounded-pill px-3">
-                                            </div>
-                                            <div class="form-group mb-4">
-                                                <label class="small font-weight-bold text-muted">ACTIVITIES</label>
-                                                <textarea wire:model.blur="itinerary.{{ $index }}.activities" class="form-control border-0 bg-light rounded-lg" rows="3"></textarea>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6 mb-2">
-                                                    <div class="meal-tag">
-                                                        <i class="fas fa-utensils text-pink"></i>
-                                                        <input type="text" wire:model.blur="itinerary.{{ $index }}.meals" class="form-control form-control-sm border-0 bg-transparent">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <div class="meal-tag">
-                                                        <i class="fas fa-hotel text-pink"></i>
-                                                        <input type="text" wire:model.blur="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm border-0 bg-transparent">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex justify-content-end mt-3 pt-3 border-top">
-                                                <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-sm btn-link text-muted">Duplicate</button>
-                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-sm btn-link text-danger">Delete Day</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="p-5 text-center bg-white border rounded-lg">
-                                        <p class="text-muted mb-0">No days added yet.</p>
-                                    </div>
-                                @endforelse
+    <h4 class="font-weight-bold mb-4">Journey Itinerary</h4>
+
+    {{-- Isolated Alpine Scope --}}
+    <div x-data="{ open: null }" class="itinerary-timeline">
+
+        @forelse($itinerary as $index => $day)
+            <div class="card card-itinerary shadow-sm"
+                 wire:key="itinerary-{{ $day['temp_id'] }}"
+                 :class="open === '{{ $day['temp_id'] }}' ? 'active' : ''">
+
+                <div class="itinerary-day-node"></div>
+
+                {{-- HEADER --}}
+                <div class="card-header itinerary-header"
+                     @click="open = open === '{{ $day['temp_id'] }}' ? null : '{{ $day['temp_id'] }}'">
+
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="text-center mr-3" style="min-width:45px;">
+                                <span class="text-pink font-weight-bold h4 mb-0">
+                                    {{ $day['day_number'] }}
+                                </span>
+                                <div class="small text-muted font-weight-bold" style="font-size:9px;">
+                                    DAY
+                                </div>
                             </div>
-                            
-                            <button type="button" wire:click="addDay" class="btn btn-block btn-outline-pink border-2 py-3 rounded-pill font-weight-bold mt-3" style="border-style: dashed;">
-                                <i class="fas fa-plus-circle mr-2"></i> ADD DAY {{ count($itinerary) + 1 }}
+
+                            <div>
+                                <h6 class="mb-0 font-weight-bold">
+                                    {{ $day['title'] ?: 'New Safari Day' }}
+                                </h6>
+                                <span class="small text-muted">
+                                    {{ Str::limit($day['accommodation'] ?: 'TBD', 25) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <i class="fas fa-chevron-down text-muted"
+                           :style="open === '{{ $day['temp_id'] }}'
+                                    ? 'transform: rotate(180deg); transition: 0.2s'
+                                    : 'transition: 0.2s'">
+                        </i>
+                    </div>
+                </div>
+
+                {{-- BODY --}}
+                <div x-show="open === '{{ $day['temp_id'] }}'"
+                     x-cloak
+                     style="display:none;">
+
+                    <div class="card-body border-top">
+
+                        <div class="form-group mb-3">
+                            <label class="small font-weight-bold text-muted">
+                                DAY TITLE
+                            </label>
+                            <input type="text"
+                                   wire:model.blur="itinerary.{{ $index }}.title"
+                                   class="form-control border-0 bg-light rounded-pill px-3">
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="small font-weight-bold text-muted">
+                                ACTIVITIES
+                            </label>
+                            <textarea wire:model.blur="itinerary.{{ $index }}.activities"
+                                      class="form-control border-0 bg-light rounded-lg"
+                                      rows="3"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <input type="text"
+                                       wire:model.blur="itinerary.{{ $index }}.meals"
+                                       class="form-control form-control-sm bg-light border-0"
+                                       placeholder="Meals">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <input type="text"
+                                       wire:model.blur="itinerary.{{ $index }}.accommodation"
+                                       class="form-control form-control-sm bg-light border-0"
+                                       placeholder="Accommodation">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3 pt-3 border-top">
+                            <button type="button"
+                                    wire:click="duplicateDay({{ $index }})"
+                                    class="btn btn-sm btn-link text-muted">
+                                Duplicate
+                            </button>
+
+                            <button type="button"
+                                    wire:click="removeDay({{ $index }})"
+                                    onclick="confirm('Delete this day?') || event.stopImmediatePropagation()"
+                                    class="btn btn-sm btn-link text-danger">
+                                Delete Day
                             </button>
                         </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        @empty
+            <div class="p-5 text-center bg-white border rounded-lg">
+                <p class="text-muted mb-0">No days added yet.</p>
+            </div>
+        @endforelse
+
+    </div>
+
+    {{-- Add Day Button --}}
+    <button type="button"
+            wire:click="addDay"
+            class="btn btn-block btn-outline-pink py-3 rounded-pill font-weight-bold mt-3"
+            style="border-style:dashed;">
+        + ADD DAY {{ count($itinerary) + 1 }}
+    </button>
+
+</div>
 
                         {{-- Trix Editor --}}
                         <div class="card shadow-sm border-0 mb-5" style="border-radius: 15px;">
