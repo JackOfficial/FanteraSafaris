@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\SafariPackage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,11 +49,15 @@ class SafariController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+   public function show(string $slug)
     {
-        //
-    }
+        // Find the package by slug, or fail with a 404 error
+        $package = SafariPackage::with(['destinations', 'categories', 'photo'])
+            ->where('slug', $slug)
+            ->firstOrFail();
 
+        return view('packages.show', compact('package'));
+    }
     /**
      * Show the form for editing the specified resource.
      */
