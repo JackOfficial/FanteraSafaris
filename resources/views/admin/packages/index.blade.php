@@ -32,6 +32,17 @@
         font-weight: 800;
         font-size: 1.1rem;
     }
+    .discount-badge {
+        background: #fff5f5;
+        color: #e53e3e;
+        border: 1px solid #feb2b2;
+        border-radius: 4px;
+        padding: 0px 4px;
+        font-size: 9px;
+        font-weight: 700;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
     .dest-badge {
         background: #fff0f6;
         color: #e83e8c;
@@ -57,7 +68,6 @@
                 <p class="text-muted small mb-0">You have a total of <strong>{{ $packages->total() }}</strong> active packages.</p>
             </div>
             <div class="d-flex align-items-center" style="gap: 10px;">
-                {{-- Prominent Export PDF Button --}}
                 <a href="{{ route('admin.packages.export.pdf') }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm">
                     <i class="fas fa-file-pdf mr-1"></i> Download PDF
                 </a>
@@ -166,8 +176,19 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="price-text">${{ number_format($package->price) }}</span>
-                                    <div class="text-muted small" style="font-size: 10px; margin-top: -4px;">Per person</div>
+                                    <div>
+                                        <span class="price-text">${{ number_format($package->price) }}</span>
+                                        @if($package->discount_rate > 0)
+                                            <span class="discount-badge">-{{ number_format($package->discount_rate, 0) }}%</span>
+                                        @endif
+                                    </div>
+                                    <div class="text-muted small" style="font-size: 10px; margin-top: -4px;">
+                                        @if($package->discount_rate > 0)
+                                            <span class="text-success font-weight-bold">Now ${{ number_format($package->price * (1 - ($package->discount_rate / 100)), 2) }}</span>
+                                        @else
+                                            Per person
+                                        @endif
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="text-dark font-weight-bold mb-0">{{ $package->duration_days }} Days</div>
