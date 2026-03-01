@@ -31,6 +31,7 @@ new class extends Component {
         $this->duration_days = $package->duration_days;
         $this->status = $package->status;
         $this->description = $package->description;
+        $this->discountRate = $package->discount_rate ?? 0;
 
         $this->selected_destinations = $this->package->destinations->pluck('id')->map(fn($id) => (string)$id)->toArray();
         $this->selected_categories = $this->package->categories->pluck('id')->map(fn($id) => (string)$id)->toArray();
@@ -113,6 +114,7 @@ protected function reorderDays()
             'price' => 'required|numeric',
             'selected_destinations' => 'required|array|min:1',
             'selected_categories' => 'required|array|min:1',
+            'discountRate' => 'required|numeric|between:0,100',
             'description' => 'required',
             'gallery_images.*' => 'image|max:2048',
         ]);
@@ -122,6 +124,7 @@ protected function reorderDays()
                 'name' => $this->name, 
                 'slug' => Str::slug($this->name),
                 'price' => $this->price, 
+                'discount_rate' => $this->discountRate,
                 'duration_days' => count($this->itinerary),
                 'status' => $this->status,
                 'description' => $this->description,
