@@ -418,13 +418,28 @@ new class extends Component {
 
                         {{-- Overview --}}
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white font-weight-bold small">PACKAGE OVERVIEW</div>
-                            <div class="card-body">
-                                <div wire:ignore x-data="{ value: @entangle('description') }" @trix-change="value = $event.target.value">
-                                    <trix-editor class="trix-content border-0 bg-light rounded shadow-inner" style="min-height: 200px;"></trix-editor>
-                                </div>
-                            </div>
-                        </div>
+    <div class="card-header bg-white font-weight-bold small">
+        PACKAGE OVERVIEW
+    </div>
+    <div class="card-body">
+
+        <div wire:ignore>
+            <input id="description"
+                   type="hidden"
+                   wire:model="description">
+
+            <trix-editor input="description"
+                         class="trix-content border-0 bg-light rounded shadow-inner"
+                         style="min-height:200px;">
+            </trix-editor>
+        </div>
+
+        @error('description')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
+
+    </div>
+</div>
 
                         <button type="submit" class="btn btn-pink btn-lg btn-block py-3 font-weight-bold shadow-sm rounded-pill">
                             <span wire:loading.remove>CREATE SAFARI PACKAGE</span>
