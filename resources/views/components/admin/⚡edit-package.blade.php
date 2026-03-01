@@ -66,6 +66,14 @@ new class extends Component {
         ];
     }
 
+    // In your Livewire component class
+public function updatedGalleryImages()
+{
+    // This is optional, but it clears the "localPreviews" in Alpine 
+    // once Livewire has successfully received the files.
+    $this->dispatch('clear-previews');
+}
+
     public function duplicateDay($index)
     {
         $newDay = $this->itinerary[$index];
@@ -258,48 +266,60 @@ new class extends Component {
                             </div>
                         </div>
 
-                        <div class="card shadow-sm border-0 mb-4" style="border-radius: 20px;">
-                            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0 font-weight-bold">Gallery Images</h5>
-                                <span class="badge badge-light px-3 rounded-pill text-muted">{{ $package->photos->where('type', 'gallery')->count() }} Images</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="gallery-grid mb-4" x-data="{ localPreviews: [] }">
-                                    @foreach($package->photos->where('type', 'gallery') as $photo)
-                                        <div class="gallery-item shadow-sm" wire:key="photo-{{ $photo->id }}">
-                                            <img src="{{ asset('storage/' . $photo->path) }}">
-                                            <div class="delete-overlay" wire:click="deletePhoto({{ $photo->id }})"><i class="fas fa-trash-alt fa-xs"></i></div>
-                                        </div>
-                                    @endforeach
+                      <div class="card shadow-sm border-0 mb-4" style="border-radius: 20px;">
+    <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 font-weight-bold">Gallery Images</h5>
+        <span class="badge badge-light px-3 rounded-pill text-muted">
+            {{ $package->photos->where('type', 'gallery')->count() + count($gallery_images) }} Images
+        </span>
+    </div>
+    <div class="card-body">
+        <div class="gallery-grid mb-4">
+            {{-- Existing Photos --}}
+            @foreach($package->photos->where('type', 'gallery') as $photo)
+                <div class="gallery-item shadow-sm" wire:key="existing-photo-{{ $photo->id }}">
+                    <img src="{{ asset('storage/' . $photo->path) }}">
+                    <div class="delete-overlay" wire:click="deletePhoto({{ $photo->id }})">
+                        <i class="fas fa-trash-alt fa-xs"></i>
+                    </div>
+                </div>
+            @endforeach
 
-                                    <template x-for="(image, index) in localPreviews" :key="index">
-                                        <div class="gallery-item" style="border: 2px dashed #e83e8c;">
-                                            <img :src="image" style="opacity: 0.5">
-                                            <div class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center" style="top:0; background: rgba(255,255,255,0.2)">
-                                                <div class="spinner-border spinner-border-sm text-pink"></div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-
-                                <div class="custom-file" 
-                                     x-data="{ 
-                                        handleFiles(event) {
-                                            this.localPreviews = [];
-                                            const files = event.target.files;
-                                            Array.from(files).forEach(file => {
-                                                const reader = new FileReader();
-                                                reader.onload = (e) => { this.localPreviews.push(e.target.result); };
-                                                reader.readAsDataURL(file);
-                                            });
-                                        }
-                                     }"
-                                     @clear-previews.window="localPreviews = []">
-                                    <input type="file" wire:model="gallery_images" multiple class="custom-file-input" id="galleryFiles" @change="handleFiles($event)">
-                                    <label class="custom-file-label rounded-pill border-0 bg-light" for="galleryFiles">Add gallery images...</label>
-                                </div>
-                            </div>
+            {{-- New Uploads Previews (Livewire Temporary) --}}
+            @if ($gallery_images)
+                @foreach($gallery_images as $index => $image)
+                    <div class="gallery-item" wire:key="upload-preview-{{ $index }}" style="border: 2px solid #e83e8c;">
+                        {{-- temporaryUrl() works for images out of the box --}}
+                        <img src="{{ $image->temporaryUrl() }}">
+                        <div class="position-absolute" style="top:5px; left:5px;">
+                            <span class="badge badge-pink">New</span>
                         </div>
+                    </div>
+                @endforeach
+            @endif
+
+            {{-- Loading State Spinner --}}
+            <div wire:loading wire:target="gallery_images" class="gallery-item" style="border: 2px dashed #ccc;">
+                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                    <div class="spinner-border spinner-border-sm text-pink"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="custom-file">
+            {{-- 
+                Removed the complex handleFiles Alpine logic. 
+                Livewire handles the upload, and the @if($gallery_images) 
+                block above shows the previews once they arrive.
+            --}}
+            <input type="file" wire:model="gallery_images" multiple class="custom-file-input" id="galleryFiles">
+            <label class="custom-file-label rounded-pill border-0 bg-light" for="galleryFiles">
+                {{ count($gallery_images) > 0 ? count($gallery_images) . ' new images selected' : 'Add gallery images...' }}
+            </label>
+            @error('gallery_images.*') <span class="text-danger small">{{ $message }}</span> @enderror
+        </div>
+    </div>
+</div>
                     </div>
 
                     {{-- Right Column --}}
