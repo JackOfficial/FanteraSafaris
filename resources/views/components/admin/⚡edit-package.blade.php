@@ -27,7 +27,7 @@ new class extends Component {
     public function mount(SafariPackage $package)
     {
         // Eager load the new many-to-many relationships
-        $this->package = $package->load(['itineraries', 'photos', 'destinations', 'categories']);
+       $this->package = $package->load(['itineraries', 'photos', 'categories']);
         
         $this->name = $package->name;
         $this->price = $package->price;
