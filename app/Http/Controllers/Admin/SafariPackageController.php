@@ -95,7 +95,7 @@ class SafariPackageController extends Controller
     public function edit(SafariPackage $package)
     {
         // Load relationships: itineraries (sorted) and all polymorphic photos
-        $package->load(['itineraries' => fn($q) => $q->orderBy('day_number'), 'photos', 'categories']);
+        $package::all();
         $categories = SafariCategory::orderBy('name')->get();
         
         return view('admin.packages.edit', compact('package', 'categories'));
