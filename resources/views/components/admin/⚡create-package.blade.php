@@ -13,7 +13,7 @@ new class extends Component {
 
     // Fields
     public $name, $price, $discount_per_person = 0, $duration_days = 1;
-    public $destination_id, $status = 'draft', $safari_category_id, $description;
+    public $destination_ids = [], $status = 'draft', $safari_category_id, $description; // Changed to array
     public $featured_image, $gallery_images = [], $itinerary = [];
 
     public function mount() {
@@ -55,7 +55,8 @@ new class extends Component {
             'name' => 'required|string|max:255|unique:safari_packages,name',
             'price' => 'required|numeric|min:0',
             'discount_per_person' => 'required|numeric|min:0|max:100',
-            'destination_id' => 'required|exists:destinations,id',
+            'destination_ids' => 'required|array|min:1',
+            'destination_ids.*' => 'exists:destinations,id',
             'safari_category_id' => 'required|exists:safari_categories,id',
             'description' => 'required|min:20',
             'featured_image' => 'required|image|max:2048',
@@ -63,7 +64,8 @@ new class extends Component {
             'itinerary.*.title' => 'required|string',
         ], [
             'itinerary.*.title.required' => 'Each day needs a title.',
-            'featured_image.required' => 'A cover photo is essential for sales.'
+            'featured_image.required' => 'A cover photo is essential for sales.',
+            'destination_ids.required' => 'Please select at least one destination.'
         ]);
 
         DB::transaction(function () {
@@ -73,11 +75,13 @@ new class extends Component {
                 'price' => $this->price,
                 'discount_per_person' => $this->discount_per_person,
                 'duration_days' => count($this->itinerary),
-                'destination_id' => $this->destination_id,
                 'status' => $this->status,
                 'safari_category_id' => $this->safari_category_id,
                 'description' => $this->description,
             ]);
+
+            // Sync Multiple Destinations
+            $package->destinations()->sync($this->destination_ids);
 
             $package->photos()->create([
                 'path' => $this->featured_image->store('safaris/featured', 'public'),
@@ -107,9 +111,16 @@ new class extends Component {
     discount: @entangle('discount_per_person'),
     calculate(people) {
         if(!this.basePrice) return 0;
-        let totalDiscount = (people - 1) * this.discount;
-        let finalPrice = this.basePrice * (1 - (totalDiscount / 100));
-        return Math.max(finalPrice, this.basePrice * 0.5).toFixed(2);
+        let totalDiscountPercentage = (people - 1) * this.discount;
+        let pricePerPerson = this.basePrice * (1 - (totalDiscountPercentage / 100));
+        let finalPrice = Math.max(pricePerPerson, this.basePrice * 0.5);
+        return (finalPrice * people).toFixed(2);
+    },
+    calculatePerPerson(people) {
+        if(!this.basePrice) return 0;
+        let totalDiscountPercentage = (people - 1) * this.discount;
+        let pricePerPerson = this.basePrice * (1 - (totalDiscountPercentage / 100));
+        return Math.max(pricePerPerson, this.basePrice * 0.5).toFixed(2);
     }
 }">
     @section('title', 'Create Safari Package')
@@ -129,6 +140,7 @@ new class extends Component {
             .card-pink { border-top: 4px solid #e83e8c; }
             .gallery-item { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
             [x-cloak] { display: none !important; }
+            .destination-badge { background: #e83e8c; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 4px; }
         </style>
     @endpush
 
@@ -183,19 +195,23 @@ new class extends Component {
                                     <div class="d-flex justify-content-between small border-bottom pb-1">
                                         <span>Solo Traveler:</span> <strong>$<span x-text="basePrice"></span></strong>
                                     </div>
+                                    <div class="d-flex justify-content-between small border-bottom py-1">
+                                        <span>Couple Total (2 People):</span> <strong class="text-pink">$<span x-text="calculate(2)"></span></strong>
+                                    </div>
                                     <div class="d-flex justify-content-between small pt-1">
-                                        <span>Group of 4 (Price/Person):</span> <strong>$<span x-text="calculate(4)"></span></strong>
+                                        <span>Group of 4 (Price/Person):</span> <strong>$<span x-text="calculatePerPerson(4)"></span></strong>
                                     </div>
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label class="small font-weight-bold">DESTINATION</label>
-                                    <select wire:model="destination_id" class="form-control @error('destination_id') is-invalid @enderror">
-                                        <option value="">Choose...</option>
+                                    <label class="small font-weight-bold">DESTINATIONS (Select Multiple)</label>
+                                    <select wire:model="destination_ids" class="form-control @error('destination_ids') is-invalid @enderror" multiple style="min-height: 120px;">
                                         @foreach(\App\Models\Destination::orderBy('name')->get() as $dest)
                                             <option value="{{ $dest->id }}">{{ $dest->name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('destination_ids') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                                    <small class="text-muted">Hold Ctrl (Cmd) to select multiple</small>
                                 </div>
 
                                 <div class="row">
