@@ -38,13 +38,6 @@ new class extends Component {
         $this->reorderDays();
     }
 
-    public function removeDay($index) {
-    // Basic confirmation logic can be handled via Alpine, 
-    // but we'll reorder here to keep the array clean.
-    array_splice($this->itinerary, $index, 1);
-    $this->reorderDays();
-}
-
 public function clearAllDays() {
     $this->itinerary = [];
     $this->duration_days = 0;
