@@ -15,10 +15,9 @@ class SafariPackageController extends Controller
 {
     public function index()
     {
-        // Eager loading 'category' and 'photo' (morphOne) for better performance
-        $packages = SafariPackage::with(['category', 'photo'])
-            ->latest()
-            ->paginate(10);
+       $packages = SafariPackage::with(['categories', 'destinations', 'photo'])
+    ->latest()
+    ->paginate(10);
         
         return view('admin.packages.index', compact('packages'));
     }

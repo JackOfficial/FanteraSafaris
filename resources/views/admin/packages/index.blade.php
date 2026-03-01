@@ -21,10 +21,11 @@
 
 <section class="content" x-data="{ 
     search: '',
-    showRow(name, destination) {
+    {{-- Update showRow to handle searching through multiple destinations/categories --}}
+    showRow(name, meta) {
         if (this.search === '') return true;
         const term = this.search.toLowerCase();
-        return name.toLowerCase().includes(term) || destination.toLowerCase().includes(term);
+        return name.toLowerCase().includes(term) || meta.toLowerCase().includes(term);
     }
 }">
     <div class="container-fluid">
@@ -40,13 +41,13 @@
                     <input type="text" 
                            x-model="search" 
                            class="form-control border-left-0 shadow-none" 
-                           placeholder="Live search packages...">
+                           placeholder="Search by name or destination...">
                 </div>
             </div>
 
             <div class="d-flex align-items-center">
                 <div class="btn-group mr-2">
-                    <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle rounded-pill px-3" data-toggle="dropdown">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 dropdown-toggle" data-toggle="dropdown">
                         <i class="fas fa-download mr-1"></i> Export
                     </button>
                     <div class="dropdown-menu dropdown-menu-right shadow border-0">
@@ -77,8 +78,8 @@
                     <thead class="bg-light text-muted small text-uppercase">
                         <tr>
                             <th class="px-4 border-0">Package</th>
-                            <th class="border-0">Destination</th>
-                            <th class="border-0">Category</th>
+                            <th class="border-0">Destinations</th>
+                            <th class="border-0">Categories</th>
                             <th class="border-0">Price</th>
                             <th class="border-0">Duration</th>
                             <th class="border-0 text-center">Status</th>
@@ -87,40 +88,52 @@
                     </thead>
                     <tbody>
                         @forelse($packages as $package)
-                            <tr x-show="showRow('{{ addslashes($package->name) }}', '{{ addslashes($package->destination->name ?? '') }}')"
+                            @php 
+                                // Create a searchable string of all destinations for Alpine
+                                $destString = $package->destinations->pluck('name')->implode(', ');
+                                $catString = $package->categories->pluck('name')->implode(', ');
+                                $featured = $package->photos->firstWhere('type', 'featured'); 
+                            @endphp
+                            <tr x-show="showRow('{{ addslashes($package->name) }}', '{{ addslashes($destString . ' ' . $catString) }}')"
                                 x-transition:enter="transition ease-out duration-300"
                                 x-transition:enter-start="opacity-0 transform scale-95"
                                 x-transition:enter-end="opacity-100 transform scale-100">
                                 <td class="px-4">
                                     <div class="d-flex align-items-center">
-                                        @php $featured = $package->photos->firstWhere('type', 'featured'); @endphp
                                         <div class="mr-3">
                                             @if($featured)
                                                 <img src="{{ asset('storage/' . $featured->path) }}" 
                                                      class="rounded shadow-sm border" 
-                                                     style="width: 45px; height: 45px; object-fit: cover;">
+                                                     style="width: 48px; height: 48px; object-fit: cover;">
                                             @else
-                                                <div class="bg-light rounded d-flex align-items-center justify-content-center border" style="width: 45px; height: 45px;">
-                                                    <i class="fas fa-camera text-muted small"></i>
+                                                <div class="bg-light rounded d-flex align-items-center justify-content-center border" style="width: 48px; height: 48px;">
+                                                    <i class="fas fa-mountain text-muted opacity-50"></i>
                                                 </div>
                                             @endif
                                         </div>
                                         <div>
-                                            <div class="font-weight-bold text-dark">{{ $package->name }}</div>
-                                            <small class="text-muted">#{{ $package->id }}</small>
+                                            <div class="font-weight-bold text-dark mb-0">{{ $package->name }}</div>
+                                            <small class="text-muted text-uppercase" style="letter-spacing: 1px; font-size: 10px;">ID: #{{ $package->id }}</small>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="text-dark font-weight-medium">
-                                        <i class="fas fa-map-marker-alt text-muted mr-1 small"></i>
-                                        {{ $package->destination->name ?? 'N/A' }}
-                                    </span>
+                                    <div class="d-flex flex-wrap" style="gap: 4px; max-width: 200px;">
+                                        @foreach($package->destinations as $dest)
+                                            <span class="small text-dark font-weight-medium">
+                                                <i class="fas fa-map-marker-alt text-pink mr-1" style="font-size: 0.7rem;"></i>{{ $dest->name }}{{ !$loop->last ? ',' : '' }}
+                                            </span>
+                                        @endforeach
+                                    </div>
                                 </td>
                                 <td>
-                                    <span class="badge badge-light border text-secondary px-2 py-1">
-                                        {{ $package->category->name ?? 'General' }}
-                                    </span>
+                                    <div class="d-flex flex-wrap" style="gap: 4px;">
+                                        @foreach($package->categories as $category)
+                                            <span class="badge badge-light border text-secondary px-2 py-1 font-weight-normal">
+                                                {{ $category->name }}
+                                            </span>
+                                        @endforeach
+                                    </div>
                                 </td>
                                 <td>
                                     <span class="text-dark font-weight-bold">
@@ -129,21 +142,21 @@
                                 </td>
                                 <td>
                                     <span class="text-muted small">
-                                        {{ $package->duration_days }} Days
+                                        <i class="far fa-clock mr-1"></i>{{ $package->duration_days }} Days
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge {{ $package->status === 'published' ? 'badge-success' : 'badge-warning' }} px-2 py-1" style="font-size: 0.7rem;">
+                                    <span class="badge {{ $package->status === 'published' ? 'badge-success' : 'badge-warning' }} px-2 py-1" style="font-size: 0.65rem;">
                                         {{ strtoupper($package->status) }}
                                     </span>
                                 </td>
                                 <td class="text-right px-4">
-                                    <div class="btn-group shadow-sm">
-                                        <a href="{{ route('admin.packages.edit', $package) }}" class="btn btn-sm btn-white border">
-                                            <i class="fas fa-edit text-info"></i>
+                                    <div class="btn-group">
+                                        <a href="{{ route('admin.packages.edit', $package) }}" class="btn btn-sm btn-light border shadow-sm mr-1">
+                                            <i class="fas fa-pencil-alt text-info"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-white border text-danger" 
-                                                onclick="if(confirm('Delete?')) document.getElementById('delete-{{ $package->id }}').submit();">
+                                        <button type="button" class="btn btn-sm btn-light border shadow-sm text-danger" 
+                                                onclick="if(confirm('Are you sure? This will remove the package and all its itineraries.')) document.getElementById('delete-{{ $package->id }}').submit();">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                         <form id="delete-{{ $package->id }}" action="{{ route('admin.packages.destroy', $package) }}" method="POST" class="d-none">
@@ -155,7 +168,10 @@
                         @empty
                             <tr>
                                 <td colspan="7" class="text-center py-5">
-                                    <p class="text-muted">No packages found.</p>
+                                    <div class="text-muted">
+                                        <i class="fas fa-box-open fa-3x mb-3 opacity-20"></i>
+                                        <p>No safari packages found in the database.</p>
+                                    </div>
                                 </td>
                             </tr>
                         @endforelse
@@ -163,13 +179,11 @@
                 </table>
             </div>
             
-            {{-- Hide pagination when searching --}}
             <div class="card-footer bg-white border-top" x-show="search === ''">
-                @if($packages->hasPages())
-                    <div class="d-flex justify-content-center">
-                        {{ $packages->links() }}
-                    </div>
-                @endif
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small text-muted">Showing {{ $packages->count() }} of {{ $packages->total() }} results</span>
+                    {{ $packages->links() }}
+                </div>
             </div>
         </div>
     </div>
