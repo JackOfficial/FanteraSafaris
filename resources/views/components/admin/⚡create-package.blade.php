@@ -298,18 +298,17 @@ new class extends Component {
                             </div>
                         </div>
 
-{{-- Itinerary Journey --}}
-                 {{-- Itinerary Journey --}}
+                        {{-- Itinerary Journey --}}
 <div class="itinerary-section mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="font-weight-bold mb-0">Itinerary Journey</h5>
         <div>
             @if(count($itinerary) > 0)
                 <button type="button" 
-                        onclick="confirm('Clear all days?') || event.stopImmediatePropagation()"
+                        onclick="confirm('Are you sure you want to delete the ENTIRE itinerary?') || event.stopImmediatePropagation()"
                         wire:click="clearAllDays" 
                         class="btn btn-sm btn-outline-danger rounded-pill px-3 mr-2">
-                    <i class="fas fa-eraser mr-1"></i> Clear
+                    <i class="fas fa-eraser mr-1"></i> Clear All
                 </button>
             @endif
             <button type="button" wire:click="addDay" class="btn btn-sm btn-pink rounded-pill px-3">
@@ -320,37 +319,39 @@ new class extends Component {
 
     <div class="itinerary-scroll-container">
         @forelse($itinerary as $index => $day)
-            {{-- CRITICAL: The key must be unique and change when the array changes --}}
-            <div class="card mb-2 border-0 shadow-sm" wire:key="itinerary-item-{{ $index }}-{{ count($itinerary) }}">
+            {{-- Keying the container is vital for Livewire 3/Laravel 12 --}}
+            <div class="card mb-2 border-0 shadow-sm" wire:key="day-container-{{ $index }}-{{ count($itinerary) }}">
                 
-                {{-- Header --}}
-                <div class="itinerary-header p-3 d-flex align-items-center bg-white" 
+                {{-- Header: Logic handled by Alpine --}}
+                <div class="itinerary-header p-3 d-flex align-items-center" 
                      @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})" 
-                     style="cursor:pointer;">
+                     style="cursor:pointer; background: white;">
                     
                     <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" 
-                         style="min-width: 28px; height: 28px; font-size: 11px; font-weight:bold;">
+                         style="width: 28px; height: 28px; font-size: 11px; font-weight:bold;">
                         {{ $day['day_number'] }}
                     </div>
                     
                     <div class="flex-grow-1 font-weight-bold small text-truncate">
-                        {{-- We use $itinerary[$index]['title'] to ensure it shows the latest Livewire state --}}
-                        {{ $itinerary[$index]['title'] ?: 'Day ' . ($index + 1) . ': Untitled Day' }}
+                        {{ $day['title'] ?: 'Day ' . $day['day_number'] . ': Untitled' }}
                     </div>
                     
+                    {{-- Icon rotation logic --}}
                     <i class="fas fa-chevron-down text-muted transition-icon" 
                        :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"></i>
                 </div>
                 
-                {{-- Body --}}
+                {{-- Body: Controlled by Alpine x-show --}}
                 <div class="card-body bg-light border-top" 
                      x-show="activeDay === {{ $index }}" 
-                     x-cloak>
+                     x-cloak 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100">
                     
                     <div class="form-group mb-2">
                         <label class="small text-muted mb-1 font-weight-bold">HEADING</label>
-                        {{-- Use .live to see the title update in the header immediately --}}
-                        <input type="text" wire:model.live="itinerary.{{ $index }}.title" class="form-control" placeholder="e.g. Arrival and Transfer">
+                        <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control" placeholder="e.g. Arrival and Transfer">
                     </div>
                     
                     <div class="form-group mb-2">
@@ -371,13 +372,13 @@ new class extends Component {
                     
                     <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
                         <div class="btn-group">
-                            <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-link btn-sm text-pink p-0 mr-3 text-decoration-none">
+                            <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-link btn-sm text-pink p-0 mr-3 text-decoration-none font-weight-bold">
                                 <i class="far fa-copy mr-1"></i> Duplicate
                             </button>
                             <button type="button" 
-                                    onclick="confirm('Delete this day?') || event.stopImmediatePropagation()"
+                                    onclick="confirm('Delete Day {{ $day['day_number'] }}?') || event.stopImmediatePropagation()"
                                     wire:click="removeDay({{ $index }})" 
-                                    class="btn btn-link btn-sm text-danger p-0 text-decoration-none">
+                                    class="btn btn-link btn-sm text-danger p-0 text-decoration-none font-weight-bold">
                                 <i class="far fa-trash-alt mr-1"></i> Delete
                             </button>
                         </div>
@@ -387,7 +388,8 @@ new class extends Component {
             </div>
         @empty
             <div class="text-center py-5 bg-light rounded border-dashed" style="border: 2px dashed #cbd5e0 !important;">
-                <p class="text-muted mb-0">No itinerary days added yet.</p>
+                <i class="fas fa-map-marked-alt fa-3x text-muted mb-3 opacity-25"></i>
+                <p class="text-muted">No itinerary days added yet. <br> Click <strong>+ Add Day</strong> to begin the journey.</p>
             </div>
         @endforelse
     </div>
