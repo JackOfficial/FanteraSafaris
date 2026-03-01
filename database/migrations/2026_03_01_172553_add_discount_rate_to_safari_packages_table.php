@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('safari_packages', function (Blueprint $table) {
-           $table->unsignedDecimal('discount_rate', 5, 2)
-                  ->default(0)
-                  ->after('price');
+          $table->decimal('discount_rate', 5, 2)
+              ->unsigned() 
+              ->default(0)
+              ->after('price');
         });
     }
 
