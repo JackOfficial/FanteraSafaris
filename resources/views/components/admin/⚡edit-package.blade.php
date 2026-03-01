@@ -1,6 +1,6 @@
 <?php
 
-use Livewire\Component; // Or use Livewire\Component; both work in this format
+use Livewire\Volt\Component; // Using the Volt-specific class
 use Livewire\WithFileUploads;
 use App\Models\SafariPackage;
 use App\Models\Destination;
@@ -17,13 +17,16 @@ new class extends Component {
     public $name, $price, $duration_days, $status, $description;
     public $selected_destinations = []; 
     public $selected_categories = [];
-    public $solo_discount = 0, $couple_discount = 0, $group_4_discount = 0;
+    
+    // Note: Discounts are now purely for the Alpine.js preview, 
+    // we don't save these to the SafariPackage model anymore.
     public $featured_image; 
     public $gallery_images = []; 
     public $itinerary = [];
 
     public function mount(SafariPackage $package)
     {
+        // Eager load the new many-to-many relationships
         $this->package = $package->load(['itineraries', 'photos', 'destinations', 'categories']);
         
         $this->name = $package->name;
@@ -31,11 +34,8 @@ new class extends Component {
         $this->duration_days = $package->duration_days;
         $this->status = $package->status;
         $this->description = $package->description;
-        $this->solo_discount = $package->solo_discount;
-        $this->couple_discount = $package->couple_discount;
-        $this->group_4_discount = $package->group_4_discount;
 
-        // Cast IDs to strings for multi-select compatibility
+        // Pluck IDs from the pivot tables
         $this->selected_destinations = $this->package->destinations->pluck('id')->map(fn($id) => (string)$id)->toArray();
         $this->selected_categories = $this->package->categories->pluck('id')->map(fn($id) => (string)$id)->toArray();
         
@@ -102,21 +102,17 @@ new class extends Component {
         ]);
 
         DB::transaction(function () {
-            $this->duration_days = count($this->itinerary);
-
             $this->package->update([
                 'name' => $this->name, 
                 'slug' => Str::slug($this->name),
                 'price' => $this->price, 
-                'duration_days' => $this->duration_days,
+                'duration_days' => count($this->itinerary),
                 'status' => $this->status,
                 'description' => $this->description,
-                'solo_discount' => $this->solo_discount,
-                'couple_discount' => $this->couple_discount,
-                'group_4_discount' => $this->group_4_discount,
+                // No discount columns here!
             ]);
 
-            // Sync Many-to-Many Relationships
+            // Sync Many-to-Many Relationships to the pivot tables we built
             $this->package->destinations()->sync($this->selected_destinations);
             $this->package->categories()->sync($this->selected_categories);
 
@@ -143,7 +139,19 @@ new class extends Component {
     }
 }; ?>
 
-<div x-data="{ activeDay: 0 }">
+{{-- UI with Alpine.js handling the "Fake" Discounts --}}
+<div x-data="{ 
+    activeDay: 0,
+    basePrice: @entangle('price'),
+    discountType: 'none',
+    get previewPrice() {
+        let p = parseFloat(this.basePrice) || 0;
+        if(this.discountType === 'solo') return (p * 0.90).toFixed(2);
+        if(this.discountType === 'couple') return (p * 0.85).toFixed(2);
+        if(this.discountType === 'group') return (p * 0.75).toFixed(2);
+        return p.toFixed(2);
+    }
+}">
     @section('title', 'Edit Safari: ' . $package->name)
 
     @push('styles')
@@ -158,9 +166,7 @@ new class extends Component {
             .border-pink { border-left: 4px solid #e83e8c !important; }
             .text-pink { color: #e83e8c !important; }
             .btn-pink { background-color: #e83e8c; color: white; border: none; }
-            .btn-pink:hover { background-color: #d81b60; color: white; }
             .itinerary-header { cursor: pointer; background: #f8f9fa; transition: 0.2s; border-bottom: 1px solid #eee; }
-            .itinerary-header:hover { background: #fff0f5; }
             [x-cloak] { display: none !important; }
         </style>
     @endpush
@@ -192,9 +198,20 @@ new class extends Component {
                                     </div>
                                 </div>
 
+                                {{-- Alpine.js Discount Preview Section --}}
+                                <div class="bg-light p-3 rounded mb-3 border">
+                                    <label class="small font-weight-bold text-muted d-block mb-2">LIVE DISCOUNT PREVIEW</label>
+                                    <div class="btn-group btn-group-toggle w-100 mb-2">
+                                        <button type="button" class="btn btn-xs btn-outline-secondary" :class="discountType === 'none' && 'active'" @click="discountType = 'none'">Regular</button>
+                                        <button type="button" class="btn btn-xs btn-outline-secondary" :class="discountType === 'solo' && 'active'" @click="discountType = 'solo'">Solo (-10%)</button>
+                                        <button type="button" class="btn btn-xs btn-outline-secondary" :class="discountType === 'couple' && 'active'" @click="discountType = 'couple'">Couple (-15%)</button>
+                                    </div>
+                                    <h4 class="mb-0 text-pink font-weight-bold">$<span x-text="previewPrice"></span></h4>
+                                </div>
+
                                 <div class="form-group mb-3">
-                                    <label class="font-weight-bold small text-muted">DESTINATIONS (MULTIPLE)</label>
-                                    <select wire:model="selected_destinations" class="form-control @error('selected_destinations') is-invalid @enderror" multiple style="height: 120px">
+                                    <label class="font-weight-bold small text-muted">DESTINATIONS</label>
+                                    <select wire:model="selected_destinations" class="form-control" multiple style="height: 120px">
                                         @foreach(\App\Models\Destination::orderBy('name')->get() as $dest)
                                             <option value="{{ $dest->id }}">{{ $dest->name }}</option>
                                         @endforeach
@@ -202,32 +219,17 @@ new class extends Component {
                                 </div>
 
                                 <div class="form-group mb-4">
-                                    <label class="font-weight-bold small text-muted">CATEGORIES (MULTIPLE)</label>
-                                    <select wire:model="selected_categories" class="form-control @error('selected_categories') is-invalid @enderror" multiple style="height: 100px">
+                                    <label class="font-weight-bold small text-muted">CATEGORIES</label>
+                                    <select wire:model="selected_categories" class="form-control" multiple style="height: 100px">
                                         @foreach(\App\Models\SafariCategory::all() as $cat)
                                             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-
-                                <h6 class="font-weight-bold text-muted small border-top pt-3 mb-3">DISCOUNT RATES (%)</h6>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label class="small text-muted font-weight-bold">SOLO</label>
-                                        <input type="number" wire:model="solo_discount" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="col-4">
-                                        <label class="small text-muted font-weight-bold">COUPLE</label>
-                                        <input type="number" wire:model="couple_discount" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="col-4">
-                                        <label class="small text-muted font-weight-bold">GROUP (4+)</label>
-                                        <input type="number" wire:model="group_4_discount" class="form-control form-control-sm">
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
+                        {{-- Gallery Section... --}}
                         <div class="card shadow-sm mb-4">
                             <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">Gallery Images</h5></div>
                             <div class="card-body">
@@ -244,7 +246,7 @@ new class extends Component {
                         </div>
                     </div>
 
-                    {{-- Right Column --}}
+                    {{-- Right Column (Featured Image, Itinerary, Trix)... --}}
                     <div class="col-md-7">
                         <div class="card shadow-sm mb-4">
                             <div class="card-body text-center p-2">
@@ -253,17 +255,16 @@ new class extends Component {
                                         @change="const reader = new FileReader(); reader.onload = (e) => { photoPreview = e.target.result; }; reader.readAsDataURL($refs.photo.files[0]);">
                                     <img :src="photoPreview ? photoPreview : '{{ $package->photos->firstWhere('type', 'featured') ? asset('storage/' . $package->photos->firstWhere('type', 'featured')->path) : asset('front/images/placeholder.jpg') }}'" 
                                          class="featured-preview border" @click="$refs.photo.click()">
-                                    <p class="small text-muted mt-2 mb-0">Click image to change cover photo</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="itinerary-builder">
+                        {{-- Itinerary Loader... --}}
+                        <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5 class="font-weight-bold mb-0">Itinerary Builder</h5>
-                                <span class="badge badge-pink px-3 shadow-sm">{{ count($itinerary) }} Days</span>
+                                <span class="badge badge-pink px-3">{{ count($itinerary) }} Days</span>
                             </div>
-
                             <div class="itinerary-scroll-container mb-3" style="max-height: 480px; overflow-y: auto; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
                                 @foreach($itinerary as $index => $day)
                                     <div class="card mb-2 border-pink shadow-sm" wire:key="itinerary-{{ $index }}">
@@ -275,7 +276,6 @@ new class extends Component {
                                             </div>
                                             <i class="fas fa-chevron-down text-muted" :class="activeDay === {{ $index }} ? 'fa-rotate-180' : ''"></i>
                                         </div>
-
                                         <div class="card-body p-3 bg-white" x-show="activeDay === {{ $index }}" x-cloak>
                                             <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control mb-2" placeholder="Title">
                                             <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control mb-2" rows="3" placeholder="Activities"></textarea>
@@ -291,14 +291,11 @@ new class extends Component {
                                     </div>
                                 @endforeach
                             </div>
-                            
-                            <button type="button" wire:click="addDay" class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold">
-                                <i class="fas fa-plus-circle mr-2"></i> ADD DAY
-                            </button>
+                            <button type="button" wire:click="addDay" class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold">ADD DAY</button>
                         </div>
 
+                        {{-- Trix and Submit... --}}
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">General Overview</h5></div>
                             <div class="card-body">
                                 <div wire:ignore x-data="{ value: @entangle('description'), isSet: false }" 
                                      x-init="$refs.trix.editor.loadHTML(value); $watch('value', v => { if (!isSet) $refs.trix.editor.loadHTML(v); isSet = false; })" 
