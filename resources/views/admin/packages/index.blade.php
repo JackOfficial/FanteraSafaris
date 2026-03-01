@@ -32,6 +32,7 @@
         font-weight: 800;
         font-size: 1.1rem;
     }
+    /* New Discount Styling */
     .discount-badge {
         background: #fff5f5;
         color: #e53e3e;
@@ -178,13 +179,16 @@
                                 <td>
                                     <div>
                                         <span class="price-text">${{ number_format($package->price) }}</span>
+                                        {{-- Discount Badge Display --}}
                                         @if($package->discount_rate > 0)
                                             <span class="discount-badge">-{{ number_format($package->discount_rate, 0) }}%</span>
                                         @endif
                                     </div>
                                     <div class="text-muted small" style="font-size: 10px; margin-top: -4px;">
                                         @if($package->discount_rate > 0)
-                                            <span class="text-success font-weight-bold">Now ${{ number_format($package->price * (1 - ($package->discount_rate / 100)), 2) }}</span>
+                                            <span class="text-success font-weight-bold">
+                                                Now ${{ number_format($package->price * (1 - ($package->discount_rate / 100)), 2) }}
+                                            </span>
                                         @else
                                             Per person
                                         @endif
