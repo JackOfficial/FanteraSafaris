@@ -16,11 +16,11 @@ class HomeController extends Controller
         $destinations = Destination::where('is_featured', true)->get();
 
         // Fetch top-rated safari packages (limit 3 for the homepage)
-        $packages = SafariPackage::with('destinations')
-            ->where('status', 'published')
-            ->latest()
-            ->take(3)
-            ->get();
+       $packages = SafariPackage::with(['destinations', 'categories', 'photo']) // Load everything at once
+         ->where('status', 'published')
+        ->latest()
+        ->take(3)
+        ->get();
 
         // Fetch the 3 most recent blog posts
         $posts = Post::latest()->take(3)->get();

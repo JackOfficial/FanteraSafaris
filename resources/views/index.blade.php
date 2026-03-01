@@ -141,7 +141,7 @@
     </div>
 </section>
 
-   <section class="ftco-section bg-light">
+ <section class="ftco-section bg-light">
     <div class="container">
         <div class="row justify-content-center mb-5 pb-3">
             <div class="col-md-7 text-center heading-section ftco-animate">
@@ -153,8 +153,8 @@
             @forelse($packages as $package)
                 <div class="col-md-4 ftco-animate mb-4">
                     <div class="destination shadow-sm transition-hover" style="border-radius: 20px; overflow: hidden; background: #fff;">
-                        {{-- Package Image with dynamic badge --}}
-                        <a href="#" 
+                        
+                        <a href="{{ route('safaris.show', $package->slug) }}" 
                            class="img d-flex justify-content-center align-items-center" 
                            style="background-image: url({{ asset('storage/' . $package->photo->path) }}); height: 280px; position: relative;">
                             
@@ -164,8 +164,16 @@
                         </a>
 
                         <div class="text p-4">
+                            {{-- Category Tags --}}
+                            <div class="mb-2">
+                                @foreach($package->categories as $category)
+                                    <span class="badge badge-light text-muted border mr-1" style="font-size: 10px; text-transform: uppercase;">
+                                        {{ $category->name }}
+                                    </span>
+                                @endforeach
+                            </div>
+
                             <div class="d-flex mb-2">
-                                {{-- Use number_format for clean pricing --}}
                                 <span class="price font-weight-bold text-warning" style="font-size: 1.4rem;">
                                     ${{ number_format($package->price) }}
                                 </span>
@@ -175,15 +183,16 @@
                             </div>
 
                             <h3 class="h5 font-weight-bold mb-3">
-                                <a href="#" class="text-dark">{{ $package->name ?? 'N/A' }}</a>
+                                <a href="{{ route('safaris.show', $package->slug) }}" class="text-dark">{{ $package->name }}</a>
                             </h3>
 
-                            {{-- Assuming a relationship exists between Package and Destination --}}
+                            {{-- Multiple Destinations Display --}}
                             <p class="text-muted small mb-3">
-                                <i class="icon-map-o mr-2"></i> {{ $package->destinations->name ?? 'N/A' }}
+                                <i class="icon-map-o mr-2 text-warning"></i> 
+                                {{ $package->destinations->pluck('name')->implode(', ') }}
                             </p>
 
-                            <a href="#" class="btn btn-warning btn-block py-2" style="border-radius: 10px; font-weight: 700;">
+                            <a href="{{ route('safaris.show', $package->slug) }}" class="btn btn-warning btn-block py-2" style="border-radius: 10px; font-weight: 700;">
                                 Explore Package
                             </a>
                         </div>
