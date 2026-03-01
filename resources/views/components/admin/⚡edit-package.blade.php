@@ -21,6 +21,7 @@ new class extends Component {
     public $featured_image; 
     public $gallery_images = []; 
     public $itinerary = [];
+    public $discountRate = 0;
 
     public function mount(SafariPackage $package)
     {
