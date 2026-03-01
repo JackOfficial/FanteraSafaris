@@ -156,7 +156,7 @@
                         {{-- Package Image with dynamic badge --}}
                         <a href="#" 
                            class="img d-flex justify-content-center align-items-center" 
-                           style="background-image: url({{ asset('storage/' . $package->image) }}); height: 280px; position: relative;">
+                           style="background-image: url({{ asset('storage/' . $package->photo->path) }}); height: 280px; position: relative;">
                             
                             @if($package->is_top_rated)
                                 <span class="badge badge-warning p-2 px-3" style="position: absolute; top: 20px; left: 20px; border-radius: 20px;">Top Rated</span>
@@ -175,12 +175,12 @@
                             </div>
 
                             <h3 class="h5 font-weight-bold mb-3">
-                                <a href="#" class="text-dark">{{ $package->title ?? 'N/A' }}</a>
+                                <a href="#" class="text-dark">{{ $package->name ?? 'N/A' }}</a>
                             </h3>
 
                             {{-- Assuming a relationship exists between Package and Destination --}}
                             <p class="text-muted small mb-3">
-                                <i class="icon-map-o mr-2"></i> {{ $package->destination->name ?? 'N/A' }}
+                                <i class="icon-map-o mr-2"></i> {{ $package->destinations->name ?? 'N/A' }}
                             </p>
 
                             <a href="#" class="btn btn-warning btn-block py-2" style="border-radius: 10px; font-weight: 700;">
