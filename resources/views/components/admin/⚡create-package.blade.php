@@ -94,7 +94,6 @@ new class extends Component {
 }; ?>
 
 <div x-data>
-    @section('title', 'Create Safari Package')
 
     @push('styles')
         <link rel="stylesheet" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
