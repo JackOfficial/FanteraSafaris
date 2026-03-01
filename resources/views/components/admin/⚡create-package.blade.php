@@ -299,127 +299,99 @@ new class extends Component {
                         </div>
 
 {{-- Itinerary Journey --}}
-                        <div class="itinerary-section mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="font-weight-bold mb-0">Itinerary Journey</h5>
-                                <div class="d-flex align-items-center">
-                                    <div class="badge badge-light border px-3 py-2 mr-3 text-muted">
-                                        Total: <span class="text-pink font-weight-bold" x-text="$wire.itinerary.length"></span> Days
-                                    </div>
-                                    @if(count($itinerary) > 0)
-                                        <button type="button" 
-                                                onclick="confirm('Are you sure you want to delete the ENTIRE itinerary?') || event.stopImmediatePropagation()"
-                                                wire:click="clearAllDays" 
-                                                class="btn btn-sm btn-outline-danger rounded-pill px-3 mr-2">
-                                            <i class="fas fa-eraser mr-1"></i> Clear
-                                        </button>
-                                    @endif
-                                    <button type="button" wire:click="addDay" class="btn btn-sm btn-pink rounded-pill px-3 shadow-sm">
-                                        <i class="fas fa-plus mr-1"></i> Add Day
-                                    </button>
-                                </div>
-                            </div>
+                 {{-- Itinerary Journey --}}
+<div class="itinerary-section mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="font-weight-bold mb-0">Itinerary Journey</h5>
+        <div>
+            @if(count($itinerary) > 0)
+                <button type="button" 
+                        onclick="confirm('Clear all days?') || event.stopImmediatePropagation()"
+                        wire:click="clearAllDays" 
+                        class="btn btn-sm btn-outline-danger rounded-pill px-3 mr-2">
+                    <i class="fas fa-eraser mr-1"></i> Clear
+                </button>
+            @endif
+            <button type="button" wire:click="addDay" class="btn btn-sm btn-pink rounded-pill px-3">
+                <i class="fas fa-plus mr-1"></i> Add Day
+            </button>
+        </div>
+    </div>
 
-                            <div class="itinerary-scroll-container">
-                                @forelse($itinerary as $index => $day)
-                                    <div class="card mb-2 border-0 shadow-sm overflow-hidden" 
-                                         wire:key="itinerary-day-{{ $index }}-{{ count($itinerary) }}">
-                                        
-                                        {{-- Header: Collapsible Trigger --}}
-                                        <div class="itinerary-header p-3 d-flex align-items-center" 
-                                             @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})" 
-                                             :class="activeDay === {{ $index }} ? 'bg-white' : 'bg-white'"
-                                             style="cursor:pointer;">
-                                            
-                                            <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" 
-                                                 style="width: 26px; height: 26px; font-size: 11px; font-weight:bold; min-width: 26px;">
-                                                {{ $day['day_number'] }}
-                                            </div>
-                                            
-                                            <div class="flex-grow-1 font-weight-bold small text-truncate">
-                                                <span class="text-muted mr-1">Day {{ $day['day_number'] }}:</span>
-                                                <span :class="activeDay === {{ $index }} ? 'text-pink' : ''">
-                                                    {{ $day['title'] ?: 'Enter day title...' }}
-                                                </span>
-                                            </div>
-                                            
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-chevron-down text-muted transition-icon" 
-                                                   :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"></i>
-                                            </div>
-                                        </div>
-                                        
-                                        {{-- Body: Form Fields --}}
-                                        <div class="card-body bg-light border-top" 
-                                             x-show="activeDay === {{ $index }}" 
-                                             x-cloak 
-                                             x-collapse> {{-- Note: Requires Alpine Collapse plugin, otherwise use x-show.transition --}}
-                                            
-                                            <div class="row">
-                                                <div class="col-12 mb-3">
-                                                    <label class="small text-muted mb-1 font-weight-bold">DAY HEADING</label>
-                                                    <input type="text" 
-                                                           wire:model.live.debounce.500ms="itinerary.{{ $index }}.title" 
-                                                           class="form-control form-control-sm border-0 shadow-sm" 
-                                                           placeholder="e.g. Serengeti Morning Game Drive">
-                                                </div>
-                                                
-                                                <div class="col-12 mb-3">
-                                                    <label class="small text-muted mb-1 font-weight-bold">DAILY ACTIVITIES & EXPERIENCE</label>
-                                                    <textarea wire:model.blur="itinerary.{{ $index }}.activities" 
-                                                              class="form-control border-0 shadow-sm" 
-                                                              rows="3" 
-                                                              placeholder="Describe what happens on this day..."></textarea>
-                                                </div>
+    <div class="itinerary-scroll-container">
+        @forelse($itinerary as $index => $day)
+            {{-- CRITICAL: The key must be unique and change when the array changes --}}
+            <div class="card mb-2 border-0 shadow-sm" wire:key="itinerary-item-{{ $index }}-{{ count($itinerary) }}">
+                
+                {{-- Header --}}
+                <div class="itinerary-header p-3 d-flex align-items-center bg-white" 
+                     @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})" 
+                     style="cursor:pointer;">
+                    
+                    <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" 
+                         style="min-width: 28px; height: 28px; font-size: 11px; font-weight:bold;">
+                        {{ $day['day_number'] }}
+                    </div>
+                    
+                    <div class="flex-grow-1 font-weight-bold small text-truncate">
+                        {{-- We use $itinerary[$index]['title'] to ensure it shows the latest Livewire state --}}
+                        {{ $itinerary[$index]['title'] ?: 'Day ' . ($index + 1) . ': Untitled Day' }}
+                    </div>
+                    
+                    <i class="fas fa-chevron-down text-muted transition-icon" 
+                       :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"></i>
+                </div>
+                
+                {{-- Body --}}
+                <div class="card-body bg-light border-top" 
+                     x-show="activeDay === {{ $index }}" 
+                     x-cloak>
+                    
+                    <div class="form-group mb-2">
+                        <label class="small text-muted mb-1 font-weight-bold">HEADING</label>
+                        {{-- Use .live to see the title update in the header immediately --}}
+                        <input type="text" wire:model.live="itinerary.{{ $index }}.title" class="form-control" placeholder="e.g. Arrival and Transfer">
+                    </div>
+                    
+                    <div class="form-group mb-2">
+                        <label class="small text-muted mb-1 font-weight-bold">DAILY ACTIVITIES</label>
+                        <textarea wire:model.blur="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
+                    </div>
 
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="small text-muted mb-1 font-weight-bold">
-                                                        <i class="fas fa-hotel mr-1 text-pink"></i> ACCOMMODATION
-                                                    </label>
-                                                    <input type="text" 
-                                                           wire:model.blur="itinerary.{{ $index }}.accommodation" 
-                                                           class="form-control form-control-sm border-0 shadow-sm" 
-                                                           placeholder="Hotel or Camp name">
-                                                </div>
-
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="small text-muted mb-1 font-weight-bold">
-                                                        <i class="fas fa-utensils mr-1 text-pink"></i> MEALS PROVIDED
-                                                    </label>
-                                                    <input type="text" 
-                                                           wire:model.blur="itinerary.{{ $index }}.meals" 
-                                                           class="form-control form-control-sm border-0 shadow-sm" 
-                                                           placeholder="e.g. Breakfast, Lunch">
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="d-flex justify-content-between align-items-center mt-2 pt-3 border-top">
-                                                <div class="btn-group">
-                                                    <button type="button" 
-                                                            wire:click="duplicateDay({{ $index }})" 
-                                                            class="btn btn-link btn-sm text-pink p-0 mr-3 text-decoration-none font-weight-bold">
-                                                        <i class="far fa-copy mr-1"></i> Copy Day
-                                                    </button>
-                                                    <button type="button" 
-                                                            onclick="confirm('Delete Day {{ $day['day_number'] }}?') || event.stopImmediatePropagation()"
-                                                            wire:click="removeDay({{ $index }})" 
-                                                            class="btn btn-link btn-sm text-danger p-0 text-decoration-none font-weight-bold">
-                                                        <i class="far fa-trash-alt mr-1"></i> Remove
-                                                    </button>
-                                                </div>
-                                                <div class="text-muted small italic">Index: {{ $index }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="text-center py-5 bg-white rounded border-dashed shadow-sm">
-                                        <i class="fas fa-map-marked-alt fa-3x text-muted mb-3 opacity-25"></i>
-                                        <h6 class="text-muted font-weight-bold">Your journey is empty</h6>
-                                        <p class="small text-muted">Click the "Add Day" button to begin building your itinerary.</p>
-                                    </div>
-                                @endforelse
-                            </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="small text-muted mb-1 font-weight-bold">ACCOMMODATION</label>
+                            <input type="text" wire:model.blur="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm">
                         </div>
+                        <div class="col-6">
+                            <label class="small text-muted mb-1 font-weight-bold">MEALS</label>
+                            <input type="text" wire:model.blur="itinerary.{{ $index }}.meals" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                        <div class="btn-group">
+                            <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-link btn-sm text-pink p-0 mr-3 text-decoration-none">
+                                <i class="far fa-copy mr-1"></i> Duplicate
+                            </button>
+                            <button type="button" 
+                                    onclick="confirm('Delete this day?') || event.stopImmediatePropagation()"
+                                    wire:click="removeDay({{ $index }})" 
+                                    class="btn btn-link btn-sm text-danger p-0 text-decoration-none">
+                                <i class="far fa-trash-alt mr-1"></i> Delete
+                            </button>
+                        </div>
+                        <span class="badge badge-secondary opacity-50">Day {{ $day['day_number'] }}</span>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="text-center py-5 bg-light rounded border-dashed" style="border: 2px dashed #cbd5e0 !important;">
+                <p class="text-muted mb-0">No itinerary days added yet.</p>
+            </div>
+        @endforelse
+    </div>
+</div>
 
                         {{-- Overview --}}
                         <div class="card shadow-sm mb-4">
