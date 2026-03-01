@@ -96,6 +96,9 @@ Route::middleware(['auth', 'role:super-admin|admin|safari-manager'])
         Route::resource('categories', CategoryController::class);
         Route::resource('safari-categories', SafariCategoryController::class);
         Route::resource('destinations', DestinationController::class);
+
+        Route::delete('destinations/bulk-delete', [DestinationController::class, 'bulkDelete'])
+         ->name('destinations.bulk-delete');
         
         // Inquiry/Message Routes
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.inbox');

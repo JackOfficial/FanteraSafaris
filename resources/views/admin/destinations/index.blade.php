@@ -3,10 +3,17 @@
 
 @section('content')
 <div x-data="{ 
+    search: '',
     selectedIds: [], 
     allIds: {{ $destinations->pluck('id')->toJson() }},
     toggleAll() {
         this.selectedIds = this.selectedIds.length === this.allIds.length ? [] : [...this.allIds];
+    },
+    // Logic to check if a row should be visible
+    isVisible(name, country) {
+        if (!this.search) return true;
+        const term = this.search.toLowerCase();
+        return name.toLowerCase().includes(term) || country.toLowerCase().includes(term);
     }
 }">
     <section class="content-header">
@@ -32,7 +39,7 @@
     <section class="content">
         <div class="container-fluid">
             
-            @include('admin.partials.alerts') {{-- Assuming you use the custom alerts --}}
+            @include('admin.partials.alerts')
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex align-items-center">
@@ -53,7 +60,13 @@
                 </div>
 
                 <div class="search-box">
-                    <input type="text" class="form-control form-control-sm border-0 shadow-sm" placeholder="Search destination..." style="border-radius: 20px; width: 250px;">
+                    <div class="input-group input-group-sm shadow-sm" style="border-radius: 20px; overflow: hidden;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white border-0"><i class="fas fa-search text-muted"></i></span>
+                        </div>
+                        {{-- x-model links the input to our search variable --}}
+                        <input type="text" x-model="search" class="form-control border-0" placeholder="Type to filter..." style="width: 250px; outline: none !important; box-shadow: none;">
+                    </div>
                 </div>
             </div>
 
@@ -78,7 +91,11 @@
                             </thead>
                             <tbody>
                                 @forelse($destinations as $dest)
-                                <tr :class="selectedIds.includes({{ $dest->id }}) ? 'bg-light-warning' : ''" style="transition: all 0.2s;">
+                                {{-- x-show handles the live filtering --}}
+                                <tr x-show="isVisible('{{ $dest->name }}', '{{ $dest->country }}')" 
+                                    x-transition:enter.duration.300ms
+                                    :class="selectedIds.includes({{ $dest->id }}) ? 'bg-light-warning' : ''" 
+                                    style="transition: all 0.2s;">
                                     <td class="text-center pl-4">
                                         <div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" id="check-{{ $dest->id }}" 
@@ -128,19 +145,31 @@
                                 @empty
                                 <tr>
                                     <td colspan="5" class="text-center py-5 text-muted">
-                                        <i class="fas fa-map-marked fa-3x mb-3 d-block opacity-50"></i>
-                                        No destinations found. <a href="{{ route('admin.destinations.create') }}">Create your first one!</a>
+                                        No destinations found.
                                     </td>
                                 </tr>
                                 @endforelse
+
+                                {{-- "No Search Results" Row --}}
+                                <tr x-show="search && !Array.from($el.closest('tbody').querySelectorAll('tr')).some(tr => tr.style.display !== 'none' && !tr.classList.contains('no-results'))" 
+                                    class="no-results" style="display: none;">
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="fas fa-search fa-2x mb-3 d-block opacity-50"></i>
+                                        No results match "<span x-text="search" class="font-weight-bold"></span>"
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="card-footer bg-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center" x-show="!search">
                         <p class="small text-muted mb-0">Showing {{ $destinations->firstItem() }} to {{ $destinations->lastItem() }} of {{ $destinations->total() }} destinations</p>
                         <div>{{ $destinations->links() }}</div>
+                    </div>
+                    {{-- Hide pagination message when searching to avoid confusion --}}
+                    <div class="text-center py-2" x-show="search">
+                        <span class="text-muted small italic">Filtering results on current page...</span>
                     </div>
                 </div>
             </div>
@@ -149,7 +178,6 @@
 </div>
 
 <style>
-    /* Professional Soft Badge Styling */
     .badge-success-soft { background-color: #e8f5e9; color: #2e7d32; }
     .bg-light-warning { background-color: #fffdf5 !important; }
     .btn-white { background: #fff; }

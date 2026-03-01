@@ -75,4 +75,27 @@ class DestinationController extends Controller
         $destination->delete();
         return back()->with('success', 'Destination removed.');
     }
+
+    public function bulkDelete(Request $request)
+{
+    // Validate that we actually got IDs
+    $request->validate([
+        'ids' => 'required|string',
+    ]);
+
+    // Convert "1,2,3" string from Alpine into [1, 2, 3] array
+    $ids = explode(',', $request->ids);
+
+    // Fetch them all to handle image deletion from storage
+    $destinations = Destination::whereIn('id', $ids)->get();
+
+    foreach ($destinations as $destination) {
+        if ($destination->image) {
+            Storage::disk('public')->delete($destination->image);
+        }
+        $destination->delete();
+    }
+
+    return back()->with('success', count($ids) . ' destinations deleted successfully.');
+}
 }
