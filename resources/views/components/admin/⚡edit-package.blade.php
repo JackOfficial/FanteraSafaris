@@ -1,8 +1,10 @@
 <?php
 
-use Livewire\Component;
+use Livewire\Component; // Or use Livewire\Component; both work in this format
 use Livewire\WithFileUploads;
 use App\Models\SafariPackage;
+use App\Models\Destination;
+use App\Models\SafariCategory;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -12,24 +14,32 @@ new class extends Component {
 
     public SafariPackage $package;
     
-    public $name, $price, $duration_days, $destination_id, $status, $safari_category_id, $description;
+    public $name, $price, $duration_days, $status, $description;
+    public $selected_destinations = []; 
+    public $selected_categories = [];
+    public $solo_discount = 0, $couple_discount = 0, $group_4_discount = 0;
     public $featured_image; 
     public $gallery_images = []; 
     public $itinerary = [];
 
     public function mount(SafariPackage $package)
     {
-        $this->package = $package->load(['itineraries', 'photos']);
+        $this->package = $package->load(['itineraries', 'photos', 'destinations', 'categories']);
         
         $this->name = $package->name;
         $this->price = $package->price;
         $this->duration_days = $package->duration_days;
-        $this->destination_id = $package->destination_id;
         $this->status = $package->status;
-        $this->safari_category_id = $package->safari_category_id;
         $this->description = $package->description;
+        $this->solo_discount = $package->solo_discount;
+        $this->couple_discount = $package->couple_discount;
+        $this->group_4_discount = $package->group_4_discount;
+
+        // Cast IDs to strings for multi-select compatibility
+        $this->selected_destinations = $this->package->destinations->pluck('id')->map(fn($id) => (string)$id)->toArray();
+        $this->selected_categories = $this->package->categories->pluck('id')->map(fn($id) => (string)$id)->toArray();
         
-        $this->itinerary = $package->itineraries->sortBy('day_number')->map(fn($day) => [
+        $this->itinerary = $this->package->itineraries->sortBy('day_number')->map(fn($day) => [
             'day_number' => $day->day_number,
             'title' => $day->title,
             'activities' => $day->activities,
@@ -85,14 +95,13 @@ new class extends Component {
         $this->validate([
             'name' => 'required|string|max:255|unique:safari_packages,name,' . $this->package->id,
             'price' => 'required|numeric',
-            'duration_days' => 'required|integer',
-            'destination_id' => 'required|exists:destinations,id',
+            'selected_destinations' => 'required|array|min:1',
+            'selected_categories' => 'required|array|min:1',
             'description' => 'required',
             'gallery_images.*' => 'image|max:2048',
         ]);
 
         DB::transaction(function () {
-            // Auto-sync duration_days based on itinerary count
             $this->duration_days = count($this->itinerary);
 
             $this->package->update([
@@ -100,19 +109,20 @@ new class extends Component {
                 'slug' => Str::slug($this->name),
                 'price' => $this->price, 
                 'duration_days' => $this->duration_days,
-                'destination_id' => $this->destination_id, 
                 'status' => $this->status,
-                'safari_category_id' => $this->safari_category_id, 
                 'description' => $this->description,
+                'solo_discount' => $this->solo_discount,
+                'couple_discount' => $this->couple_discount,
+                'group_4_discount' => $this->group_4_discount,
             ]);
 
-            // Photo Logic
+            // Sync Many-to-Many Relationships
+            $this->package->destinations()->sync($this->selected_destinations);
+            $this->package->categories()->sync($this->selected_categories);
+
             if ($this->featured_image) {
                 $old = $this->package->photos()->where('type', 'featured')->first();
-                if ($old) { 
-                    Storage::disk('public')->delete($old->path); 
-                    $old->delete(); 
-                }
+                if ($old) { Storage::disk('public')->delete($old->path); $old->delete(); }
                 $path = $this->featured_image->store('safaris/featured', 'public');
                 $this->package->photos()->create(['path' => $path, 'type' => 'featured']);
             }
@@ -122,17 +132,9 @@ new class extends Component {
                 $this->package->photos()->create(['path' => $path, 'type' => 'gallery']);
             }
 
-            // Itinerary Logic - Recreate with key safety
             $this->package->itineraries()->delete();
-            
-            foreach ($this->itinerary as $index => $day) { 
-                $this->package->itineraries()->create([
-                    'day_number'    => $day['day_number'] ?? ($index + 1),
-                    'title'         => $day['title'] ?? '',
-                    'activities'    => $day['activities'] ?? '',
-                    'meals'         => $day['meals'] ?? '',
-                    'accommodation' => $day['accommodation'] ?? '',
-                ]); 
+            foreach ($this->itinerary as $day) { 
+                $this->package->itineraries()->create($day); 
             }
         });
 
@@ -151,7 +153,7 @@ new class extends Component {
             .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
             .gallery-item { position: relative; height: 100px; }
             .gallery-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
-            .delete-overlay { position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid white; }
+            .delete-overlay { position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid white; }
             .trix-content { min-height: 250px !important; background: white; }
             .border-pink { border-left: 4px solid #e83e8c !important; }
             .text-pink { color: #e83e8c !important; }
@@ -160,28 +162,11 @@ new class extends Component {
             .itinerary-header { cursor: pointer; background: #f8f9fa; transition: 0.2s; border-bottom: 1px solid #eee; }
             .itinerary-header:hover { background: #fff0f5; }
             [x-cloak] { display: none !important; }
-
-            /* Custom Slim Pink Scrollbar */
-            .itinerary-scroll-container::-webkit-scrollbar { width: 6px; }
-            .itinerary-scroll-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-            .itinerary-scroll-container::-webkit-scrollbar-thumb { background: #e83e8c; border-radius: 10px; }
-            .itinerary-scroll-container::-webkit-scrollbar-thumb:hover { background: #d81b60; }
         </style>
     @endpush
 
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-3">
-                <div class="col-sm-6"><h1 class="font-weight-bold">Edit Safari Package</h1></div>
-                <div class="col-sm-6 text-right">
-                    <a href="{{ route('admin.packages.index') }}" class="btn btn-default btn-sm mr-2 shadow-sm">Cancel</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section class="content">
-        <div class="container-fluid">
+        <div class="container-fluid py-4">
             <form wire:submit="save">
                 <div class="row">
                     {{-- Left Column --}}
@@ -191,7 +176,7 @@ new class extends Component {
                             <div class="card-body">
                                 <div class="form-group mb-3">
                                     <label class="font-weight-bold small text-muted">PACKAGE NAME</label>
-                                    <input type="text" wire:model="name" class="form-control @error('name') is-invalid @enderror">
+                                    <input type="text" wire:model="name" class="form-control">
                                 </div>
                                 <div class="row">
                                     <div class="col-6 mb-3">
@@ -199,33 +184,45 @@ new class extends Component {
                                         <input type="number" wire:model="price" class="form-control">
                                     </div>
                                     <div class="col-6 mb-3">
-                                        <label class="font-weight-bold small text-muted">DAYS</label>
-                                        <input type="number" wire:model="duration_days" class="form-control">
+                                        <label class="font-weight-bold small text-muted">STATUS</label>
+                                        <select wire:model="status" class="form-control">
+                                            <option value="draft">Draft</option>
+                                            <option value="published">Published</option>
+                                        </select>
                                     </div>
                                 </div>
+
                                 <div class="form-group mb-3">
-                                    <label class="font-weight-bold small text-muted">DESTINATION</label>
-                                    <select wire:model="destination_id" class="form-control">
+                                    <label class="font-weight-bold small text-muted">DESTINATIONS (MULTIPLE)</label>
+                                    <select wire:model="selected_destinations" class="form-control @error('selected_destinations') is-invalid @enderror" multiple style="height: 120px">
                                         @foreach(\App\Models\Destination::orderBy('name')->get() as $dest)
                                             <option value="{{ $dest->id }}">{{ $dest->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="font-weight-bold small text-muted">CATEGORIES (MULTIPLE)</label>
+                                    <select wire:model="selected_categories" class="form-control @error('selected_categories') is-invalid @enderror" multiple style="height: 100px">
+                                        @foreach(\App\Models\SafariCategory::all() as $cat)
+                                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <h6 class="font-weight-bold text-muted small border-top pt-3 mb-3">DISCOUNT RATES (%)</h6>
                                 <div class="row">
-                                    <div class="col-6">
-                                        <label class="small font-weight-bold text-muted">CATEGORY</label>
-                                        <select wire:model="safari_category_id" class="form-control">
-                                            @foreach(\App\Models\SafariCategory::all() as $cat)
-                                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="col-4">
+                                        <label class="small text-muted font-weight-bold">SOLO</label>
+                                        <input type="number" wire:model="solo_discount" class="form-control form-control-sm">
                                     </div>
-                                    <div class="col-6">
-                                        <label class="small font-weight-bold text-muted">STATUS</label>
-                                        <select wire:model="status" class="form-control">
-                                            <option value="draft">Draft</option>
-                                            <option value="published">Published</option>
-                                        </select>
+                                    <div class="col-4">
+                                        <label class="small text-muted font-weight-bold">COUPLE</label>
+                                        <input type="number" wire:model="couple_discount" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="small text-muted font-weight-bold">GROUP (4+)</label>
+                                        <input type="number" wire:model="group_4_discount" class="form-control form-control-sm">
                                     </div>
                                 </div>
                             </div>
@@ -267,67 +264,36 @@ new class extends Component {
                                 <span class="badge badge-pink px-3 shadow-sm">{{ count($itinerary) }} Days</span>
                             </div>
 
-                            <div class="itinerary-scroll-container mb-3" 
-                                 style="max-height: 480px; overflow-y: auto; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
-                                
+                            <div class="itinerary-scroll-container mb-3" style="max-height: 480px; overflow-y: auto; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
                                 @foreach($itinerary as $index => $day)
-                                    <div class="card mb-2 border-pink shadow-sm" wire:key="edit-itinerary-{{ $index }}">
-                                        
+                                    <div class="card mb-2 border-pink shadow-sm" wire:key="itinerary-{{ $index }}">
                                         <div class="card-header itinerary-header p-3 d-flex align-items-center justify-content-between" 
-                                             style="width: 100%;"
                                              @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
-                                            
-                                            <div class="d-flex align-items-center" style="flex: 1;">
-                                                <span class="badge badge-pink mr-3" style="min-width: 60px;">DAY {{ $day['day_number'] }}</span>
-                                                <span class="small font-weight-bold text-dark text-uppercase" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">
-                                                    {{ $itinerary[$index]['title'] ?: 'Enter day title...' }}
-                                                </span>
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge badge-pink mr-3">DAY {{ $day['day_number'] }}</span>
+                                                <span class="small font-weight-bold text-dark">{{ $day['title'] ?: 'Untitled Day' }}</span>
                                             </div>
-
-                                            <div class="pl-2">
-                                                <i class="fas fa-chevron-down text-muted" 
-                                                   :class="activeDay === {{ $index }} ? 'fa-rotate-180 text-pink' : ''" 
-                                                   style="transition: 0.3s; pointer-events: none;"></i>
-                                            </div>
+                                            <i class="fas fa-chevron-down text-muted" :class="activeDay === {{ $index }} ? 'fa-rotate-180' : ''"></i>
                                         </div>
 
                                         <div class="card-body p-3 bg-white" x-show="activeDay === {{ $index }}" x-cloak>
-                                            <div class="form-group mb-3">
-                                                <label class="small font-weight-bold text-muted">DAY TITLE</label>
-                                                <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control font-weight-bold border-0 bg-light" placeholder="e.g. Arrival at Entebbe">
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label class="small font-weight-bold text-muted">ACTIVITIES</label>
-                                                <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
-                                            </div>
+                                            <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control mb-2" placeholder="Title">
+                                            <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control mb-2" rows="3" placeholder="Activities"></textarea>
                                             <div class="row">
-                                                <div class="col-6">
-                                                    <label class="small font-weight-bold text-muted">MEALS</label>
-                                                    <input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm shadow-none">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="small font-weight-bold text-muted">ACCOMMODATION</label>
-                                                    <input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm shadow-none">
-                                                </div>
+                                                <div class="col-6"><input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm" placeholder="Meals"></div>
+                                                <div class="col-6"><input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm" placeholder="Hotel"></div>
                                             </div>
-                                            <div class="d-flex justify-content-end mt-3 pt-2 border-top">
-                                                <button type="button" wire:click="duplicateDay({{ $index }})" 
-                                                        @click="activeDay = {{ $index + 1 }}"
-                                                        class="btn btn-xs btn-outline-info mr-2 shadow-sm">
-                                                    <i class="fas fa-copy mr-1"></i> Duplicate
-                                                </button>
-                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-xs btn-outline-danger shadow-sm">
-                                                    <i class="fas fa-trash-alt mr-1"></i> Remove
-                                                </button>
+                                            <div class="d-flex justify-content-end mt-2">
+                                                <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-xs btn-outline-info mr-2">Duplicate</button>
+                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-xs btn-outline-danger">Remove</button>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
                             
-                            <button type="button" wire:click="addDay" @click="activeDay = {{ count($itinerary) }}" 
-                                    class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold py-2">
-                                <i class="fas fa-plus-circle mr-2"></i> ADD NEXT DAY
+                            <button type="button" wire:click="addDay" class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold">
+                                <i class="fas fa-plus-circle mr-2"></i> ADD DAY
                             </button>
                         </div>
 
@@ -343,8 +309,8 @@ new class extends Component {
                         </div>
 
                         <button type="submit" class="btn btn-pink btn-lg btn-block shadow-lg py-3 font-weight-bold mb-5">
-                            <span wire:loading.remove wire:target="save">UPDATE PACKAGE</span>
-                            <span wire:loading wire:target="save"><i class="fas fa-spinner fa-spin mr-2"></i> SAVING...</span>
+                            <span wire:loading.remove>UPDATE PACKAGE</span>
+                            <span wire:loading><i class="fas fa-spinner fa-spin mr-2"></i> SAVING...</span>
                         </button>
                     </div>
                 </div>
