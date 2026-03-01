@@ -157,35 +157,50 @@ new class extends Component {
     }
 }">
 
-@push('styles')
-<style>
-/* ================= GLOBAL POLISH ================= */
-.card { border-radius: 16px !important; }
-.form-control:focus { box-shadow: 0 0 0 0.15rem rgba(232,62,140,.15); }
-.transition-soft { transition: all .25s ease; }
+@section('title', 'Edit Safari: ' . $package->name)
 
-/* ================= BADGES ================= */
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+
+<style>
+
+/* GLOBAL POLISH */
+.card { border-radius:16px !important; }
+.form-control:focus { box-shadow:0 0 0 .15rem rgba(232,62,140,.15); }
+.transition-soft { transition:all .25s ease; }
+
+/* BADGES */
 .badge-choice {
-    cursor: pointer;
-    transition: all .2s ease;
-    border: 1px solid #dee2e6;
-    user-select: none;
-    font-weight: 500;
+    cursor:pointer;
+    transition:all .2s ease;
+    border:1px solid #dee2e6;
+    user-select:none;
+    font-weight:500;
 }
 .badge-choice:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,.08);
+    transform:translateY(-2px);
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 .badge-choice.active-dest { background:#e83e8c; color:white; border-color:#e83e8c; }
 .badge-choice.active-cat { background:#343a40; color:white; border-color:#343a40; }
 
-/* ================= PRICE CARD ================= */
+/* PRICE PREVIEW */
 .price-preview {
-    background: linear-gradient(135deg,#fff5f8,#ffffff);
+    background:linear-gradient(135deg,#fff5f8,#ffffff);
     border:1px solid #f3d1e3;
 }
 
-/* ================= GALLERY ================= */
+/* FEATURED IMAGE */
+.featured-preview {
+    width:100%;
+    height:240px;
+    object-fit:cover;
+    border-radius:14px;
+    transition:.3s ease;
+}
+.featured-preview:hover { filter:brightness(.85); }
+
+/* GALLERY */
 .gallery-grid {
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
@@ -216,7 +231,7 @@ new class extends Component {
     border:2px solid white;
 }
 
-/* ================= ITINERARY ================= */
+/* ITINERARY */
 .itinerary-timeline {
     position:relative;
     padding-left:25px;
@@ -249,19 +264,7 @@ new class extends Component {
 }
 .itinerary-header:hover { background:#fff5f8 !important; }
 
-/* ================= FEATURED ================= */
-.featured-preview {
-    width:100%;
-    height:240px;
-    object-fit:cover;
-    border-radius:14px;
-    transition:.3s ease;
-}
-.featured-preview:hover {
-    filter:brightness(.85);
-}
-
-/* ================= STICKY BAR ================= */
+/* STICKY BAR */
 .sticky-action-bar {
     position:sticky;
     bottom:20px;
@@ -280,7 +283,11 @@ new class extends Component {
     transform:translateY(-2px);
     box-shadow:0 6px 18px rgba(232,62,140,.35);
 }
+
+.trix-content { min-height:220px; }
+
 [x-cloak]{ display:none !important; }
+
 </style>
 @endpush
 
@@ -291,13 +298,14 @@ new class extends Component {
 
 <div class="row">
 
-<!-- ================= LEFT COLUMN ================= -->
+<!-- LEFT COLUMN -->
 <div class="col-lg-4 col-md-5">
 
 <div class="card shadow-sm border-0 mb-4">
+<div class="card-header bg-white py-3">
+<h5 class="mb-0 font-weight-bold">Package Essentials</h5>
+</div>
 <div class="card-body">
-
-<h5 class="font-weight-bold mb-4">Package Essentials</h5>
 
 <label class="small font-weight-bold text-muted">PACKAGE NAME</label>
 <input type="text" wire:model="name"
@@ -365,13 +373,7 @@ class="badge badge-choice px-3 py-2 m-1 rounded-pill"
 </div>
 </div>
 
-</div>
-
-
-<!-- ================= RIGHT COLUMN ================= -->
-<div class="col-lg-8 col-md-7">
-
-{{-- KEEP YOUR EXISTING FEATURED IMAGE + ITINERARY + TRIX + SAVE BAR EXACTLY AS BEFORE --}}
+@include('YOUR_EXISTING_GALLERY_AND_FEATURED_AND_ITINERARY_AND_TRIX_SECTIONS')
 
 </div>
 
@@ -379,5 +381,9 @@ class="badge badge-choice px-3 py-2 m-1 rounded-pill"
 </form>
 </div>
 </section>
+
+@push('scripts')
+<script src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
+@endpush
 
 </div>
