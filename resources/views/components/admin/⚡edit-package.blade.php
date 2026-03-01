@@ -59,16 +59,6 @@ new class extends Component {
         ];
     }
 
-    public function duplicateDay($index)
-    {
-        $newDay = $this->itinerary[$index];
-        array_splice($this->itinerary, $index + 1, 0, [$newDay]);
-        
-        foreach ($this->itinerary as $k => $v) { 
-            $this->itinerary[$k]['day_number'] = $k + 1; 
-        }
-    }
-
     public function removeDay($index)
     {
         unset($this->itinerary[$index]);
@@ -135,7 +125,7 @@ new class extends Component {
             .gallery-item { position: relative; height: 100px; }
             .gallery-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
             .delete-overlay { position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid white; }
-            .trix-editor-container { min-height: 250px; background: white; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; }
+            .trix-content { min-height: 250px !important; background: white; }
             .border-pink { border-left: 4px solid #e83e8c !important; }
             .text-pink { color: #e83e8c !important; }
             .btn-pink { background-color: #e83e8c; color: white; border: none; }
@@ -144,52 +134,59 @@ new class extends Component {
             .itinerary-header:hover { background: #fff0f5; }
             [x-cloak] { display: none !important; }
 
+            /* Custom Slim Pink Scrollbar */
             .itinerary-scroll-container::-webkit-scrollbar { width: 6px; }
+            .itinerary-scroll-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
             .itinerary-scroll-container::-webkit-scrollbar-thumb { background: #e83e8c; border-radius: 10px; }
+            .itinerary-scroll-container::-webkit-scrollbar-thumb:hover { background: #d81b60; }
         </style>
     @endpush
 
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-3">
+                <div class="col-sm-6"><h1 class="font-weight-bold">Edit Safari Package</h1></div>
+                <div class="col-sm-6 text-right">
+                    <a href="{{ route('admin.packages.index') }}" class="btn btn-default btn-sm mr-2 shadow-sm">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="content">
-        <div class="container-fluid pt-4">
+        <div class="container-fluid">
             <form wire:submit="save">
                 <div class="row">
-                    {{-- Left Column: Settings & Description --}}
+                    {{-- Left Column --}}
                     <div class="col-md-5">
                         <div class="card card-outline card-pink shadow-sm mb-4">
-                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold text-pink">Package Info</h5></div>
+                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold text-pink">Package Basics</h5></div>
                             <div class="card-body">
                                 <div class="form-group mb-3">
-                                    <label class="font-weight-bold small text-muted text-uppercase">Package Name</label>
-                                    <input type="text" wire:model="name" class="form-control">
+                                    <label class="font-weight-bold small text-muted">PACKAGE NAME</label>
+                                    <input type="text" wire:model="name" class="form-control @error('name') is-invalid @enderror">
                                 </div>
-                                
-                                <div class="row mb-3">
-                                    <div class="col-6"><label class="small font-weight-bold">PRICE (USD)</label><input type="number" wire:model="price" class="form-control"></div>
-                                    <div class="col-6"><label class="small font-weight-bold">DAYS</label><input type="number" wire:model="duration_days" class="form-control"></div>
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label class="font-weight-bold small text-muted">PRICE (USD)</label>
+                                        <input type="number" wire:model="price" class="form-control">
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="font-weight-bold small text-muted">DAYS</label>
+                                        <input type="number" wire:model="duration_days" class="form-control">
+                                    </div>
                                 </div>
-
-                                {{-- DESCRIPTION SECTION --}}
-                                <div class="form-group mb-3" wire:ignore>
-                                    <label class="small font-weight-bold text-muted text-uppercase">Description</label>
-                                    <input id="description" type="hidden" name="description" value="{{ $description }}">
-                                    <trix-editor input="description" 
-                                        class="trix-editor-container"
-                                        x-on:trix-change="$wire.set('description', $event.target.value)">
-                                    </trix-editor>
-                                </div>
-
                                 <div class="form-group mb-3">
-                                    <label class="small font-weight-bold">DESTINATION</label>
+                                    <label class="font-weight-bold small text-muted">DESTINATION</label>
                                     <select wire:model="destination_id" class="form-control">
                                         @foreach(\App\Models\Destination::orderBy('name')->get() as $dest)
                                             <option value="{{ $dest->id }}">{{ $dest->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-
                                 <div class="row">
                                     <div class="col-6">
-                                        <label class="small font-weight-bold">CATEGORY</label>
+                                        <label class="small font-weight-bold text-muted">CATEGORY</label>
                                         <select wire:model="safari_category_id" class="form-control">
                                             @foreach(\App\Models\SafariCategory::all() as $cat)
                                                 <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -197,7 +194,7 @@ new class extends Component {
                                         </select>
                                     </div>
                                     <div class="col-6">
-                                        <label class="small font-weight-bold">STATUS</label>
+                                        <label class="small font-weight-bold text-muted">STATUS</label>
                                         <select wire:model="status" class="form-control">
                                             <option value="draft">Draft</option>
                                             <option value="published">Published</option>
@@ -208,7 +205,7 @@ new class extends Component {
                         </div>
 
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">Gallery</h5></div>
+                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">Gallery Images</h5></div>
                             <div class="card-body">
                                 <div class="gallery-grid mb-3">
                                     @foreach($package->photos->where('type', 'gallery') as $photo)
@@ -223,79 +220,98 @@ new class extends Component {
                         </div>
                     </div>
 
-                    {{-- Right Column: Itinerary --}}
+                    {{-- Right Column --}}
                     <div class="col-md-7">
-                        {{-- Cover Image --}}
-                        <div class="card shadow-sm mb-4 p-2">
-                            <div x-data="{ photoPreview: null }">
-                                <input type="file" wire:model="featured_image" class="d-none" x-ref="photo"
-                                    @change="const reader = new FileReader(); reader.onload = (e) => { photoPreview = e.target.result; }; reader.readAsDataURL($refs.photo.files[0]);">
-                                <img :src="photoPreview ? photoPreview : '{{ $package->photos->firstWhere('type', 'featured') ? asset('storage/' . $package->photos->firstWhere('type', 'featured')->path) : asset('front/images/placeholder.jpg') }}'" 
-                                     class="featured-preview border" @click="$refs.photo.click()">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-body text-center p-2">
+                                <div x-data="{ photoPreview: null }">
+                                    <input type="file" wire:model="featured_image" class="d-none" x-ref="photo"
+                                        @change="const reader = new FileReader(); reader.onload = (e) => { photoPreview = e.target.result; }; reader.readAsDataURL($refs.photo.files[0]);">
+                                    <img :src="photoPreview ? photoPreview : '{{ $package->photos->firstWhere('type', 'featured') ? asset('storage/' . $package->photos->firstWhere('type', 'featured')->path) : asset('front/images/placeholder.jpg') }}'" 
+                                         class="featured-preview border" @click="$refs.photo.click()">
+                                    <p class="small text-muted mt-2 mb-0">Click image to change cover photo</p>
+                                </div>
                             </div>
                         </div>
 
-                        {{-- Itinerary List --}}
-                        <div class="itinerary-builder">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="font-weight-bold mb-0">Itinerary Builder</h5>
-                                <span class="badge badge-pink px-3 shadow-sm">{{ count($itinerary) }} Days</span>
+                        {{-- SCROLLABLE ITINERARY WITH GUARANTEED END-ALIGNED ICONS --}}
+<div class="itinerary-builder">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="font-weight-bold mb-0">Itinerary Builder</h5>
+        <span class="badge badge-pink px-3 shadow-sm">{{ count($itinerary) }} Days</span>
+    </div>
+
+    <div class="itinerary-scroll-container mb-3" 
+         style="max-height: 480px; overflow-y: auto; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
+        
+        @foreach($itinerary as $index => $day)
+            <div class="card mb-2 border-pink shadow-sm" wire:key="edit-itinerary-{{ $index }}">
+                
+                {{-- HEADER: Use w-100 and d-flex to force the chevron to the far right --}}
+                <div class="card-header itinerary-header p-3 d-flex align-items-center justify-content-between" 
+                     style="width: 100%;"
+                     @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
+                    
+                    {{-- LEFT SIDE: Badge and Title --}}
+                    <div class="d-flex align-items-center" style="flex: 1;">
+                        <span class="badge badge-pink mr-3" style="min-width: 60px;">DAY {{ $day['day_number'] }}</span>
+                        <span class="small font-weight-bold text-dark text-uppercase" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">
+                            {{ $itinerary[$index]['title'] ?: 'Enter day title...' }}
+                        </span>
+                    </div>
+
+                    {{-- RIGHT SIDE: The Icon (Guaranteed to be at the end) --}}
+                    <div class="pl-2">
+                        <i class="fas fa-chevron-down text-muted" 
+                           :class="activeDay === {{ $index }} ? 'fa-rotate-180 text-pink' : ''" 
+                           style="transition: 0.3s; pointer-events: none;"></i>
+                    </div>
+                </div>
+
+                <div class="card-body p-3 bg-white" x-show="activeDay === {{ $index }}" x-cloak>
+                    <div class="form-group mb-3">
+                        <label class="small font-weight-bold text-muted">DAY TITLE</label>
+                        <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control font-weight-bold border-0 bg-light" placeholder="e.g. Arrival at Entebbe">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="small font-weight-bold text-muted">ACTIVITIES</label>
+                        <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="small font-weight-bold text-muted">MEALS</label>
+                            <input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm shadow-none">
+                        </div>
+                        <div class="col-6">
+                            <label class="small font-weight-bold text-muted">ACCOMMODATION</label>
+                            <input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm shadow-none">
+                        </div>
+                    </div>
+                    <div class="text-right mt-3 pt-2 border-top">
+                        <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-xs btn-outline-danger">
+                            <i class="fas fa-trash-alt mr-1"></i> Remove Day
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+    
+    <button type="button" wire:click="addDay" @click="activeDay = {{ count($itinerary) }}" 
+            class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold py-2">
+        <i class="fas fa-plus-circle mr-2"></i> ADD NEXT DAY
+    </button>
+</div>
+
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">General Overview</h5></div>
+                            <div class="card-body">
+                                <div wire:ignore x-data="{ value: @entangle('description'), isSet: false }" 
+                                     x-init="$refs.trix.editor.loadHTML(value); $watch('value', v => { if (!isSet) $refs.trix.editor.loadHTML(v); isSet = false; })" 
+                                     @trix-change="isSet = true; value = $event.target.value">
+                                    <trix-editor x-ref="trix" class="trix-content"></trix-editor>
+                                </div>
                             </div>
-
-                            <div class="itinerary-scroll-container mb-3" style="max-height: 500px; overflow-y: auto;">
-                                @foreach($itinerary as $index => $day)
-                                    <div class="card mb-2 border-pink shadow-sm" wire:key="day-{{ $index }}">
-                                        {{-- HEADER WITH END-ALIGNED BUTTON --}}
-                                        <div class="card-header itinerary-header p-3 d-flex align-items-center justify-content-between" 
-                                             @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
-                                            
-                                            <div class="d-flex align-items-center overflow-hidden">
-                                                <span class="badge badge-pink mr-3">DAY {{ $day['day_number'] }}</span>
-                                                <span class="small font-weight-bold text-dark text-uppercase text-truncate" style="max-width: 320px;">
-                                                    {{ $day['title'] ?: 'Enter day title...' }}
-                                                </span>
-                                            </div>
-
-                                            <div class="pl-2">
-                                                <i class="fas fa-chevron-down text-muted" 
-                                                   :class="activeDay === {{ $index }} ? 'fa-rotate-180 text-pink' : ''" 
-                                                   style="transition: 0.3s"></i>
-                                            </div>
-                                        </div>
-
-                                        <div class="card-body p-3 bg-white" x-show="activeDay === {{ $index }}" x-cloak>
-                                            <div class="form-group mb-3">
-                                                <label class="small font-weight-bold text-muted">DAY TITLE</label>
-                                                <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control font-weight-bold bg-light border-0">
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label class="small font-weight-bold text-muted">ACTIVITIES</label>
-                                                <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-6"><label class="small font-weight-bold text-muted">MEALS</label><input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm"></div>
-                                                <div class="col-6"><label class="small font-weight-bold text-muted">ACCOM.</label><input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm"></div>
-                                            </div>
-                                            
-                                            <div class="d-flex justify-content-end mt-3 pt-2 border-top">
-                                                <button type="button" wire:click="duplicateDay({{ $index }})" 
-                                                        @click="activeDay = {{ $index + 1 }}"
-                                                        class="btn btn-xs btn-outline-info mr-2">
-                                                    <i class="fas fa-copy mr-1"></i> Duplicate
-                                                </button>
-                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-xs btn-outline-danger">
-                                                    <i class="fas fa-trash-alt mr-1"></i> Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            
-                            <button type="button" wire:click="addDay" @click="activeDay = {{ count($itinerary) }}" 
-                                    class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold">
-                                <i class="fas fa-plus-circle mr-2"></i> ADD NEXT DAY
-                            </button>
                         </div>
 
                         <button type="submit" class="btn btn-pink btn-lg btn-block shadow-lg py-3 font-weight-bold mb-5">
