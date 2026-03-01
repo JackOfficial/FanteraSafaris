@@ -275,64 +275,109 @@ new class extends Component {
                             </div>
                         </div>
 
-                        {{-- Itinerary Section --}}
-                        <div class="mb-4">
-                            <h4 class="font-weight-bold mb-4">Journey Itinerary</h4>
-                            <div x-data="{ open: null, toggleDay(id) { this.open = (this.open === id ? null : id); } }"
-                                 @day-added.window="open = $event.detail.id"
-                                 class="itinerary-timeline">
+                       {{-- Itinerary Section --}}
+<div class="mb-4">
+    <h4 class="font-weight-bold mb-4">Journey Itinerary</h4>
+    
+    {{-- We scope the open state to this container and use a more robust toggle --}}
+    <div x-data="{ 
+            openId: null, 
+            init() {
+                // Automatically open the first day on load
+                if(this.openId === null && @js(count($itinerary)) > 0) {
+                    this.openId = @js($itinerary[0]['temp_id'] ?? null);
+                }
+            }
+         }"
+         @day-added.window="openId = $event.detail.id"
+         class="itinerary-timeline">
 
-                                @foreach($itinerary as $index => $day)
-                                    <div class="card card-itinerary shadow-sm mb-3" wire:key="itinerary-item-{{ $day['temp_id'] }}" :class="open === '{{ $day['temp_id'] }}' ? 'active shadow-md' : ''">
-                                        <div class="itinerary-day-node"></div>
-                                        <div class="card-header itinerary-header border-0 cursor-pointer" @click="toggleDay('{{ $day['temp_id'] }}')">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="text-center mr-3" style="min-width:45px;">
-                                                        <span class="text-pink font-weight-bold h4 mb-0">{{ $day['day_number'] }}</span>
-                                                        <div class="small text-muted" style="font-size:9px;">DAY</div>
-                                                    </div>
-                                                    <div>
-                                                        <h6 class="mb-0 font-weight-bold">{{ $day['title'] ?: 'New Safari Day' }}</h6>
-                                                    </div>
-                                                </div>
-                                                <i class="fas fa-chevron-down text-muted transition-all" :style="open === '{{ $day['temp_id'] }}' ? 'transform: rotate(180deg)' : ''"></i>
-                                            </div>
-                                        </div>
-
-                                        <div x-show="open === '{{ $day['temp_id'] }}'" x-collapse x-cloak>
-                                            <div class="card-body border-top bg-white">
-                                                <div class="form-group mb-3">
-                                                    <label class="small text-muted">DAY TITLE</label>
-                                                    <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control border-0 bg-light rounded-pill px-3">
-                                                </div>
-                                                <div class="form-group mb-4">
-                                                    <label class="small text-muted">ACTIVITIES</label>
-                                                    <textarea wire:model.blur="itinerary.{{ $index }}.activities" class="form-control border-0 bg-light rounded-lg" rows="3"></textarea>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-2">
-                                                        <label class="small text-muted">Meals</label>
-                                                        <input type="text" wire:model.blur="itinerary.{{ $index }}.meals" class="form-control form-control-sm bg-light border-0">
-                                                    </div>
-                                                    <div class="col-md-6 mb-2">
-                                                        <label class="small text-muted">Accommodation</label>
-                                                        <input type="text" wire:model.blur="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm bg-light border-0">
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-end mt-3 pt-3 border-top">
-                                                    <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-sm btn-link text-muted">Duplicate</button>
-                                                    <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-sm btn-link text-danger">Delete Day</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
+        @foreach($itinerary as $index => $day)
+            {{-- CRITICAL: wire:key must be on the outermost element of the loop --}}
+            <div class="card card-itinerary shadow-sm mb-3" 
+                 wire:key="itinerary-day-{{ $day['temp_id'] }}" 
+                 :class="openId === '{{ $day['temp_id'] }}' ? 'active shadow-md' : ''">
+                
+                <div class="itinerary-day-node"></div>
+                
+                {{-- Header Toggle --}}
+                <div class="card-header itinerary-header border-0 cursor-pointer p-3" 
+                     @click="openId = (openId === '{{ $day['temp_id'] }}' ? null : '{{ $day['temp_id'] }}')">
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="text-center mr-3" style="min-width:45px;">
+                                <span class="text-pink font-weight-bold h4 mb-0">{{ $day['day_number'] }}</span>
+                                <div class="small text-muted" style="font-size:9px;">DAY</div>
                             </div>
-                            <button type="button" wire:click="addDay" class="btn btn-block btn-outline-pink py-3 rounded-pill font-weight-bold mt-3 shadow-sm" style="border-style:dashed; background: #fff;">
-                                <i class="fas fa-plus mr-2"></i> ADD DAY {{ count($itinerary) + 1 }}
+                            <div>
+                                <h6 class="mb-0 font-weight-bold">
+                                    {{ $day['title'] ?: 'New Safari Day' }}
+                                </h6>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-muted transition-all" 
+                           :style="openId === '{{ $day['temp_id'] }}' ? 'transform: rotate(180deg)' : ''"></i>
+                    </div>
+                </div>
+
+                {{-- Content --}}
+                <div x-show="openId === '{{ $day['temp_id'] }}'" x-collapse x-cloak>
+                    <div class="card-body border-top bg-white">
+                        <div class="form-group mb-3">
+                            <label class="small text-muted">DAY TITLE</label>
+                            <input type="text" 
+                                   wire:model.live="itinerary.{{ $index }}.title" 
+                                   class="form-control border-0 bg-light rounded-pill px-3">
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label class="small text-muted">ACTIVITIES</label>
+                            <textarea wire:model.live="itinerary.{{ $index }}.activities" 
+                                      class="form-control border-0 bg-light rounded-lg" 
+                                      rows="3"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label class="small text-muted">Meals</label>
+                                <input type="text" wire:model.live="itinerary.{{ $index }}.meals" class="form-control form-control-sm bg-light border-0">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="small text-muted">Accommodation</label>
+                                <input type="text" wire:model.live="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm bg-light border-0">
+                            </div>
+                        </div>
+
+                        {{-- Actions --}}
+                        <div class="d-flex justify-content-end mt-3 pt-3 border-top">
+                            <button type="button" 
+                                    wire:click="duplicateDay({{ $index }})" 
+                                    wire:loading.attr="disabled"
+                                    class="btn btn-sm btn-link text-muted mr-2">
+                                <i class="fas fa-copy mr-1"></i> Duplicate
+                            </button>
+                            <button type="button" 
+                                    wire:click="removeDay({{ $index }})" 
+                                    wire:confirm="Are you sure you want to delete this day?"
+                                    class="btn btn-sm btn-link text-danger">
+                                <i class="fas fa-trash mr-1"></i> Delete
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    <button type="button" 
+            wire:click="addDay" 
+            wire:loading.attr="disabled"
+            class="btn btn-block btn-outline-pink py-3 rounded-pill font-weight-bold mt-3 shadow-sm" 
+            style="border-style:dashed; background: #fff;">
+        <i class="fas fa-plus mr-2"></i> ADD DAY {{ count($itinerary) + 1 }}
+    </button>
+</div>
 
                         <div class="card shadow-sm border-0 mb-5" style="border-radius: 20px;">
                             <div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="mb-0 font-weight-bold">Full Package Overview</h5></div>
