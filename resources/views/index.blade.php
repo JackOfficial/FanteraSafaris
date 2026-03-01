@@ -100,69 +100,103 @@
         </div>
     </section>
 
-    <section class="ftco-section ftco-destination">
-        <div class="container">
-            <div class="row justify-content-start mb-5 pb-3">
-                <div class="col-md-7 heading-section ftco-animate">
-                    <span class="subheading" style="color: #ffc107; font-weight: 700; letter-spacing: 2px;">DESTINATIONS</span>
-                    <h2 class="mb-4" style="font-family: 'Playfair Display', serif;"><strong>Featured</strong> Wild Spaces</h2>
-                </div>
+   <section class="ftco-section ftco-destination">
+    <div class="container">
+        <div class="row justify-content-start mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate">
+                <span class="subheading" style="color: #ffc107; font-weight: 700; letter-spacing: 2px;">DESTINATIONS</span>
+                <h2 class="mb-4" style="font-family: 'Playfair Display', serif;"><strong>Featured</strong> Wild Spaces</h2>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="destination-slider owl-carousel ftco-animate">
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="destination-slider owl-carousel ftco-animate">
+                    @forelse($destinations as $destination)
                         <div class="item">
                             <div class="destination shadow-sm transition-hover" style="border-radius: 15px; overflow: hidden;">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Bwindi.jpg') }}); height: 350px;"></a>
+                                {{-- Link to a destination details page --}}
+                                <a href="{{ route('destinations.show', $destination->slug) }}" 
+                                   class="img d-flex justify-content-center align-items-center" 
+                                   style="background-image: url({{ asset('storage/' . $destination->image) }}); height: 350px;">
+                                </a>
                                 <div class="text p-3 bg-white">
-                                    <h3 class="font-weight-bold"><a href="#">Bwindi Forest, Uganda</a></h3>
-                                    <span class="listing text-warning font-weight-bold">Gorilla Encounters</span>
+                                    <h3 class="font-weight-bold">
+                                        <a href="{{ route('destinations.show', $destination->slug) }}">
+                                            {{ $destination->name }}, {{ $destination->country }}
+                                        </a>
+                                    </h3>
+                                    {{-- Use a 'tagline' or 'type' field from your DB --}}
+                                    <span class="listing text-warning font-weight-bold">{{ $destination->tagline }}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="item">
-                            <div class="destination shadow-sm transition-hover" style="border-radius: 15px; overflow: hidden;">
-                                <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/Maasai mara.jpg') }}); height: 350px;"></a>
-                                <div class="text p-3 bg-white">
-                                    <h3 class="font-weight-bold"><a href="#">Maasai Mara, Kenya</a></h3>
-                                    <span class="listing text-warning font-weight-bold">Great Migration</span>
-                                </div>
-                            </div>
+                    @empty
+                        <div class="col-12 text-center">
+                            <p>No destinations found at the moment. Adventure is coming soon!</p>
                         </div>
-                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="ftco-section bg-light">
-        <div class="container">
-            <div class="row justify-content-center mb-5 pb-3">
-                <div class="col-md-7 text-center heading-section ftco-animate">
-                    <span class="subheading" style="color: #ffc107; font-weight: 700; letter-spacing: 2px;">POPULAR TOURS</span>
-                    <h2 class="mb-4" style="font-family: 'Playfair Display', serif;">Featured <strong>Safari Packages</strong></h2>
-                </div>
+   <section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 text-center heading-section ftco-animate">
+                <span class="subheading" style="color: #ffc107; font-weight: 700; letter-spacing: 2px;">POPULAR TOURS</span>
+                <h2 class="mb-4" style="font-family: 'Playfair Display', serif;">Featured <strong>Safari Packages</strong></h2>
             </div>
-            <div class="row">
+        </div>
+        <div class="row">
+            @forelse($packages as $package)
                 <div class="col-md-4 ftco-animate mb-4">
                     <div class="destination shadow-sm transition-hover" style="border-radius: 20px; overflow: hidden; background: #fff;">
-                        <a href="#" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('front/images/safari-1.jpg') }}); height: 280px; position: relative;">
-                            <span class="badge badge-warning p-2 px-3" style="position: absolute; top: 20px; left: 20px; border-radius: 20px;">Top Rated</span>
+                        {{-- Package Image with dynamic badge --}}
+                        <a href="{{ route('safaris.show', $package->slug) }}" 
+                           class="img d-flex justify-content-center align-items-center" 
+                           style="background-image: url({{ asset('storage/' . $package->image) }}); height: 280px; position: relative;">
+                            
+                            @if($package->is_top_rated)
+                                <span class="badge badge-warning p-2 px-3" style="position: absolute; top: 20px; left: 20px; border-radius: 20px;">Top Rated</span>
+                            @endif
                         </a>
+
                         <div class="text p-4">
                             <div class="d-flex mb-2">
-                                <span class="price font-weight-bold text-warning" style="font-size: 1.4rem;">$1,200</span>
-                                <span class="ml-auto text-muted"><i class="icon-calendar mr-1"></i> 5 Days</span>
+                                {{-- Use number_format for clean pricing --}}
+                                <span class="price font-weight-bold text-warning" style="font-size: 1.4rem;">
+                                    ${{ number_format($package->price) }}
+                                </span>
+                                <span class="ml-auto text-muted">
+                                    <i class="icon-calendar mr-1"></i> {{ $package->duration }} Days
+                                </span>
                             </div>
-                            <h3 class="h5 font-weight-bold mb-3"><a href="#" class="text-dark">Queen Elizabeth & Bwindi Forest</a></h3>
-                            <p class="text-muted small mb-3"><i class="icon-map-o mr-2"></i> Uganda, East Africa</p>
-                            <a href="#" class="btn btn-warning btn-block py-2" style="border-radius: 10px; font-weight: 700;">Explore Package</a>
+
+                            <h3 class="h5 font-weight-bold mb-3">
+                                <a href="{{ route('safaris.show', $package->slug) }}" class="text-dark">{{ $package->title }}</a>
+                            </h3>
+
+                            {{-- Assuming a relationship exists between Package and Destination --}}
+                            <p class="text-muted small mb-3">
+                                <i class="icon-map-o mr-2"></i> {{ $package->location_label ?? $package->destination->name }}
+                            </p>
+
+                            <a href="{{ route('safaris.show', $package->slug) }}" class="btn btn-warning btn-block py-2" style="border-radius: 10px; font-weight: 700;">
+                                Explore Package
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
+            @empty
+                <div class="col-md-12 text-center">
+                    <p class="text-muted">No safari packages available at the moment. Check back soon!</p>
+                </div>
+            @endforelse
         </div>
-    </section>
+    </div>
+</section>
 
     <section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url({{ asset('front/images/bg_1.jpg') }}); background-attachment: fixed;">
         <div class="overlay" style="background: rgba(0,0,0,0.6);"></div>
