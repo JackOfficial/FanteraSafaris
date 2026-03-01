@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SafariPackage;
 use App\Models\SafariCategory;
-use Barryvdh\DomPDF\Facade\Pdf;
+// use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-// use Barrier\DomPDF\Facade\Pdf;
+use Barrier\DomPDF\Facade\Pdf;
 
 class SafariPackageController extends Controller
 {
