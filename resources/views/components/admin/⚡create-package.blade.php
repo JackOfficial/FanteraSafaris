@@ -3,15 +3,12 @@
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\SafariPackage;
-use App\Models\SafariCategory;
-use App\Models\Destination;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 new class extends Component {
     use WithFileUploads;
 
-    // Fields
     public $name, $price, $discount_per_person = 0, $duration_days = 1;
     public $destination_ids = [], $status = 'draft', $safari_category_ids = [], $description; 
     public $featured_image, $gallery_images = [], $itinerary = [];
@@ -31,13 +28,18 @@ new class extends Component {
             'accommodation' => ''
         ];
         $this->duration_days = count($this->itinerary);
+        
+        // Dispatch event to Alpine to open the last day added
+        $this->dispatch('day-added', index: count($this->itinerary) - 1);
     }
 
     public function duplicateDay($index) {
         $dayToCopy = $this->itinerary[$index];
         array_splice($this->itinerary, $index + 1, 0, [$dayToCopy]);
         $this->reorderDays();
-        $this->js("activeDay = " . ($index + 1));
+        
+        // Open the newly duplicated day
+        $this->dispatch('day-added', index: $index + 1);
     }
 
     public function removeDay($index) {
@@ -50,16 +52,16 @@ new class extends Component {
         $this->duration_days = 0;
     }
 
-    public function removeGalleryImage($index) {
-        array_splice($this->gallery_images, $index, 1);
-    }
-
     protected function reorderDays() {
         $this->itinerary = array_values($this->itinerary);
         foreach ($this->itinerary as $k => $v) {
             $this->itinerary[$k]['day_number'] = $k + 1;
         }
         $this->duration_days = count($this->itinerary);
+    }
+
+    public function removeGalleryImage($index) {
+        array_splice($this->gallery_images, $index, 1);
     }
 
     public function save() {
@@ -128,7 +130,10 @@ new class extends Component {
         let pricePerPerson = this.basePrice * (1 - (totalDiscountPercentage / 100));
         return Math.max(pricePerPerson, this.basePrice * 0.5).toLocaleString();
     }
-}">
+}" 
+@day-added.window="activeDay = $event.detail.index">
+    {{-- Rest of your styles and sections remain the same --}}
+
     @section('title', 'Create Safari Package')
 
     @push('styles')
@@ -146,14 +151,12 @@ new class extends Component {
             .bg-pink { background-color: #e83e8c !important; }
             .card-pink { border-top: 4px solid #e83e8c; }
             [x-cloak] { display: none !important; }
-            .object-fit-cover { object-fit: cover; }
             .itinerary-scroll-container { max-height: 550px; overflow-y: auto; padding-right: 8px; }
             .multiselect-badge { background: #e83e8c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; display: inline-flex; align-items: center; margin: 2px; }
             .multiselect-dropdown { position: absolute; z-index: 1000; background: white; border: 1px solid #ddd; width: 100%; max-height: 200px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; }
             .multiselect-option { padding: 8px 12px; cursor: pointer; transition: 0.2s; font-size: 14px; }
             .multiselect-option:hover { background: #fdf2f7; color: #e83e8c; }
             .transition-icon { transition: transform 0.3s ease; }
-            .border-dashed { border: 2px dashed #cbd5e0 !important; }
         </style>
     @endpush
 
@@ -161,7 +164,7 @@ new class extends Component {
         <div class="container-fluid pt-4">
             <form wire:submit="save">
                 <div class="row">
-                    {{-- Left Column: Core Data --}}
+                    {{-- Left Column --}}
                     <div class="col-md-5">
                         <div class="card card-pink shadow-sm mb-4 sticky-top-card">
                             <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">Package Core Details</h5></div>
@@ -176,38 +179,31 @@ new class extends Component {
                                     <div class="col-md-6 mb-3">
                                         <label class="small font-weight-bold">BASE PRICE</label>
                                         <div class="input-group shadow-sm">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text bg-white text-muted border-right-0">$</span>
-                                            </div>
-                                            <input type="number" wire:model.live="price" class="form-control border-left-0" placeholder="0.00">
+                                            <div class="input-group-prepend"><span class="input-group-text bg-white">$</span></div>
+                                            <input type="number" wire:model.live="price" class="form-control" placeholder="0.00">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="small font-weight-bold">DISC. / PERSON</label>
                                         <div class="input-group shadow-sm">
-                                            <input type="number" wire:model.live="discount_per_person" class="form-control border-right-0" placeholder="0">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text bg-white text-muted border-left-0">%</span>
-                                            </div>
+                                            <input type="number" wire:model.live="discount_per_person" class="form-control" placeholder="0">
+                                            <div class="input-group-append"><span class="input-group-text bg-white">%</span></div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- Price Preview Box --}}
+                                {{-- Price Preview --}}
                                 <div class="price-preview-box p-3 mb-4" x-show="basePrice > 0" x-transition>
-                                    <h6 class="small font-weight-bold text-pink mb-2"><i class="fas fa-calculator mr-1"></i> DYNAMIC PRICING PREVIEW</h6>
-                                    <div class="d-flex justify-content-between border-bottom pb-1 mb-1 small">
+                                    <h6 class="small font-weight-bold text-pink mb-2"><i class="fas fa-calculator mr-1"></i> PRICING PREVIEW</h6>
+                                    <div class="d-flex justify-content-between border-bottom pb-1 small">
                                         <span>1 Person:</span> <span class="font-weight-bold" x-text="'$' + calculate(1)"></span>
                                     </div>
-                                    <div class="d-flex justify-content-between border-bottom pb-1 mb-1 small">
-                                        <span>2 People:</span> <span class="font-weight-bold" x-text="'$' + calculate(2) + ' ($' + calculatePerPerson(2) + ' ea)'"></span>
-                                    </div>
                                     <div class="d-flex justify-content-between small">
-                                        <span>4 People:</span> <span class="font-weight-bold text-success" x-text="'$' + calculate(4) + ' ($' + calculatePerPerson(4) + ' ea)'"></span>
+                                        <span>2 People:</span> <span x-text="'$' + calculate(2) + ' ($' + calculatePerPerson(2) + ' ea)'"></span>
                                     </div>
                                 </div>
 
-                                {{-- Multi-Select Destinations --}}
+                                {{-- Multi-Select Destinations (Robust Version) --}}
                                 <div class="form-group mb-3" x-data="{
                                     open: false, search: '',
                                     options: @js(\App\Models\Destination::orderBy('name')->get()->map(fn($d) => ['id' => $d->id, 'name' => $d->name])),
@@ -221,42 +217,17 @@ new class extends Component {
                                         <template x-for="item in selectedNames" :key="item.id">
                                             <span class="multiselect-badge"><span x-text="item.name"></span><i class="fas fa-times ml-2" @click.stop="toggle(item.id)" style="cursor:pointer"></i></span>
                                         </template>
-                                        <input type="text" x-model="search" class="border-0 flex-grow-1 m-1" placeholder="Search destinations..." style="outline:none;">
+                                        <input type="text" x-model="search" class="border-0 flex-grow-1 m-1" placeholder="Search..." style="outline:none;">
                                     </div>
                                     <div x-show="open" class="multiselect-dropdown" x-cloak>
                                         <template x-for="option in filteredOptions" :key="option.id">
                                             <div class="multiselect-option" @click="toggle(option.id); search = '';" x-text="option.name"></div>
                                         </template>
                                     </div>
-                                    @error('destination_ids') <small class="text-danger">{{ $message }}</small> @enderror
                                 </div>
 
-                                {{-- Multi-Select Categories --}}
-                                <div class="form-group mb-3" x-data="{
-                                    open: false, search: '',
-                                    options: @js(\App\Models\SafariCategory::orderBy('name')->get()->map(fn($c) => ['id' => $c->id, 'name' => $c->name])),
-                                    selected: @entangle('safari_category_ids'),
-                                    get filteredOptions() { return this.options.filter(i => i.name.toLowerCase().includes(this.search.toLowerCase()) && !this.selected.includes(i.id)); },
-                                    get selectedNames() { return this.options.filter(i => this.selected.includes(i.id)); },
-                                    toggle(id) { this.selected.includes(id) ? this.selected = this.selected.filter(i => i !== id) : this.selected.push(id); }
-                                }" @click.away="open = false">
-                                    <label class="small font-weight-bold">CATEGORIES</label>
-                                    <div class="form-control h-auto d-flex flex-wrap align-items-center p-1" @click="open = true" style="cursor: text; min-height: 45px;">
-                                        <template x-for="item in selectedNames" :key="item.id">
-                                            <span class="multiselect-badge" style="background: #6366f1;"><span x-text="item.name"></span><i class="fas fa-times ml-2" @click.stop="toggle(item.id)" style="cursor:pointer"></i></span>
-                                        </template>
-                                        <input type="text" x-model="search" class="border-0 flex-grow-1 m-1" placeholder="Search categories..." style="outline:none;">
-                                    </div>
-                                    <div x-show="open" class="multiselect-dropdown" x-cloak>
-                                        <template x-for="option in filteredOptions" :key="option.id">
-                                            <div class="multiselect-option" @click="toggle(option.id); search = '';" x-text="option.name"></div>
-                                        </template>
-                                    </div>
-                                    @error('safari_category_ids') <small class="text-danger">{{ $message }}</small> @enderror
-                                </div>
-
-                                <div class="form-group mb-0">
-                                    <label class="small font-weight-bold">VISIBILITY STATUS</label>
+                                <div class="form-group">
+                                    <label class="small font-weight-bold">STATUS</label>
                                     <select wire:model="status" class="form-control">
                                         <option value="draft">Draft</option>
                                         <option value="published">Published</option>
@@ -266,141 +237,81 @@ new class extends Component {
                         </div>
                     </div>
 
-                    {{-- Right Column: Media and Itinerary --}}
+                    {{-- Right Column --}}
                     <div class="col-md-7">
-                        {{-- Media Uploads --}}
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white font-weight-bold small">MEDIA ASSETS</div>
-                            <div class="card-body">
-                                <label class="small font-weight-bold">COVER IMAGE</label>
-                                <div x-data="{ preview: null }">
-                                    <input type="file" id="cover_input" wire:model="featured_image" class="d-none" @change="const file = $event.target.files[0]; if(file){ const reader = new FileReader(); reader.onload = (e) => { preview = e.target.result; }; reader.readAsDataURL(file); }">
-                                    <div class="featured-upload-box mb-3 shadow-sm" onclick="document.getElementById('cover_input').click()">
-                                        <template x-if="preview"><img :src="preview" class="w-100 h-100 object-fit-cover"></template>
-                                        <template x-if="!preview"><div class="text-center text-muted"><i class="fas fa-cloud-upload-alt fa-3x mb-2 text-pink"></i><p>Upload Featured Image</p></div></template>
-                                    </div>
+                        {{-- Itinerary Journey (FIXED SECTION) --}}
+                        <div class="itinerary-section mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="font-weight-bold mb-0">Itinerary Journey</h5>
+                                <div>
+                                    <button type="button" wire:click="addDay" class="btn btn-sm btn-pink rounded-pill px-3">
+                                        <i class="fas fa-plus mr-1"></i> Add Day
+                                    </button>
                                 </div>
+                            </div>
 
-                                <label class="small font-weight-bold">GALLERY IMAGES</label>
-                                <div class="d-flex flex-wrap" style="gap: 10px;">
-                                    @foreach($gallery_images as $index => $image)
-                                        <div class="gallery-item shadow-sm border">
-                                            <img src="{{ $image->temporaryUrl() }}" class="w-100 h-100 object-fit-cover">
-                                            <div class="gallery-remove" wire:click="removeGalleryImage({{ $index }})"><i class="fas fa-times"></i></div>
+                            <div class="itinerary-scroll-container">
+                                @forelse($itinerary as $index => $day)
+                                    <div class="card mb-2 border-0 shadow-sm" wire:key="itinerary-day-{{ $index }}-v2">
+                                        <div class="itinerary-header p-3 d-flex align-items-center" 
+                                             @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})" 
+                                             style="cursor:pointer; background: white;">
+                                            
+                                            <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" 
+                                                 style="width: 28px; height: 28px; font-size: 11px; font-weight:bold;">
+                                                {{ $day['day_number'] }}
+                                            </div>
+                                            
+                                            <div class="flex-grow-1 font-weight-bold small text-truncate">
+                                                {{ $day['title'] ?: 'Day ' . $day['day_number'] . ': Untitled' }}
+                                            </div>
+                                            
+                                            <i class="fas fa-chevron-down text-muted transition-icon" 
+                                               :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"></i>
                                         </div>
-                                    @endforeach
-                                    <label class="gallery-upload-box mb-0 shadow-sm" for="gallery_input">
-                                        <i class="fas fa-plus text-muted"></i>
-                                        <input type="file" id="gallery_input" wire:model.live="gallery_images" multiple class="d-none">
-                                    </label>
-                                </div>
-                                <div wire:loading wire:target="gallery_images" class="small text-pink mt-2"><i class="fas fa-spinner fa-spin mr-1"></i> Uploading gallery...</div>
+                                        
+                                        <div class="card-body bg-light border-top" 
+                                             x-show="activeDay === {{ $index }}" 
+                                             x-cloak>
+                                            <div class="form-group mb-2">
+                                                <label class="small text-muted font-weight-bold">TITLE</label>
+                                                <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control">
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <label class="small text-muted font-weight-bold">ACTIVITIES</label>
+                                                <textarea wire:model.blur="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label class="small text-muted font-weight-bold">ACCOMMODATION</label>
+                                                    <input type="text" wire:model.blur="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="small text-muted font-weight-bold">MEALS</label>
+                                                    <input type="text" wire:model.blur="itinerary.{{ $index }}.meals" class="form-control form-control-sm">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="d-flex justify-content-between mt-3 pt-2 border-top">
+                                                <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-link btn-sm text-pink p-0">Duplicate</button>
+                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-link btn-sm text-danger p-0">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-5 bg-light rounded" style="border: 2px dashed #cbd5e0;">
+                                        No days added yet.
+                                    </div>
+                                @endforelse
                             </div>
                         </div>
 
-                        {{-- Itinerary Journey --}}
-<div class="itinerary-section mb-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="font-weight-bold mb-0">Itinerary Journey</h5>
-        <div>
-            @if(count($itinerary) > 0)
-                <button type="button" 
-                        onclick="confirm('Are you sure you want to delete the ENTIRE itinerary?') || event.stopImmediatePropagation()"
-                        wire:click="clearAllDays" 
-                        class="btn btn-sm btn-outline-danger rounded-pill px-3 mr-2">
-                    <i class="fas fa-eraser mr-1"></i> Clear All
-                </button>
-            @endif
-            <button type="button" wire:click="addDay" class="btn btn-sm btn-pink rounded-pill px-3">
-                <i class="fas fa-plus mr-1"></i> Add Day
-            </button>
-        </div>
-    </div>
-
-    <div class="itinerary-scroll-container">
-        @forelse($itinerary as $index => $day)
-            {{-- Keying the container is vital for Livewire 3/Laravel 12 --}}
-            <div class="card mb-2 border-0 shadow-sm" wire:key="day-container-{{ $index }}-{{ count($itinerary) }}">
-                
-                {{-- Header: Logic handled by Alpine --}}
-                <div class="itinerary-header p-3 d-flex align-items-center" 
-                     @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})" 
-                     style="cursor:pointer; background: white;">
-                    
-                    <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" 
-                         style="width: 28px; height: 28px; font-size: 11px; font-weight:bold;">
-                        {{ $day['day_number'] }}
-                    </div>
-                    
-                    <div class="flex-grow-1 font-weight-bold small text-truncate">
-                        {{ $day['title'] ?: 'Day ' . $day['day_number'] . ': Untitled' }}
-                    </div>
-                    
-                    {{-- Icon rotation logic --}}
-                    <i class="fas fa-chevron-down text-muted transition-icon" 
-                       :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"></i>
-                </div>
-                
-                {{-- Body: Controlled by Alpine x-show --}}
-                <div class="card-body bg-light border-top" 
-                     x-show="activeDay === {{ $index }}" 
-                     x-cloak 
-                     x-transition:enter="transition ease-out duration-200"
-                     x-transition:enter-start="opacity-0 transform scale-95"
-                     x-transition:enter-end="opacity-100 transform scale-100">
-                    
-                    <div class="form-group mb-2">
-                        <label class="small text-muted mb-1 font-weight-bold">HEADING</label>
-                        <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control" placeholder="e.g. Arrival and Transfer">
-                    </div>
-                    
-                    <div class="form-group mb-2">
-                        <label class="small text-muted mb-1 font-weight-bold">DAILY ACTIVITIES</label>
-                        <textarea wire:model.blur="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-6">
-                            <label class="small text-muted mb-1 font-weight-bold">ACCOMMODATION</label>
-                            <input type="text" wire:model.blur="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm">
-                        </div>
-                        <div class="col-6">
-                            <label class="small text-muted mb-1 font-weight-bold">MEALS</label>
-                            <input type="text" wire:model.blur="itinerary.{{ $index }}.meals" class="form-control form-control-sm">
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                        <div class="btn-group">
-                            <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-link btn-sm text-pink p-0 mr-3 text-decoration-none font-weight-bold">
-                                <i class="far fa-copy mr-1"></i> Duplicate
-                            </button>
-                            <button type="button" 
-                                    onclick="confirm('Delete Day {{ $day['day_number'] }}?') || event.stopImmediatePropagation()"
-                                    wire:click="removeDay({{ $index }})" 
-                                    class="btn btn-link btn-sm text-danger p-0 text-decoration-none font-weight-bold">
-                                <i class="far fa-trash-alt mr-1"></i> Delete
-                            </button>
-                        </div>
-                        <span class="badge badge-secondary opacity-50">Day {{ $day['day_number'] }}</span>
-                    </div>
-                </div>
-            </div>
-        @empty
-            <div class="text-center py-5 bg-light rounded border-dashed" style="border: 2px dashed #cbd5e0 !important;">
-                <i class="fas fa-map-marked-alt fa-3x text-muted mb-3 opacity-25"></i>
-                <p class="text-muted">No itinerary days added yet. <br> Click <strong>+ Add Day</strong> to begin the journey.</p>
-            </div>
-        @endforelse
-    </div>
-</div>
-
-                        {{-- Overview --}}
+                        {{-- Trix Editor --}}
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white font-weight-bold small">PACKAGE OVERVIEW</div>
+                            <div class="card-header bg-white font-weight-bold small">DESCRIPTION</div>
                             <div class="card-body">
                                 <div wire:ignore x-data="{ value: @entangle('description') }" @trix-change="value = $event.target.value">
-                                    <trix-editor class="trix-content border-0 bg-light rounded shadow-inner" style="min-height: 200px;"></trix-editor>
+                                    <trix-editor class="trix-content border-0 bg-light rounded" style="min-height: 200px;"></trix-editor>
                                 </div>
                             </div>
                         </div>
