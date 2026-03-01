@@ -1,6 +1,6 @@
 <?php
 
-use Livewire\Volt\Component; // Using the Volt-specific class
+use Livewire\Component; // Using the Volt-specific class
 use Livewire\WithFileUploads;
 use App\Models\SafariPackage;
 use App\Models\Destination;
