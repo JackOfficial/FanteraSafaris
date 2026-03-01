@@ -234,6 +234,17 @@ new class extends Component {
                             </div>
                         </div>
 
+                          <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">General Overview</h5></div>
+                            <div class="card-body">
+                                <div wire:ignore x-data="{ value: @entangle('description'), isSet: false }" 
+                                     x-init="$refs.trix.editor.loadHTML(value); $watch('value', v => { if (!isSet) $refs.trix.editor.loadHTML(v); isSet = false; })" 
+                                     @trix-change="isSet = true; value = $event.target.value">
+                                    <trix-editor x-ref="trix" class="trix-content"></trix-editor>
+                                </div>
+                            </div>
+                        </div>
+                        
                         {{-- SCROLLABLE ITINERARY WITH GUARANTEED END-ALIGNED ICONS --}}
 <div class="itinerary-builder">
     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -302,17 +313,6 @@ new class extends Component {
         <i class="fas fa-plus-circle mr-2"></i> ADD NEXT DAY
     </button>
 </div>
-
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold">General Overview</h5></div>
-                            <div class="card-body">
-                                <div wire:ignore x-data="{ value: @entangle('description'), isSet: false }" 
-                                     x-init="$refs.trix.editor.loadHTML(value); $watch('value', v => { if (!isSet) $refs.trix.editor.loadHTML(v); isSet = false; })" 
-                                     @trix-change="isSet = true; value = $event.target.value">
-                                    <trix-editor x-ref="trix" class="trix-content"></trix-editor>
-                                </div>
-                            </div>
-                        </div>
 
                         <button type="submit" class="btn btn-pink btn-lg btn-block shadow-lg py-3 font-weight-bold mb-5">
                             <span wire:loading.remove wire:target="save">UPDATE PACKAGE</span>
