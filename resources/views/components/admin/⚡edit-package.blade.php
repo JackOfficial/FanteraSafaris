@@ -59,6 +59,20 @@ new class extends Component {
         ];
     }
 
+    // DUPLICATE DAY FEATURE
+    public function duplicateDay($index)
+    {
+        $newDay = $this->itinerary[$index];
+        
+        // Insert the duplicate right after the current index
+        array_splice($this->itinerary, $index + 1, 0, [$newDay]);
+        
+        // Fix all day numbers
+        foreach ($this->itinerary as $k => $v) { 
+            $this->itinerary[$k]['day_number'] = $k + 1; 
+        }
+    }
+
     public function removeDay($index)
     {
         unset($this->itinerary[$index]);
@@ -234,74 +248,74 @@ new class extends Component {
                             </div>
                         </div>
 
-                        {{-- SCROLLABLE ITINERARY WITH GUARANTEED END-ALIGNED ICONS --}}
-<div class="itinerary-builder">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <h5 class="font-weight-bold mb-0">Itinerary Builder</h5>
-        <span class="badge badge-pink px-3 shadow-sm">{{ count($itinerary) }} Days</span>
-    </div>
+                        <div class="itinerary-builder">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="font-weight-bold mb-0">Itinerary Builder</h5>
+                                <span class="badge badge-pink px-3 shadow-sm">{{ count($itinerary) }} Days</span>
+                            </div>
 
-    <div class="itinerary-scroll-container mb-3" 
-         style="max-height: 480px; overflow-y: auto; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
-        
-        @foreach($itinerary as $index => $day)
-            <div class="card mb-2 border-pink shadow-sm" wire:key="edit-itinerary-{{ $index }}">
-                
-                {{-- HEADER: Use w-100 and d-flex to force the chevron to the far right --}}
-                <div class="card-header itinerary-header p-3 d-flex align-items-center justify-content-between" 
-                     style="width: 100%;"
-                     @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
-                    
-                    {{-- LEFT SIDE: Badge and Title --}}
-                    <div class="d-flex align-items-center" style="flex: 1;">
-                        <span class="badge badge-pink mr-3" style="min-width: 60px;">DAY {{ $day['day_number'] }}</span>
-                        <span class="small font-weight-bold text-dark text-uppercase" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">
-                            {{ $itinerary[$index]['title'] ?: 'Enter day title...' }}
-                        </span>
-                    </div>
+                            <div class="itinerary-scroll-container mb-3" 
+                                 style="max-height: 480px; overflow-y: auto; padding: 10px; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
+                                
+                                @foreach($itinerary as $index => $day)
+                                    <div class="card mb-2 border-pink shadow-sm" wire:key="edit-itinerary-{{ $index }}">
+                                        
+                                        <div class="card-header itinerary-header p-3 d-flex align-items-center justify-content-between" 
+                                             @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
+                                            
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge badge-pink mr-3" style="min-width: 60px;">DAY {{ $day['day_number'] }}</span>
+                                                <span class="small font-weight-bold text-dark text-uppercase">
+                                                    {{ $itinerary[$index]['title'] ?: 'Enter day title...' }}
+                                                </span>
+                                            </div>
 
-                    {{-- RIGHT SIDE: The Icon (Guaranteed to be at the end) --}}
-                    <div class="pl-2">
-                        <i class="fas fa-chevron-down text-muted" 
-                           :class="activeDay === {{ $index }} ? 'fa-rotate-180 text-pink' : ''" 
-                           style="transition: 0.3s; pointer-events: none;"></i>
-                    </div>
-                </div>
+                                            <div>
+                                                <i class="fas fa-chevron-down text-muted" 
+                                                   :class="activeDay === {{ $index }} ? 'fa-rotate-180 text-pink' : ''" 
+                                                   style="transition: 0.3s"></i>
+                                            </div>
+                                        </div>
 
-                <div class="card-body p-3 bg-white" x-show="activeDay === {{ $index }}" x-cloak>
-                    <div class="form-group mb-3">
-                        <label class="small font-weight-bold text-muted">DAY TITLE</label>
-                        <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control font-weight-bold border-0 bg-light" placeholder="e.g. Arrival at Entebbe">
-                    </div>
-                    <div class="form-group mb-3">
-                        <label class="small font-weight-bold text-muted">ACTIVITIES</label>
-                        <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <label class="small font-weight-bold text-muted">MEALS</label>
-                            <input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm shadow-none">
+                                        <div class="card-body p-3 bg-white" x-show="activeDay === {{ $index }}" x-cloak>
+                                            <div class="form-group mb-3">
+                                                <label class="small font-weight-bold text-muted">DAY TITLE</label>
+                                                <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control font-weight-bold border-0 bg-light">
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <label class="small font-weight-bold text-muted">ACTIVITIES</label>
+                                                <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label class="small font-weight-bold text-muted">MEALS</label>
+                                                    <input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="small font-weight-bold text-muted">ACCOMMODATION</label>
+                                                    <input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm">
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-end mt-3 pt-2 border-top">
+                                                <button type="button" wire:click="duplicateDay({{ $index }})" 
+                                                        @click="activeDay = {{ $index + 1 }}"
+                                                        class="btn btn-xs btn-outline-info mr-2 shadow-sm">
+                                                    <i class="fas fa-copy mr-1"></i> Duplicate Day
+                                                </button>
+                                                <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-xs btn-outline-danger shadow-sm">
+                                                    <i class="fas fa-trash-alt mr-1"></i> Remove Day
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            
+                            <button type="button" wire:click="addDay" @click="activeDay = {{ count($itinerary) }}" 
+                                    class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold py-2">
+                                <i class="fas fa-plus-circle mr-2"></i> ADD NEXT DAY
+                            </button>
                         </div>
-                        <div class="col-6">
-                            <label class="small font-weight-bold text-muted">ACCOMMODATION</label>
-                            <input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm shadow-none">
-                        </div>
-                    </div>
-                    <div class="text-right mt-3 pt-2 border-top">
-                        <button type="button" wire:click="removeDay({{ $index }})" class="btn btn-xs btn-outline-danger">
-                            <i class="fas fa-trash-alt mr-1"></i> Remove Day
-                        </button>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-    
-    <button type="button" wire:click="addDay" @click="activeDay = {{ count($itinerary) }}" 
-            class="btn btn-outline-pink btn-block mb-4 shadow-sm font-weight-bold py-2">
-        <i class="fas fa-plus-circle mr-2"></i> ADD NEXT DAY
-    </button>
-</div>
 
                         <button type="submit" class="btn btn-pink btn-lg btn-block shadow-lg py-3 font-weight-bold mb-5">
                             <span wire:loading.remove wire:target="save">UPDATE PACKAGE</span>
