@@ -65,7 +65,7 @@ class SafariPackage extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(SafariCategory::class, 'safari_category_safari_package');
+        return $this->belongsToMany(SafariCategory::class, 'safari_category_safari_packages');
     }
 
     /**
