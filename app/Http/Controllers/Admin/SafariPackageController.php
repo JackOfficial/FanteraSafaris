@@ -25,7 +25,7 @@ class SafariPackageController extends Controller
     public function exportPdf()
     {
         // Fetch all packages with their destination relationship
-        $packages = SafariPackage::with('destination', 'category')->get();
+        $packages = SafariPackage::with('destinations', 'categories')->get();
 
         // Load the view and pass the data
         $pdf = Pdf::loadView('admin.packages.pdf', compact('packages'));
