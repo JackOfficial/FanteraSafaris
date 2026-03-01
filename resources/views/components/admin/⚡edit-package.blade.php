@@ -247,23 +247,62 @@ new class extends Component {
                             </div>
                         </div>
 
-                        <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
-                            <div class="card-header bg-white py-3"><h5 class="mb-0 font-weight-bold">Gallery Images</h5></div>
-                            <div class="card-body">
-                                <div class="gallery-grid mb-3">
-                                    @foreach($package->photos->where('type', 'gallery') as $photo)
-                                        <div class="gallery-item" wire:key="photo-{{ $photo->id }}">
-                                            <img src="{{ asset('storage/' . $photo->path) }}">
-                                            <div class="delete-overlay" wire:click="deletePhoto({{ $photo->id }})"><i class="fas fa-times"></i></div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" wire:model="gallery_images" multiple class="custom-file-input" id="galleryFiles">
-                                    <label class="custom-file-label rounded-pill" for="galleryFiles">Choose images...</label>
-                                </div>
-                            </div>
-                        </div>
+                       <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 font-weight-bold">Gallery Images</h5>
+    </div>
+    <div class="card-body">
+        <div class="gallery-grid mb-3" x-data="{ localPreviews: [] }">
+            
+            @foreach($package->photos->where('type', 'gallery') as $photo)
+                <div class="gallery-item" wire:key="photo-{{ $photo->id }}">
+                    <img src="{{ asset('storage/' . $photo->path) }}">
+                    <div class="delete-overlay" wire:click="deletePhoto({{ $photo->id }})">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            @endforeach
+
+            <template x-for="(image, index) in localPreviews" :key="index">
+                <div class="gallery-item opacity-75">
+                    <img :src="image">
+                    <div class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center" style="top:0; left:0; background: rgba(255,255,255,0.4)">
+                        <div class="spinner-border spinner-border-sm text-pink" role="status"></div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="custom-file" 
+             x-data="{ 
+                handleFiles(event) {
+                    this.localPreviews = []; // Clear previous previews
+                    const files = event.target.files;
+                    Array.from(files).forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => { this.localPreviews.push(e.target.result); };
+                        reader.readAsDataURL(file);
+                    });
+                }
+             }"
+             @clear-previews.window="localPreviews = []"> {{-- Listener to clear previews after Livewire save --}}
+            
+            <input type="file" 
+                   wire:model="gallery_images" 
+                   multiple 
+                   class="custom-file-input" 
+                   id="galleryFiles"
+                   @change="handleFiles($event)">
+            
+            <label class="custom-file-label rounded-pill" for="galleryFiles">
+                <span wire:loading.remove wire:target="gallery_images">Choose images...</span>
+                <span wire:loading wire:target="gallery_images">Uploading to server...</span>
+            </label>
+        </div>
+        
+        @error('gallery_images.*') <span class="text-danger small">{{ $message }}</span> @enderror
+    </div>
+</div>
                     </div>
 
                     {{-- Right Column: Itinerary --}}
