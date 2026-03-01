@@ -21,9 +21,9 @@ class SafariPackage extends Model
         'description', 
         'price', 
         'duration_days', 
-        'location', 
+        'destination_id', // Swapped 'location' for 'destination_id'
         'difficulty', 
-        'safari_category_id', // Matched to migration
+        'safari_category_id', 
         'is_featured', 
         'status', 
         'meta_title', 
@@ -39,6 +39,7 @@ class SafariPackage extends Model
             'price' => 'decimal:2',
             'is_featured' => 'boolean',
             'duration_days' => 'integer',
+            'destination_id' => 'integer',
         ];
     }
 
@@ -47,10 +48,19 @@ class SafariPackage extends Model
         parent::boot();
         
         static::saving(function ($safari) {
+            // Automatically update slug if name changes or slug is missing
             if (empty($safari->slug) || $safari->isDirty('name')) {
                 $safari->slug = Str::slug($safari->name);
             }
         });
+    }
+
+    /**
+     * Relationship to the Destination (Park/City)
+     */
+    public function destination(): BelongsTo
+    {
+        return $this->belongsTo(Destination::class);
     }
 
     /**
@@ -70,7 +80,7 @@ class SafariPackage extends Model
     }
 
     /**
-     * Relationship to the single Featured Photo
+     * Relationship to the single Featured Photo (Cover)
      */
     public function photo(): MorphOne
     {
@@ -92,9 +102,4 @@ class SafariPackage extends Model
     {
         return '$' . number_format($this->price, 0);
     }
-
-    public function destination(): BelongsTo
-{
-    return $this->belongsTo(Destination::class);
-}
 }
