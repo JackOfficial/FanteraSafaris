@@ -109,6 +109,7 @@ new class extends Component {
     activeDay: 0, 
     basePrice: @entangle('price'), 
     discount: @entangle('discount_per_person'),
+    isDropping: false,
     calculate(people) {
         if(!this.basePrice) return 0;
         let totalDiscountPercentage = (people - 1) * this.discount;
@@ -137,27 +138,23 @@ new class extends Component {
             .btn-pink { background-color: #e83e8c; color: white; transition: 0.3s; }
             .btn-pink:hover { background-color: #be185d; color: white; transform: translateY(-1px); }
             .text-pink { color: #e83e8c !important; }
+            .bg-pink { background-color: #e83e8c !important; }
             .card-pink { border-top: 4px solid #e83e8c; }
             .gallery-item { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
             [x-cloak] { display: none !important; }
             .destination-badge { background: #e83e8c; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 4px; }
-       .object-fit-cover { object-fit: cover; }
-.transition-all { transition: all 0.3s ease; }
-.rounded-lg { border-radius: 0.75rem !important; }
-
-/* Show the delete button on hover */
-.col:hover .hover-opacity-100 {
-    opacity: 1 !important;
-}
-.col:hover img {
-    transform: scale(1.1);
-}
-
-/* Background for the card body */
-.bg-light-50 {
-    background-color: #fafbfc;
-}
-       </style>
+            .object-fit-cover { object-fit: cover; }
+            .transition-all { transition: all 0.3s ease; }
+            .rounded-lg { border-radius: 0.75rem !important; }
+            .col:hover .hover-opacity-100 { opacity: 1 !important; }
+            .col:hover img { transform: scale(1.1); }
+            .bg-light-50 { background-color: #fafbfc; }
+            
+            /* Drag and Drop Styling */
+            .upload-zone.dragging { border-color: #e83e8c !important; background: #fff5f8 !important; transform: scale(1.01); }
+            .skeleton-loader { background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+            @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        </style>
     @endpush
 
     <section class="content-header">
@@ -279,83 +276,89 @@ new class extends Component {
                         </div>
 
                         {{-- 2. Gallery Images --}}
-                      {{-- 2. Gallery Images --}}
-<div class="card shadow-sm mb-4 border-0 overflow-hidden">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-        <div>
-            <h6 class="mb-0 font-weight-bold text-uppercase small">Package Gallery</h6>
-            <small class="text-muted">{{ count($gallery_images) }} photos selected</small>
-        </div>
-        @if($gallery_images)
-            <button type="button" wire:click="$set('gallery_images', [])" class="btn btn-xs btn-outline-danger border-0 font-weight-bold">
-                <i class="fas fa-trash-alt mr-1"></i> CLEAR ALL
-            </button>
-        @endif
-    </div>
-    
-    <div class="card-body bg-light-50">
-        {{-- Upload Area --}}
-        <div 
-            class="upload-zone p-4 mb-3 text-center border rounded-lg transition-all" 
-            style="border: 2px dashed #cbd5e0; cursor: pointer; background: #fff;"
-            onmouseover="this.style.borderColor='#e83e8c'; this.style.background='#fff5f8'"
-            onmouseout="this.style.borderColor='#cbd5e0'; this.style.background='#fff'"
-            onclick="document.getElementById('gallery_input').click()"
-        >
-            <div wire:loading.remove wire:target="gallery_images">
-                <i class="fas fa-cloud-upload-alt text-pink fa-3x mb-2"></i>
-                <p class="mb-0 font-weight-bold">Drop photos here or click to browse</p>
-                <p class="small text-muted mb-0">Upload up to 10 high-resolution images</p>
-            </div>
-
-            {{-- Loading State --}}
-            <div wire:loading wire:target="gallery_images" class="py-2">
-                <div class="spinner-border text-pink mb-2" role="status"></div>
-                <p class="mb-0 font-weight-bold text-pink">Processing Images...</p>
-            </div>
-
-            <input type="file" id="gallery_input" wire:model="gallery_images" multiple class="d-none" accept="image/*">
-        </div>
-
-        {{-- Preview Grid --}}
-        @if($gallery_images)
-            <div class="row row-cols-3 row-cols-md-4 g-2 px-1">
-                @foreach($gallery_images as $index => $image)
-                    <div class="col mb-3" wire:key="gallery-{{ $index }}">
-                        <div class="position-relative shadow-sm rounded-lg overflow-hidden group" style="height: 100px;">
-                            {{-- Actual Image --}}
-                            <img src="{{ $image->temporaryUrl() }}" 
-                                 class="w-100 h-100 object-fit-cover transition-all" 
-                                 style="object-fit: cover; transition: transform 0.3s ease;">
-                            
-                            {{-- Individual Loading Overlay (if specific image is being removed/processed) --}}
-                            <div wire:loading wire:target="removeGalleryImage({{ $index }})" class="position-absolute inset-0 bg-white-75 d-flex align-items-center justify-content-center" style="top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.7); z-index: 5;">
-                                <i class="fas fa-spinner fa-spin text-pink"></i>
+                        <div class="card shadow-sm mb-4 border-0 overflow-hidden">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <h6 class="mb-0 font-weight-bold text-uppercase small">Package Gallery</h6>
+                                    <small class="text-muted">{{ count($gallery_images) }} photos selected</small>
+                                </div>
+                                @if($gallery_images)
+                                    <button type="button" wire:click="$set('gallery_images', [])" class="btn btn-xs btn-outline-danger border-0 font-weight-bold">
+                                        <i class="fas fa-trash-alt mr-1"></i> CLEAR ALL
+                                    </button>
+                                @endif
                             </div>
+                            
+                            <div class="card-body bg-light-50">
+                                {{-- Drag and Drop Area --}}
+                                <div 
+                                    class="upload-zone p-4 mb-3 text-center border rounded-lg transition-all" 
+                                    :class="isDropping ? 'dragging' : ''"
+                                    style="border: 2px dashed #cbd5e0; cursor: pointer; background: #fff;"
+                                    @dragover.prevent="isDropping = true"
+                                    @dragleave.prevent="isDropping = false"
+                                    @drop.prevent="isDropping = false; $refs.gallery_input.files = $event.dataTransfer.files; $refs.gallery_input.dispatchEvent(new Event('change'))"
+                                    onclick="document.getElementById('gallery_input').click()"
+                                >
+                                    <div wire:loading.remove wire:target="gallery_images">
+                                        <i class="fas fa-cloud-upload-alt text-pink fa-3x mb-2"></i>
+                                        <p class="mb-0 font-weight-bold">Drop photos here or click to browse</p>
+                                        <p class="small text-muted mb-0">Upload up to 10 high-resolution images</p>
+                                    </div>
 
-                            {{-- Actions Overlay --}}
-                            <div class="position-absolute inset-0 d-flex align-items-center justify-content-center opacity-0 hover-opacity-100 transition-all" 
-                                 style="top:0; left:0; right:0; bottom:0; background: rgba(232, 62, 140, 0.2); opacity: 0; transition: 0.3s;">
-                                <button type="button" 
-                                        wire:click="removeGalleryImage({{ $index }})" 
-                                        class="btn btn-danger btn-sm rounded-circle shadow"
-                                        style="width: 30px; height: 30px; padding: 0;">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                    <div wire:loading wire:target="gallery_images" class="py-2">
+                                        <div class="spinner-border text-pink mb-2" role="status"></div>
+                                        <p class="mb-0 font-weight-bold text-pink">Processing Images...</p>
+                                    </div>
+
+                                    <input type="file" id="gallery_input" x-ref="gallery_input" wire:model="gallery_images" multiple class="d-none" accept="image/*">
+                                </div>
+
+                                {{-- Preview Grid --}}
+                                <div class="row row-cols-3 row-cols-md-4 g-2 px-1">
+                                    {{-- Individual Image Previews --}}
+                                    @foreach($gallery_images as $index => $image)
+                                        <div class="col mb-3" wire:key="gallery-{{ $index }}">
+                                            <div class="position-relative shadow-sm rounded-lg overflow-hidden group" style="height: 100px;">
+                                                <img src="{{ $image->temporaryUrl() }}" 
+                                                     class="w-100 h-100 object-fit-cover transition-all">
+                                                
+                                                {{-- Individual Loading Overlay --}}
+                                                <div wire:loading wire:target="removeGalleryImage({{ $index }})" class="position-absolute inset-0 bg-white-75 d-flex align-items-center justify-content-center" style="top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.7); z-index: 5;">
+                                                    <i class="fas fa-spinner fa-spin text-pink"></i>
+                                                </div>
+
+                                                {{-- Actions Overlay --}}
+                                                <div class="position-absolute inset-0 d-flex align-items-center justify-content-center opacity-0 hover-opacity-100 transition-all" 
+                                                     style="top:0; left:0; right:0; bottom:0; background: rgba(232, 62, 140, 0.2); opacity: 0; transition: 0.3s;">
+                                                    <button type="button" 
+                                                            wire:click="removeGalleryImage({{ $index }})" 
+                                                            class="btn btn-danger btn-sm rounded-circle shadow"
+                                                            style="width: 30px; height: 30px; padding: 0;">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    {{-- Always Visible Loading Skeletons when uploading --}}
+                                    <template x-if="false"> {{-- Logical bridge for Alpine/Livewire loading --}} </template>
+                                    <div class="col mb-3" wire:loading wire:target="gallery_images">
+                                        <div class="skeleton-loader rounded-lg" style="height: 100px; width: 100%;"></div>
+                                    </div>
+                                    <div class="col mb-3 d-none d-md-block" wire:loading wire:target="gallery_images">
+                                        <div class="skeleton-loader rounded-lg" style="height: 100px; width: 100%;"></div>
+                                    </div>
+                                </div>
+
+                                @error('gallery_images.*') 
+                                    <div class="alert alert-danger p-2 small mt-2">
+                                        <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-
-        @error('gallery_images.*') 
-            <div class="alert alert-danger p-2 small mt-2">
-                <i class="fas fa-exclamation-circle mr-1"></i> {{ $message }}
-            </div>
-        @enderror
-    </div>
-</div>
 
                         {{-- Itinerary Builder --}}
                         <div class="itinerary-section mb-4">
