@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -21,9 +21,7 @@ class SafariPackage extends Model
         'description', 
         'price', 
         'duration_days', 
-        'destination_id', // Swapped 'location' for 'destination_id'
         'difficulty', 
-        'safari_category_id', 
         'is_featured', 
         'status', 
         'meta_title', 
@@ -39,7 +37,6 @@ class SafariPackage extends Model
             'price' => 'decimal:2',
             'is_featured' => 'boolean',
             'duration_days' => 'integer',
-            'destination_id' => 'integer',
         ];
     }
 
@@ -48,7 +45,6 @@ class SafariPackage extends Model
         parent::boot();
         
         static::saving(function ($safari) {
-            // Automatically update slug if name changes or slug is missing
             if (empty($safari->slug) || $safari->isDirty('name')) {
                 $safari->slug = Str::slug($safari->name);
             }
@@ -56,19 +52,20 @@ class SafariPackage extends Model
     }
 
     /**
-     * Relationship to the Destination (Park/City)
+     * Many-to-Many Relationship to Destinations
+     * Using the plural table name you created
      */
-    public function destination(): BelongsTo
+    public function destinations(): BelongsToMany
     {
-        return $this->belongsTo(Destination::class);
+        return $this->belongsToMany(Destination::class, 'destination_safari_packages');
     }
 
     /**
-     * Relationship to Category
+     * Many-to-Many Relationship to Categories
      */
-    public function category(): BelongsTo
+    public function categories(): BelongsToMany
     {
-        return $this->belongsTo(SafariCategory::class, 'safari_category_id');
+        return $this->belongsToMany(SafariCategory::class, 'safari_category_safari_package');
     }
 
     /**
