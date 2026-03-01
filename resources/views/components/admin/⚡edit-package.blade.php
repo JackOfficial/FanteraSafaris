@@ -84,8 +84,9 @@ new class extends Component {
             'name' => 'required|string|max:255|unique:safari_packages,name,' . $this->package->id,
             'price' => 'required|numeric',
             'duration_days' => 'required|integer',
-            'destination_id' => 'required',
+            'destination_id' => 'required|exists:destinations,id',
             'description' => 'required',
+            'gallery_images.*' => 'image|max:2048',
         ]);
 
         DB::transaction(function () {
@@ -134,35 +135,49 @@ new class extends Component {
             .gallery-item { position: relative; height: 100px; }
             .gallery-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
             .delete-overlay { position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid white; }
+            .trix-editor-container { min-height: 250px; background: white; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; }
             .border-pink { border-left: 4px solid #e83e8c !important; }
             .text-pink { color: #e83e8c !important; }
             .btn-pink { background-color: #e83e8c; color: white; border: none; }
             .btn-pink:hover { background-color: #d81b60; color: white; }
             .itinerary-header { cursor: pointer; background: #f8f9fa; transition: 0.2s; border-bottom: 1px solid #eee; }
             .itinerary-header:hover { background: #fff0f5; }
+            [x-cloak] { display: none !important; }
+
             .itinerary-scroll-container::-webkit-scrollbar { width: 6px; }
             .itinerary-scroll-container::-webkit-scrollbar-thumb { background: #e83e8c; border-radius: 10px; }
-            [x-cloak] { display: none !important; }
         </style>
     @endpush
 
     <section class="content">
-        <div class="container-fluid pt-3">
+        <div class="container-fluid pt-4">
             <form wire:submit="save">
                 <div class="row">
-                    {{-- Left Column: Settings --}}
+                    {{-- Left Column: Settings & Description --}}
                     <div class="col-md-5">
                         <div class="card card-outline card-pink shadow-sm mb-4">
-                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold text-pink">Package Details</h5></div>
+                            <div class="card-header bg-white"><h5 class="mb-0 font-weight-bold text-pink">Package Info</h5></div>
                             <div class="card-body">
                                 <div class="form-group mb-3">
-                                    <label class="font-weight-bold small text-muted">PACKAGE NAME</label>
+                                    <label class="font-weight-bold small text-muted text-uppercase">Package Name</label>
                                     <input type="text" wire:model="name" class="form-control">
                                 </div>
-                                <div class="row">
-                                    <div class="col-6 mb-3"><label class="small font-weight-bold">PRICE (USD)</label><input type="number" wire:model="price" class="form-control"></div>
-                                    <div class="col-6 mb-3"><label class="small font-weight-bold">DAYS</label><input type="number" wire:model="duration_days" class="form-control"></div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-6"><label class="small font-weight-bold">PRICE (USD)</label><input type="number" wire:model="price" class="form-control"></div>
+                                    <div class="col-6"><label class="small font-weight-bold">DAYS</label><input type="number" wire:model="duration_days" class="form-control"></div>
                                 </div>
+
+                                {{-- DESCRIPTION SECTION --}}
+                                <div class="form-group mb-3" wire:ignore>
+                                    <label class="small font-weight-bold text-muted text-uppercase">Description</label>
+                                    <input id="description" type="hidden" name="description" value="{{ $description }}">
+                                    <trix-editor input="description" 
+                                        class="trix-editor-container"
+                                        x-on:trix-change="$wire.set('description', $event.target.value)">
+                                    </trix-editor>
+                                </div>
+
                                 <div class="form-group mb-3">
                                     <label class="small font-weight-bold">DESTINATION</label>
                                     <select wire:model="destination_id" class="form-control">
@@ -171,6 +186,7 @@ new class extends Component {
                                         @endforeach
                                     </select>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-6">
                                         <label class="small font-weight-bold">CATEGORY</label>
@@ -196,7 +212,7 @@ new class extends Component {
                             <div class="card-body">
                                 <div class="gallery-grid mb-3">
                                     @foreach($package->photos->where('type', 'gallery') as $photo)
-                                        <div class="gallery-item">
+                                        <div class="gallery-item" wire:key="photo-{{ $photo->id }}">
                                             <img src="{{ asset('storage/' . $photo->path) }}">
                                             <div class="delete-overlay" wire:click="deletePhoto({{ $photo->id }})"><i class="fas fa-times"></i></div>
                                         </div>
@@ -207,8 +223,9 @@ new class extends Component {
                         </div>
                     </div>
 
-                    {{-- Right Column: Itinerary Builder --}}
+                    {{-- Right Column: Itinerary --}}
                     <div class="col-md-7">
+                        {{-- Cover Image --}}
                         <div class="card shadow-sm mb-4 p-2">
                             <div x-data="{ photoPreview: null }">
                                 <input type="file" wire:model="featured_image" class="d-none" x-ref="photo"
@@ -218,29 +235,28 @@ new class extends Component {
                             </div>
                         </div>
 
+                        {{-- Itinerary List --}}
                         <div class="itinerary-builder">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="font-weight-bold mb-0">Itinerary Builder</h5>
                                 <span class="badge badge-pink px-3 shadow-sm">{{ count($itinerary) }} Days</span>
                             </div>
 
-                            <div class="itinerary-scroll-container mb-3" style="max-height: 500px; overflow-y: auto; padding: 5px;">
+                            <div class="itinerary-scroll-container mb-3" style="max-height: 500px; overflow-y: auto;">
                                 @foreach($itinerary as $index => $day)
                                     <div class="card mb-2 border-pink shadow-sm" wire:key="day-{{ $index }}">
-                                        
-                                        {{-- HEADER WITH COLLAPSE BUTTON AT THE END --}}
+                                        {{-- HEADER WITH END-ALIGNED BUTTON --}}
                                         <div class="card-header itinerary-header p-3 d-flex align-items-center justify-content-between" 
                                              @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})">
                                             
                                             <div class="d-flex align-items-center overflow-hidden">
                                                 <span class="badge badge-pink mr-3">DAY {{ $day['day_number'] }}</span>
-                                                <span class="small font-weight-bold text-dark text-uppercase text-truncate" style="max-width: 300px;">
-                                                    {{ $day['title'] ?: 'Untitled Day' }}
+                                                <span class="small font-weight-bold text-dark text-uppercase text-truncate" style="max-width: 320px;">
+                                                    {{ $day['title'] ?: 'Enter day title...' }}
                                                 </span>
                                             </div>
 
-                                            {{-- THE END BUTTON --}}
-                                            <div class="pl-3">
+                                            <div class="pl-2">
                                                 <i class="fas fa-chevron-down text-muted" 
                                                    :class="activeDay === {{ $index }} ? 'fa-rotate-180 text-pink' : ''" 
                                                    style="transition: 0.3s"></i>
@@ -249,25 +265,18 @@ new class extends Component {
 
                                         <div class="card-body p-3 bg-white" x-show="activeDay === {{ $index }}" x-cloak>
                                             <div class="form-group mb-3">
-                                                <label class="small font-weight-bold text-muted text-uppercase">Day Title</label>
+                                                <label class="small font-weight-bold text-muted">DAY TITLE</label>
                                                 <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control font-weight-bold bg-light border-0">
                                             </div>
                                             <div class="form-group mb-3">
-                                                <label class="small font-weight-bold text-muted text-uppercase">Activities</label>
+                                                <label class="small font-weight-bold text-muted">ACTIVITIES</label>
                                                 <textarea wire:model.defer="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
                                             </div>
                                             <div class="row">
-                                                <div class="col-6">
-                                                    <label class="small font-weight-bold text-muted text-uppercase">Meals</label>
-                                                    <input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm">
-                                                </div>
-                                                <div class="col-6">
-                                                    <label class="small font-weight-bold text-muted text-uppercase">Accom.</label>
-                                                    <input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm">
-                                                </div>
+                                                <div class="col-6"><label class="small font-weight-bold text-muted">MEALS</label><input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm"></div>
+                                                <div class="col-6"><label class="small font-weight-bold text-muted">ACCOM.</label><input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm"></div>
                                             </div>
                                             
-                                            {{-- ACTIONS FOOTER --}}
                                             <div class="d-flex justify-content-end mt-3 pt-2 border-top">
                                                 <button type="button" wire:click="duplicateDay({{ $index }})" 
                                                         @click="activeDay = {{ $index + 1 }}"
