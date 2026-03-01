@@ -163,7 +163,7 @@ protected function reorderDays()
 <div x-data="{
     expandedId: null,
     price: @entangle('price'),
-    discountRate: 0,
+    discountRate: @entangle('discountRate'),
     destinations: @entangle('selected_destinations'),
     categories: @entangle('selected_categories'),
 
