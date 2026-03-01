@@ -92,4 +92,9 @@ class SafariPackage extends Model
     {
         return '$' . number_format($this->price, 0);
     }
+
+    public function destination(): BelongsTo
+{
+    return $this->belongsTo(Destination::class);
+}
 }

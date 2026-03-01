@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\SafariController;
@@ -94,6 +95,7 @@ Route::middleware(['auth', 'role:super-admin|admin|safari-manager'])
         Route::resource('posts', PostController::class);
         Route::resource('categories', CategoryController::class);
         Route::resource('safari-categories', SafariCategoryController::class);
+        Route::resource('destinations', DestinationController::class);
         
         // Inquiry/Message Routes
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.inbox');

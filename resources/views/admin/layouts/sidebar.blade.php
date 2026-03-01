@@ -57,6 +57,14 @@
                                 <p>All Packages</p>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+    <a href="{{ route('admin.destinations.index') }}" class="nav-link {{ request()->routeIs('admin.destinations.*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-map-marked-alt text-warning"></i>
+        <p>Destinations</p>
+    </a>
+</li>
+
                         <li class="nav-item">
                             <a href="{{ route('admin.safari-categories.index') }}" class="nav-link {{ request()->routeIs('admin.safari-categories.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
