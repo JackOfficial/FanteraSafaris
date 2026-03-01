@@ -17,7 +17,7 @@ class HomeController extends Controller
 
         // Fetch top-rated safari packages (limit 3 for the homepage)
         $packages = SafariPackage::with('destination')
-            ->where('is_active', true)
+            ->where('published', true)
             ->latest()
             ->take(3)
             ->get();
