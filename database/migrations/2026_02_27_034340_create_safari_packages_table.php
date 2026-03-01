@@ -25,7 +25,6 @@ return new class extends Migration
     $table->foreignId('safari_category_id')->nullable()->constrained('safari_categories')->onDelete('set null');
     
     // Attributes
-    $table->string('location'); 
     $table->string('difficulty')->default('moderate'); 
     $table->string('image')->nullable();
     
