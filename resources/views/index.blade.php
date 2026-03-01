@@ -31,7 +31,7 @@
             <p class="lead text-white mb-5" style="font-size: 1.25rem; max-width: 600px;">Luxury Gorilla trekking and bespoke savannah safaris curated by local experts across East Africa.</p>
             
             <div class="block-17 my-4 shadow-2xl" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1);">
-              <form action="{{ route('safaris.index') }}" method="GET" class="d-block d-flex align-items-center">
+              <form action="#" method="GET" class="d-block d-flex align-items-center">
                 <div class="fields d-block d-flex w-100">
                   <div class="textfield-search one-third w-100 mr-2">
                     <input type="text" name="query" class="form-control" placeholder="Where do you want to go?" style="border-radius: 12px; height: 60px; border: none; padding-left: 20px;">
