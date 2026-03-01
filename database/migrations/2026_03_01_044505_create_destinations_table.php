@@ -21,11 +21,6 @@ return new class extends Migration
         $table->boolean('is_featured')->default(false);
         $table->timestamps();
         });
-
-        Schema::table('safari_packages', function (Blueprint $table) {
-        $table->foreignId('destination_id')->nullable()->after('safari_category_id')->constrained()->onDelete('cascade');
-    });
-    
     }
 
     /**

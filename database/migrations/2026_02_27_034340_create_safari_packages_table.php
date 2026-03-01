@@ -22,7 +22,6 @@ return new class extends Migration
     $table->decimal('price', 12, 2);     // Increased to 12 to handle large groups/luxury rates
     $table->integer('duration_days')->default(1);
     $table->integer('max_people')->nullable(); // Good for booking logic later
-    $table->foreignId('safari_category_id')->nullable()->constrained('safari_categories')->onDelete('set null');
     
     // Attributes
     $table->string('difficulty')->default('moderate'); 
