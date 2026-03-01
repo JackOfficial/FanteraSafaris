@@ -94,17 +94,6 @@ class SafariPackageController extends Controller
 
    public function edit(SafariPackage $package)
 {
-    // Load plural relationships: itineraries (sorted), photos, categories, and destinations
-    $package->load([
-        'itineraries' => fn($q) => $q->orderBy('day_number'), 
-        'photos', 
-        'categories', 
-        'destinations'
-    ]);
-
-    // Fetch all available options for the multi-select fields
-    $categories = SafariCategory::orderBy('name')->get();
-    
     return view('admin.packages.edit', compact('package', 'categories'));
 }
 
