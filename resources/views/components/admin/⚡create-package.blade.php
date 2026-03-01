@@ -298,11 +298,11 @@ new class extends Component {
                             </div>
                         </div>
 
-{{-- Itinerary Journey --}}
+                        {{-- Itinerary Journey --}}
 <div class="itinerary-section mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="font-weight-bold mb-0">Itinerary Journey</h5>
-        <div class="d-flex align-items-center">
+        <div>
             @if(count($itinerary) > 0)
                 <button type="button" 
                         onclick="confirm('Are you sure you want to delete the ENTIRE itinerary?') || event.stopImmediatePropagation()"
@@ -319,56 +319,59 @@ new class extends Component {
 
     <div class="itinerary-scroll-container">
         @forelse($itinerary as $index => $day)
-            {{-- In BS4, cards work best with specific spacing classes --}}
-            <div class="card mb-2 border-0 shadow-sm" wire:key="day-v4-{{ $index }}-{{ count($itinerary) }}">
+            {{-- Keying the container is vital for Livewire 3/Laravel 12 --}}
+            <div class="card mb-2 border-0 shadow-sm" wire:key="day-container-{{ $index }}-{{ count($itinerary) }}">
                 
-                {{-- Header: Using Bootstrap 4 float/flex utility classes --}}
-                <div class="card-header p-3 d-flex align-items-center bg-white border-0" 
+                {{-- Header: Logic handled by Alpine --}}
+                <div class="itinerary-header p-3 d-flex align-items-center" 
                      @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})" 
-                     style="cursor:pointer;">
+                     style="cursor:pointer; background: white;">
                     
                     <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" 
-                         style="width: 28px; height: 28px; font-size: 11px; font-weight:bold; flex-shrink: 0;">
+                         style="width: 28px; height: 28px; font-size: 11px; font-weight:bold;">
                         {{ $day['day_number'] }}
                     </div>
                     
-                    <div class="flex-grow-1 font-weight-bold small text-truncate text-dark">
-                        {{ $itinerary[$index]['title'] ?: 'Day ' . $day['day_number'] . ': Untitled' }}
+                    <div class="flex-grow-1 font-weight-bold small text-truncate">
+                        {{ $day['title'] ?: 'Day ' . $day['day_number'] . ': Untitled' }}
                     </div>
                     
-                    <i class="fas fa-chevron-down text-muted transition-icon ml-auto" 
+                    {{-- Icon rotation logic --}}
+                    <i class="fas fa-chevron-down text-muted transition-icon" 
                        :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"></i>
                 </div>
                 
-                {{-- Body: BS4 bg-light --}}
+                {{-- Body: Controlled by Alpine x-show --}}
                 <div class="card-body bg-light border-top" 
                      x-show="activeDay === {{ $index }}" 
                      x-cloak 
-                     x-transition.opacity>
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100">
                     
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label class="small text-muted mb-1 font-weight-bold">HEADING</label>
-                        <input type="text" wire:model.live.debounce.400ms="itinerary.{{ $index }}.title" class="form-control" placeholder="e.g. Arrival and Transfer">
+                        <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control" placeholder="e.g. Arrival and Transfer">
                     </div>
                     
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label class="small text-muted mb-1 font-weight-bold">DAILY ACTIVITIES</label>
                         <textarea wire:model.blur="itinerary.{{ $index }}.activities" class="form-control" rows="3"></textarea>
                     </div>
 
-                    <div class="form-row"> {{-- BS4 uses form-row for horizontal layouts --}}
-                        <div class="form-group col-md-6">
+                    <div class="row">
+                        <div class="col-6">
                             <label class="small text-muted mb-1 font-weight-bold">ACCOMMODATION</label>
                             <input type="text" wire:model.blur="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm">
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="col-6">
                             <label class="small text-muted mb-1 font-weight-bold">MEALS</label>
                             <input type="text" wire:model.blur="itinerary.{{ $index }}.meals" class="form-control form-control-sm">
                         </div>
                     </div>
                     
                     <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                        <div>
+                        <div class="btn-group">
                             <button type="button" wire:click="duplicateDay({{ $index }})" class="btn btn-link btn-sm text-pink p-0 mr-3 text-decoration-none font-weight-bold">
                                 <i class="far fa-copy mr-1"></i> Duplicate
                             </button>
@@ -379,14 +382,14 @@ new class extends Component {
                                 <i class="far fa-trash-alt mr-1"></i> Delete
                             </button>
                         </div>
-                        <span class="badge badge-secondary p-2">Day {{ $day['day_number'] }}</span>
+                        <span class="badge badge-secondary opacity-50">Day {{ $day['day_number'] }}</span>
                     </div>
                 </div>
             </div>
         @empty
-            <div class="text-center py-5 bg-light rounded" style="border: 2px dashed #cbd5e0 !important;">
-                <i class="fas fa-map-marked-alt fa-3x text-muted mb-3" style="opacity: 0.3;"></i>
-                <p class="text-muted">No itinerary days added yet.</p>
+            <div class="text-center py-5 bg-light rounded border-dashed" style="border: 2px dashed #cbd5e0 !important;">
+                <i class="fas fa-map-marked-alt fa-3x text-muted mb-3 opacity-25"></i>
+                <p class="text-muted">No itinerary days added yet. <br> Click <strong>+ Add Day</strong> to begin the journey.</p>
             </div>
         @endforelse
     </div>
