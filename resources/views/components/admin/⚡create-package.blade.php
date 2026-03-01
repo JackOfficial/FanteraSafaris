@@ -23,27 +23,30 @@ new class extends Component {
     }
 
     public function addDay() {
-        $this->itinerary[] = [
-            'day_number' => count($this->itinerary) + 1,
-            'title' => '',
-            'activities' => '',
-            'meals' => 'Breakfast, Lunch, Dinner',
-            'accommodation' => ''
-        ];
-        $this->duration_days = count($this->itinerary);
-        
-        // Tells Alpine to open the new day
-        $this->dispatch('day-added', index: count($this->itinerary) - 1);
-    }
+    $this->itinerary[] = [
+        'id' => uniqid(), // ADD THIS: A unique ID for Alpine to track
+        'day_number' => count($this->itinerary) + 1,
+        'title' => '',
+        'activities' => '',
+        'meals' => 'Breakfast, Lunch, Dinner',
+        'accommodation' => ''
+    ];
+    $this->duration_days = count($this->itinerary);
+    
+    // Dispatch the UNIQUE ID instead of the index
+    $this->dispatch('day-added', id: $this->itinerary[count($this->itinerary) - 1]['id']);
+}
 
-    public function duplicateDay($index) {
-        $dayToCopy = $this->itinerary[$index];
-        array_splice($this->itinerary, $index + 1, 0, [$dayToCopy]);
-        $this->reorderDays();
-        
-        // Tells Alpine to open the duplicated day
-        $this->dispatch('day-added', index: $index + 1);
-    }
+public function duplicateDay($index) {
+    $newId = uniqid();
+    $dayToCopy = $this->itinerary[$index];
+    $dayToCopy['id'] = $newId; // Give the duplicate its own ID
+    
+    array_splice($this->itinerary, $index + 1, 0, [$dayToCopy]);
+    $this->reorderDays();
+    
+    $this->dispatch('day-added', id: $newId);
+}
 
     public function removeDay($index) {
         array_splice($this->itinerary, $index, 1);
@@ -301,30 +304,29 @@ new class extends Component {
                         </div>
 
                         {{-- Itinerary Journey (Robust Collapse) --}}
-<div class="itinerary-section mb-4" x-data="{ activeDay: 0 }" @day-added.window="activeDay = $event.detail.index">
+{{-- Update the x-data to track ID instead of Index --}}
+<div class="itinerary-section mb-4" 
+     x-data="{ activeId: '{{ $itinerary[0]['id'] ?? null }}' }" 
+     @day-added.window="activeId = $event.detail.id">
+    
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="font-weight-bold mb-0">Itinerary Journey</h5>
         <div>
             @if(count($itinerary) > 0)
-                <button type="button" 
-                    onclick="confirm('Clear all?') || event.stopImmediatePropagation()" 
-                    wire:click="clearAllDays" 
-                    class="btn btn-sm btn-outline-danger rounded-pill px-3 mr-2">Clear All</button>
+                <button type="button" onclick="confirm('Clear all?') || event.stopImmediatePropagation()" wire:click="clearAllDays" class="btn btn-sm btn-outline-danger rounded-pill px-3 mr-2">Clear All</button>
             @endif
-            <button type="button" 
-                wire:click="addDay" 
-                class="btn btn-sm btn-pink rounded-pill px-3">+ Add Day</button>
+            <button type="button" wire:click="addDay" class="btn btn-sm btn-pink rounded-pill px-3">+ Add Day</button>
         </div>
     </div>
 
     <div class="itinerary-scroll-container">
         @forelse($itinerary as $index => $day)
-            {{-- Using a more specific wire:key prevents Livewire from confusing DOM elements during re-orders --}}
-            <div class="card mb-2 border-0 shadow-sm" wire:key="itinerary-item-{{ $index }}-{{ count($itinerary) }}">
+            {{-- Use the UNIQUE ID for the wire:key --}}
+            <div class="card mb-2 border-0 shadow-sm" wire:key="day-{{ $day['id'] }}">
                 
-                {{-- Header: Logic handled purely by Alpine --}}
+                {{-- Header: Toggle based on ID --}}
                 <div class="itinerary-header p-3 d-flex align-items-center" 
-                     @click="activeDay = (activeDay === {{ $index }} ? null : {{ $index }})" 
+                     @click="activeId = (activeId === '{{ $day['id'] }}' ? null : '{{ $day['id'] }}')" 
                      style="cursor:pointer; background: white;">
                     
                     <div class="bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" 
@@ -337,19 +339,18 @@ new class extends Component {
                     </div>
                     
                     <i class="fas fa-chevron-down text-muted transition-icon" 
-                       :style="activeDay === {{ $index }} ? 'transform:rotate(180deg)' : ''"
+                       :style="activeId === '{{ $day['id'] }}' ? 'transform:rotate(180deg)' : ''"
                        style="transition: transform 0.3s ease;"></i>
                 </div>
                 
-                {{-- Content: x-show stays in sync with activeDay --}}
+                {{-- Content: Show based on ID --}}
                 <div class="card-body bg-light border-top" 
-                     x-show="activeDay === {{ $index }}" 
+                     x-show="activeId === '{{ $day['id'] }}'" 
                      x-cloak 
-                     x-collapse> {{-- Note: Ensure you have the Alpine Collapse plugin or use x-show.transition --}}
+                     x-transition> 
                     
                     <div class="form-group mb-2">
                         <label class="small text-muted font-weight-bold">HEADING</label>
-                        {{-- .blur ensures the UI doesn't refresh while you are typing --}}
                         <input type="text" wire:model.blur="itinerary.{{ $index }}.title" class="form-control">
                     </div>
 
