@@ -141,7 +141,23 @@ new class extends Component {
             .gallery-item { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
             [x-cloak] { display: none !important; }
             .destination-badge { background: #e83e8c; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 4px; }
-        </style>
+       .object-fit-cover { object-fit: cover; }
+.transition-all { transition: all 0.3s ease; }
+.rounded-lg { border-radius: 0.75rem !important; }
+
+/* Show the delete button on hover */
+.col:hover .hover-opacity-100 {
+    opacity: 1 !important;
+}
+.col:hover img {
+    transform: scale(1.1);
+}
+
+/* Background for the card body */
+.bg-light-50 {
+    background-color: #fafbfc;
+}
+       </style>
     @endpush
 
     <section class="content-header">
