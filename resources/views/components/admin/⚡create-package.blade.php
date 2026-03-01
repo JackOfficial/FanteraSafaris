@@ -4,6 +4,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\SafariPackage;
 use App\Models\SafariCategory;
+use App\Models\Destination;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -11,7 +12,7 @@ new class extends Component {
     use WithFileUploads;
 
     // Basic Info
-    public $name, $price, $duration_days, $location, $status = 'draft', $safari_category_id, $description;
+    public $name, $price, $duration_days, $destination_id, $status = 'draft', $safari_category_id, $description;
     
     // Media
     public $featured_image; 
@@ -52,7 +53,7 @@ new class extends Component {
             'name' => 'required|string|max:255|unique:safari_packages,name',
             'price' => 'required|numeric',
             'duration_days' => 'required|integer',
-            'location' => 'required|string',
+            'destination_id' => 'required|exists:destinations,id',
             'safari_category_id' => 'required|exists:safari_categories,id',
             'description' => 'required',
             'featured_image' => 'required|image|max:2048',
@@ -66,7 +67,7 @@ new class extends Component {
                 'slug' => Str::slug($this->name),
                 'price' => $this->price,
                 'duration_days' => $this->duration_days,
-                'location' => $this->location,
+                'destination_id' => $this->destination_id,
                 'status' => $this->status,
                 'safari_category_id' => $this->safari_category_id,
                 'description' => $this->description,
@@ -154,8 +155,14 @@ new class extends Component {
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label class="small font-weight-bold">LOCATION</label>
-                                    <input type="text" wire:model="location" class="form-control" placeholder="Bwindi Impenetrable NP, Uganda">
+                                    <label class="small font-weight-bold">DESTINATION / LOCATION</label>
+                                    <select wire:model="destination_id" class="form-control @error('destination_id') is-invalid @enderror">
+                                        <option value="">Select Destination</option>
+                                        @foreach(\App\Models\Destination::orderBy('name')->get() as $dest)
+                                            <option value="{{ $dest->id }}">{{ $dest->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('destination_id') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div class="row">
