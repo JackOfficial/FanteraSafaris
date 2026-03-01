@@ -159,15 +159,26 @@ new class extends Component {
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="small font-weight-bold">BASE PRICE ($)</label>
-                                        <input type="number" wire:model.live="price" class="form-control">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="small font-weight-bold">DISC. PER ADD. PERSON (%)</label>
-                                        <input type="number" wire:model.live="discount_per_person" class="form-control">
-                                    </div>
-                                </div>
+    <div class="col-md-6 mb-3">
+        <label class="small font-weight-bold">BASE PRICE</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text bg-white text-muted border-right-0">$</span>
+            </div>
+            <input type="number" wire:model.live="price" class="form-control border-left-0" placeholder="0.00">
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label class="small font-weight-bold">DISC. PER ADD. PERSON</label>
+        <div class="input-group">
+            <input type="number" wire:model.live="discount_per_person" class="form-control border-right-0" placeholder="0">
+            <div class="input-group-append">
+                <span class="input-group-text bg-white text-muted border-left-0">%</span>
+            </div>
+        </div>
+    </div>
+</div>
 
                                 {{-- Price Preview Box --}}
                                 <div class="price-preview-box p-3 mb-4" x-show="basePrice > 0" x-transition>
