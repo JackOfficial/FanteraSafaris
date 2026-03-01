@@ -113,6 +113,10 @@ Route::middleware(['auth', 'role:super-admin|admin|safari-manager'])
     Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy');
 
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+        Route::get('packages/export/pdf', [SafariPackageController::class, 'exportPdf'])
+         ->name('packages.export.pdf');
+         
         Route::resource('packages', SafariPackageController::class);
 
         // Settings

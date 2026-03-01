@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SafariPackage;
 use App\Models\SafariCategory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+// use Barrier\DomPDF\Facade\Pdf;
 
 class SafariPackageController extends Controller
 {
@@ -20,6 +22,18 @@ class SafariPackageController extends Controller
             ->paginate(10);
         
         return view('admin.packages.index', compact('packages'));
+    }
+
+    public function exportPdf()
+    {
+        // Fetch all packages with their destination relationship
+        $packages = SafariPackage::with('destination', 'category')->get();
+
+        // Load the view and pass the data
+        $pdf = Pdf::loadView('admin.packages.pdf', compact('packages'));
+
+        // Download the file
+        return $pdf->download('safari-packages-list.pdf');
     }
 
     public function create()
