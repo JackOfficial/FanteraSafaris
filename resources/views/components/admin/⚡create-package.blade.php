@@ -13,6 +13,7 @@ new class extends Component {
     public $name, $price = 0, $duration_days, $status = 'draft', $description = '';
     public $selected_destinations = []; 
     public $selected_categories = [];
+    public $openDayId = null;
     
     public $featured_image; 
     public $gallery_images = []; 
@@ -23,6 +24,7 @@ new class extends Component {
     {
         // Initialize with one empty day by default
         $this->addDay();
+        $this->openDayId = $this->itinerary[0]['temp_id'];
     }
 
     public function updatedGalleryImages()
@@ -41,7 +43,8 @@ new class extends Component {
             'meals' => 'Breakfast, Lunch, Dinner',
             'accommodation' => ''
         ];
-        $this->dispatch('day-added', id: $newId);
+        $this->openDayId = $newId;
+        //$this->dispatch('day-added', id: $newId);
     }
 
     public function duplicateDay($index)
@@ -280,21 +283,11 @@ new class extends Component {
 <div class="mb-4">
     <h4 class="font-weight-bold mb-4">Journey Itinerary</h4>
     
-    {{-- We scope the open state to this container and use a more robust toggle --}}
-    <div x-data="{ 
-            openId: null, 
-            init() {
-                // Automatically open the first day on load
-                if(this.openId === null && @js(count($itinerary)) > 0) {
-                    this.openId = @js($itinerary[0]['temp_id'] ?? null);
-                }
-            }
-         }"
-         @day-added.window="openId = $event.detail.id"
+    {{-- Entangle makes the PHP and JS variables share the same state --}}
+    <div x-data="{ openId: @entangle('openDayId') }"
          class="itinerary-timeline">
 
         @foreach($itinerary as $index => $day)
-            {{-- CRITICAL: wire:key must be on the outermost element of the loop --}}
             <div class="card card-itinerary shadow-sm mb-3" 
                  wire:key="itinerary-day-{{ $day['temp_id'] }}" 
                  :class="openId === '{{ $day['temp_id'] }}' ? 'active shadow-md' : ''">
@@ -327,14 +320,15 @@ new class extends Component {
                     <div class="card-body border-top bg-white">
                         <div class="form-group mb-3">
                             <label class="small text-muted">DAY TITLE</label>
+                            {{-- wire:model in Livewire 3 is deferred by default --}}
                             <input type="text" 
-                                   wire:model.defer="itinerary.{{ $index }}.title" 
+                                   wire:model="itinerary.{{ $index }}.title" 
                                    class="form-control border-0 bg-light rounded-pill px-3">
                         </div>
                         
                         <div class="form-group mb-4">
                             <label class="small text-muted">ACTIVITIES</label>
-                            <textarea wire:model.defer="itinerary.{{ $index }}.activities" 
+                            <textarea wire:model="itinerary.{{ $index }}.activities" 
                                       class="form-control border-0 bg-light rounded-lg" 
                                       rows="3"></textarea>
                         </div>
@@ -342,11 +336,11 @@ new class extends Component {
                         <div class="row">
                             <div class="col-md-6 mb-2">
                                 <label class="small text-muted">Meals</label>
-                                <input type="text" wire:model.defer="itinerary.{{ $index }}.meals" class="form-control form-control-sm bg-light border-0">
+                                <input type="text" wire:model="itinerary.{{ $index }}.meals" class="form-control form-control-sm bg-light border-0">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="small text-muted">Accommodation</label>
-                                <input type="text" wire:model.defer="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm bg-light border-0">
+                                <input type="text" wire:model="itinerary.{{ $index }}.accommodation" class="form-control form-control-sm bg-light border-0">
                             </div>
                         </div>
 
@@ -379,7 +373,6 @@ new class extends Component {
         <i class="fas fa-plus mr-2"></i> ADD DAY {{ count($itinerary) + 1 }}
     </button>
 </div>
-
                         <div class="card shadow-sm border-0 mb-5" style="border-radius: 20px;">
                             <div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="mb-0 font-weight-bold">Full Package Overview</h5></div>
                             <div class="card-body px-4 pb-4">
