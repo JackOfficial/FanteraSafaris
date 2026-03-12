@@ -46,7 +46,7 @@ Route::prefix('safaris')->group(function () {
 
     // The individual safari detail page (using the slug for SEO)
     // Example: domain.com/safaris/bwindi-gorilla-trek
-    Route::get('/{slug}', [PackageController::class, 'show'])->name('safaris.show');
+    Route::get('/{package}', [PackageController::class, 'show'])->name('safaris.show');
     
 });
 

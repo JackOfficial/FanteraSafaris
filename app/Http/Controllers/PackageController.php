@@ -58,15 +58,27 @@ class PackageController extends Controller
     /**
      * Display the specific safari details.
      */
-    public function show(string $slug): View
-    {
-        $package = SafariPackage::where('slug', $slug)
-            ->with(['destinations', 'categories', 'photos', 'itineraries'])
-            ->firstOrFail();
+ public function show(SafariPackage $package): View
+{
+    // 1. Eager load everything, including ONLY published reviews
+    $package->load([
+        'destinations', 
+        'categories', 
+        'photos', 
+        'itineraries',
+        'reviews' => function($query) {
+            $query->where('is_published', true)->latest();
+        }
+    ]);
 
-        // Increment views for the admin "Hot" badge logic
-        $package->increment('views');
+    // 2. Load the average rating for approved reviews only
+    $package->loadAvg(['reviews' => function($query) {
+        $query->where('is_published', true);
+    }], 'rating');
 
-        return view('packages.show', compact('package'));
-    }
+    // 3. Increment views (Standard for "Popular" logic)
+    $package->increment('views');
+
+    return view('packages.show', compact('package'));
+}
 }
