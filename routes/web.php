@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\SafariCategoryController;
 use App\Http\Controllers\Admin\SafariPackageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PackageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,8 +37,18 @@ Route::view('/tour-details', 'tours.show')->name('tours.show');
 // Hotels & Packages
 Route::view('/hotel', 'hotel')->name('hotel.index');
 Route::view('/hotel-single', 'hotel-single')->name('hotel.show');
-Route::view('/packages', 'packages.index')->name('packages.index');
-Route::view('/package', 'packages.show')->name('packages.show');
+
+// Grouping safari routes for better organization
+Route::prefix('safaris')->group(function () {
+    
+    // The main listing page (Search, Filters, All Packages)
+    Route::get('/', [PackageController::class, 'index'])->name('packages.index');
+
+    // The individual safari detail page (using the slug for SEO)
+    // Example: domain.com/safaris/bwindi-gorilla-trek
+    Route::get('/{slug}', [PackageController::class, 'show'])->name('packages.show');
+    
+});
 
 // Blog Content
 Route::view('/blog', 'blog')->name('blog.index');

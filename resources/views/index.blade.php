@@ -1,4 +1,4 @@
-<x-layout>m
+<x-layout>
     <x-slot name="styles">
         <style>
             .transition-hover {

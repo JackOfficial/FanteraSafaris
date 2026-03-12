@@ -100,4 +100,10 @@ class SafariPackage extends Model
     {
         return '$' . number_format($this->price, 0);
     }
+
+    public function getRouteKeyName()
+{
+    return 'slug';
+}
+
 }
