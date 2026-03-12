@@ -9273,6 +9273,33 @@ textarea.form-control {
   color: #f85959;
   margin: 0 4px; }
 
+  /* Pagination Customization */
+.pagination {
+    margin-top: 50px;
+    gap: 8px;
+}
+
+.page-item .page-link {
+    border-radius: 12px !important; /* Matches your card radius */
+    color: var(--safari-dark);
+    border: 1px solid #e0e0e0;
+    padding: 12px 20px;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.page-item.active .page-link {
+    background-color: var(--safari-gold) !important;
+    border-color: var(--safari-gold) !important;
+    color: #000 !important;
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+}
+
+.page-item .page-link:hover {
+    background-color: var(--safari-dark);
+    color: #fff;
+}
+
 .sidebar-box {
   margin-bottom: 30px;
   padding: 25px;
