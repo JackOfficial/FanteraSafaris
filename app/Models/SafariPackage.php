@@ -24,6 +24,7 @@ class SafariPackage extends Model
         'duration_days', 
         'difficulty', 
         'is_featured', 
+        'views',
         'status', 
         'meta_title', 
         'meta_description'
