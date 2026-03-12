@@ -55,7 +55,7 @@
                         [
                             'name' => 'Land Cruiser Extended (Luxury)',
                             'tag' => 'Most Popular',
-                            'image' => 'land_cruiser_extended.jpg',
+                            'image' => 'Land Cruiser Extended.jpg',
                             'desc' => 'The ultimate safari machine. Extra length provides superior legroom and space for camera gear.',
                             'capacity' => '6-7 Guests',
                             'roof' => 'Full Pop-up',
@@ -66,7 +66,7 @@
                         [
                             'name' => 'Land Cruiser Short-Base',
                             'tag' => 'Perfect for Couples',
-                            'image' => 'land_cruiser_short.jpg',
+                            'image' => 'Land Cruiser Short-Base.jpg',
                             'desc' => 'Nimble and fast. Ideal for honeymooners or private couples wanting a more intimate experience.',
                             'capacity' => '2-3 Guests',
                             'roof' => 'Pop-up Top',
