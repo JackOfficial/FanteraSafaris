@@ -54,7 +54,7 @@ view()->composer('admin.layouts.sidebar', function ($view) {
             UpdateLastLogin::class
         );
 
-        Paginator::useBootstrapFive();
+        Paginator::useBootstrapFour();
 
     }
 
