@@ -13,7 +13,7 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         background: #fff;
         border: 1px solid #eee;
-        height: 100%; /* Ensures uniform card heights in a row */
+        height: 100%; 
     }
     .destination:hover {
         transform: translateY(-10px);
@@ -54,10 +54,11 @@
         color: #e83e8c;
         font-weight: 700;
     }
-    .pagination-wrapper .active span {
+    /* Fix for Laravel Pagination UI */
+    .pagination-wrapper .block-27 ul li.active span {
         background: #e83e8c !important;
-        border-color: #e83e8c !important;
-        color: #fff !important;
+        color: #fff;
+        border: 1px solid #e83e8c;
     }
 </style>
 
@@ -80,6 +81,7 @@
             <div class="col-lg-3 sidebar ftco-animate">
                 <div class="sidebar-box bg-white p-4 rounded shadow-sm mb-4 border">
                     <h3 class="heading-2 mb-4" style="font-size: 18px; font-weight: 700;">Find Your Adventure</h3>
+                    {{-- Ensure this route name matches your web.php --}}
                     <form action="{{ route('safaris.index') }}" method="GET" class="search-property-1">
                         <div class="form-group mb-3">
                             <label class="small font-weight-bold text-muted">Search</label>
@@ -104,20 +106,21 @@
 
             <div class="col-lg-9">
                 <div class="row">
-                    
                     @forelse($packages as $package)
                         @php
-                            // Dynamic Discount Calculation
                             $hasDiscount = $package->discount_rate > 0;
                             $finalPrice = $hasDiscount 
                                 ? $package->price - ($package->price * ($package->discount_rate / 100)) 
                                 : $package->price;
+                            
+                            // Correct Image Logic: Assuming 'photo' relationship
+                            $imagePath = $package->photo ? asset('storage/' . $package->photo->path) : asset('front/images/placeholder.jpg');
                         @endphp
 
                         <div class="col-md-6 mb-5 ftco-animate">
                             <div class="destination">
                                 <a href="{{ route('safaris.show', $package->slug) }}" class="img d-flex justify-content-center align-items-center" 
-                                   style="background-image: url('{{ $package->image_path ? asset('storage/' . $package->photo->path) : asset('front/images/placeholder.jpg') }}');">
+                                   style="background-image: url('{{ $imagePath }}');">
                                     
                                     <div class="badge-overlay">
                                         @if($package->views > 100)
@@ -164,7 +167,7 @@
                                     <div class="bottom-area d-flex align-items-center">
                                         <div class="location">
                                             <i class="icon-map-o mr-1"></i> 
-                                            <span class="small">{{ $package->destinations->pluck('name')->first() }}</span>
+                                            <span class="small">{{ $package->destinations->pluck('name')->first() ?? 'East Africa' }}</span>
                                         </div>
                                         <div class="ml-auto">
                                             <a href="{{ route('safaris.show', $package->slug) }}" class="btn btn-outline-dark btn-sm px-3" style="border-radius: 20px;">Explore</a>
@@ -179,7 +182,6 @@
                             <a href="{{ route('safaris.index') }}" class="btn btn-primary mt-3">View All Packages</a>
                         </div>
                     @endforelse
-
                 </div>
 
                 <div class="row mt-5 pagination-wrapper">
