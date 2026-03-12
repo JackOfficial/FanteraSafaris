@@ -1,13 +1,10 @@
-@extends('layouts.app')
+<x-layout 
+    title="Safaris & Tour Packages | Fantera Safaris"
+    meta-description="Explore our luxury safari and tour packages across East Africa including Uganda, Kenya, Tanzania, Rwanda, and Zanzibar."
+    meta-keywords="Luxury Safari Packages, East Africa Tours, Gorilla Trekking, Serengeti Safaris, Maasai Mara"
+    og-image="{{ asset('front/images/safari_banner.jpg') }}"
+>
 
-@section('title', 'Safaris & Tour Packages | Fantera Safaris')
-@section('meta_description', 'Explore our luxury safari and tour packages across East Africa including Uganda, Kenya, Tanzania, Rwanda, and Zanzibar.')
-@section('meta_keywords', 'Luxury Safari Packages, East Africa Tours, Gorilla Trekking, Serengeti Safaris, Maasai Mara')
-@section('og_image', asset('front/images/safari_banner.jpg'))
-
-@section('content')
-
-<!-- Hero Banner -->
 <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/Bwindi.jpg') }}');">
     <div class="overlay"></div>
     <div class="container h-100">
@@ -21,12 +18,10 @@
     </div>
 </div>
 
-<!-- Safari Packages Section -->
 <section class="ftco-section ftco-degree-bg">
     <div class="container">
         <div class="row">
 
-            <!-- Sidebar / Filters -->
             <div class="col-lg-3 sidebar ftco-animate">
                 <div class="sidebar-box bg-white p-4 rounded shadow-sm mb-4">
                     <h3 class="mb-3">Filter Your Safari</h3>
@@ -62,11 +57,9 @@
                 </div>
             </div>
 
-            <!-- Main Packages Listing -->
             <div class="col-lg-9">
                 <div class="row">
 
-                    <!-- Package Card Example -->
                     <div class="col-md-6 mb-4 ftco-animate">
                         <div class="destination">
                             <a href="/tours/bwindi" class="img img-2 d-flex justify-content-center align-items-center" style="background-image: url('{{ asset('front/images/Bwindi.jpg') }}');">
@@ -161,7 +154,6 @@
 
                 </div>
 
-                <!-- Pagination -->
                 <div class="row mt-5">
                     <div class="col text-center">
                         <div class="block-27">
@@ -181,4 +173,4 @@
     </div>
 </section>
 
-@endsection
+</x-layout>
