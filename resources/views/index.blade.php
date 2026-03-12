@@ -115,13 +115,13 @@
                         <div class="item">
                             <div class="destination shadow-sm transition-hover" style="border-radius: 15px; overflow: hidden;">
                                 {{-- Link to a destination details page --}}
-                                <a href="#" 
+                                <a href="{{ route('destinations.show', $destination->slug) }}" 
                                    class="img d-flex justify-content-center align-items-center" 
                                    style="background-image: url({{ asset('storage/' . $destination->image) }}); height: 350px;">
                                 </a>
                                 <div class="text p-3 bg-white">
                                     <h3 class="font-weight-bold">
-                                        <a href="#">
+                                        <a href="{{ route('destinations.show', $destination->slug) }}">
                                             {{ $destination->name }}, {{ $destination->country }}
                                         </a>
                                     </h3>
