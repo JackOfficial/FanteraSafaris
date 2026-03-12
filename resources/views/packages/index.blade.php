@@ -167,7 +167,7 @@
                                             <span class="small">{{ $package->destinations->pluck('name')->first() }}</span>
                                         </div>
                                         <div class="ml-auto">
-                                            <a href="{{ route('packages.show', $package->slug) }}" class="btn btn-outline-dark btn-sm px-3" style="border-radius: 20px;">Explore</a>
+                                            <a href="{{ route('safaris.show', $package->slug) }}" class="btn btn-outline-dark btn-sm px-3" style="border-radius: 20px;">Explore</a>
                                         </div>
                                     </div>
                                 </div>
@@ -176,7 +176,7 @@
                     @empty
                         <div class="col-12 text-center py-5">
                             <h4 class="text-muted">No packages found matching your criteria.</h4>
-                            <a href="{{ route('packages.index') }}" class="btn btn-primary mt-3">View All Packages</a>
+                            <a href="{{ route('safaris.index') }}" class="btn btn-primary mt-3">View All Packages</a>
                         </div>
                     @endforelse
 
