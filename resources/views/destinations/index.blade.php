@@ -25,6 +25,28 @@
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
 
+            /* Fleet Promotion Section */
+.destination-fleet-cta {
+    background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+    border-radius: 30px;
+    padding: 60px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+.fleet-floating-img {
+    position: absolute;
+    right: -50px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.3;
+    max-width: 500px;
+}
+@media (max-width: 991px) {
+    .fleet-floating-img { display: none; }
+    .destination-fleet-cta { padding: 40px 20px; text-align: center; }
+}
+
             /* Country Pill Filters */
             .filter-pill { 
                 padding: 10px 25px; border-radius: 50px; background: #fff; 
@@ -105,6 +127,29 @@
                 </div>
                 @endforelse
             </div>
+
+            {{-- Fleet CTA: The Fantera Difference --}}
+<div class="destination-fleet-cta mt-5 mb-4 shadow-lg">
+    <div class="row align-items-center">
+        <div class="col-lg-7" style="z-index: 2;">
+            <span class="text-warning font-weight-bold small text-uppercase" style="letter-spacing: 2px;">The Fantera Difference</span>
+            <h2 class="text-white font-weight-bold mt-2 mb-3" style="font-family: 'Playfair Display', serif;">Traverse {{ $destination->name }} in Comfort</h2>
+            <p class="text-white-50 mb-4">
+                The roads in East Africa can be challenging. That's why we use our own custom-fitted 4x4 Land Cruisers—maintained daily to ensure your safety and provide the perfect platform for photography.
+            </p>
+            <div class="d-flex flex-wrap mb-4">
+                <div class="mr-4 mb-2"><i class="fas fa-wifi text-warning mr-2"></i> <small>On-board Wi-Fi</small></div>
+                <div class="mr-4 mb-2"><i class="fas fa-battery-full text-warning mr-2"></i> <small>Charging Ports</small></div>
+                <div class="mb-2"><i class="fas fa-ice-cream text-warning mr-2"></i> <small>Cooler Box</small></div>
+            </div>
+            <a href="{{ route('fleet.index') }}" class="btn btn-warning px-4 py-3 font-weight-bold shadow-sm" style="border-radius: 15px;">
+                EXPLORE OUR FLEET <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+    {{-- Floating Background Image --}}
+    <img src="{{ asset('front/images/land_cruiser_extended.png') }}" class="fleet-floating-img" alt="Safari Land Cruiser">
+</div>
 
             {{-- Custom Pagination Styling --}}
             <div class="row mt-5">
