@@ -77,6 +77,11 @@ class SafariPackage extends Model
         return $this->morphMany(Photo::class, 'imageable');
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'package_id');
+    }
+
     /**
      * Relationship to the single Featured Photo (Cover)
      */
