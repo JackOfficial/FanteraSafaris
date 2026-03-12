@@ -58,9 +58,9 @@ class PackageController extends Controller
     /**
      * Display the specific safari details.
      */
- public function show(SafariPackage $package): View
+public function show(SafariPackage $package): View
 {
-    // 1. Eager load everything, including ONLY published reviews
+    // 1. Eager load everything for the main package
     $package->load([
         'destinations', 
         'categories', 
@@ -71,14 +71,25 @@ class PackageController extends Controller
         }
     ]);
 
-    // 2. Load the average rating for approved reviews only
+    // 2. Load the average rating
     $package->loadAvg(['reviews' => function($query) {
         $query->where('is_published', true);
     }], 'rating');
 
-    // 3. Increment views (Standard for "Popular" logic)
+    // 3. Increment views for "Hot" badge logic
     $package->increment('views');
 
-    return view('packages.show', compact('package'));
+    // 4. Fetch Related Packages (World-Class UX)
+    // We find packages in the same categories, excluding the current one
+    $relatedPackages = SafariPackage::where('id', '!=', $package->id)
+        ->whereHas('categories', function ($query) use ($package) {
+            $query->whereIn('safari_categories.id', $package->categories->pluck('id'));
+        })
+        ->with(['destinations', 'photo']) // Eager load for the small cards
+        ->limit(3) 
+        ->get();
+
+    // 5. Pass both variables to the view
+    return view('packages.show', compact('package', 'relatedPackages'));
 }
 }
