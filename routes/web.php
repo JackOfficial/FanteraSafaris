@@ -42,11 +42,11 @@ Route::view('/hotel-single', 'hotel-single')->name('hotel.show');
 Route::prefix('safaris')->group(function () {
     
     // The main listing page (Search, Filters, All Packages)
-    Route::get('/', [PackageController::class, 'index'])->name('packages.index');
+    Route::get('/', [PackageController::class, 'index'])->name('safaris.index');
 
     // The individual safari detail page (using the slug for SEO)
     // Example: domain.com/safaris/bwindi-gorilla-trek
-    Route::get('/{slug}', [PackageController::class, 'show'])->name('packages.show');
+    Route::get('/{slug}', [PackageController::class, 'show'])->name('safaris.show');
     
 });
 
