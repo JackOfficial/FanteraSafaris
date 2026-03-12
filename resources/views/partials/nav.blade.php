@@ -11,7 +11,7 @@
     <div class="collapse navbar-collapse" id="ftco-nav">
       <ul class="navbar-nav ml-auto align-items-center">
         <li class="nav-item {{ request()->is('/') ? 'active' : '' }}"><a href="/" class="nav-link">Home</a></li>
-        <li class="nav-item {{ request()->is('tour*') ? 'active' : '' }}"><a href="/tour" class="nav-link">Destinations</a></li>
+        <li class="nav-item {{ request()->is('destinations*') ? 'active' : '' }}"><a href="{{ route('destinations.index') }}" class="nav-link">Destinations</a></li>
         <li class="nav-item {{ request()->is('safaris*') ? 'active' : '' }}"><a href="/safaris" class="nav-link">Safari Packages</a></li>
 
         @hasanyrole('super-admin|safari-manager')
