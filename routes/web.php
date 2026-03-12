@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\SafariCategoryController;
 use App\Http\Controllers\Admin\SafariPackageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DestinationController as TourController;
 use App\Http\Controllers\PackageController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,8 +32,18 @@ Route::view('/contact', 'contact')->name('contact');
 
 // Safari & Tour Catalog
 Route::get('/safaris', [SafariController::class, 'index'])->name('safaris.index');
-Route::view('/tour', 'tours.index')->name('tours.index');
+// Route::view('/tour', 'tours.index')->name('tours.index');
 Route::view('/tour-details', 'tours.show')->name('tours.show');
+
+Route::prefix('destinations')->group(function () {
+
+    // 1. All Destinations (The "Where to Go" page)
+    Route::get('/', [TourController::class, 'index'])->name('destinations.index');
+
+    // 2. Specific Destination page (Shows all tours in a specific park/country)
+    Route::get('/{destination:slug}', [TourController::class, 'show'])->name('destinations.show');
+
+});
 
 // Hotels & Packages
 Route::view('/hotel', 'hotel')->name('hotel.index');
