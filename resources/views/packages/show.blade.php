@@ -201,4 +201,38 @@
     </div>
 </section>
 
+{{-- Related Safaris Section --}}
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-7 text-center heading-section">
+                <span class="subheading">Similar Experiences</span>
+                <h2 class="mb-4">Recommended for You</h2>
+            </div>
+        </div>
+        <div class="row">
+            {{-- This loop assumes you pass $relatedPackages from your controller --}}
+            @foreach($relatedPackages as $related)
+                <div class="col-md-4">
+                    <div class="destination shadow-sm bg-white rounded">
+                        <a href="{{ route('safaris.show', $related->slug) }}" class="img d-flex justify-content-center align-items-center" style="background-image: url({{ asset('storage/' . $related->photo?->path) }}); height: 250px;">
+                            <div class="icon d-flex justify-content-center align-items-center">
+                                <span class="icon-link"></span>
+                            </div>
+                        </a>
+                        <div class="text p-3">
+                            <h3><a href="{{ route('safaris.show', $related->slug) }}">{{ $related->name }}</a></h3>
+                            <span class="price">${{ number_format($related->price) }}</span>
+                            <p class="bottom-area d-flex">
+                                <span><i class="icon-map-o"></i> {{ $related->destinations->first()?->name }}</span>
+                                <span class="ml-auto"><i class="icon-calendar"></i> {{ $related->duration_days }} Days</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
 </x-layout>
