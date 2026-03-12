@@ -117,7 +117,7 @@
                         <div class="col-md-6 mb-5 ftco-animate">
                             <div class="destination">
                                 <a href="{{ route('safaris.show', $package->slug) }}" class="img d-flex justify-content-center align-items-center" 
-                                   style="background-image: url('{{ $package->image_path ? asset('storage/' . $package->image_path) : asset('front/images/placeholder.jpg') }}');">
+                                   style="background-image: url('{{ $package->image_path ? asset('storage/' . $package->photo->path) : asset('front/images/placeholder.jpg') }}');">
                                     
                                     <div class="badge-overlay">
                                         @if($package->views > 100)
