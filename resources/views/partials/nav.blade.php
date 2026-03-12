@@ -36,7 +36,7 @@
         {{-- Role-based Fleet Access --}}
         @hasanyrole('super-admin|safari-manager')
           <li class="nav-item">
-            <a href="{{ route('admin.fleet.index') }}" class="nav-link text-warning px-lg-3">
+            <a href="{{ route('fleet.index') }}" class="nav-link text-warning px-lg-3">
                <i class="fas fa-car-side mr-1"></i> Fleet
             </a>
           </li>
