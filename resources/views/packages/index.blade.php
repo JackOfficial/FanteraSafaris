@@ -160,7 +160,7 @@
                                     </div>
 
                                     <p class="text-muted small">
-                                        {{ Str::limit($package->description, 100) }}
+                                        {!! Str::limit(strip_tags($package->description), 100) !!}
                                     </p>
                                     
                                     <hr>
