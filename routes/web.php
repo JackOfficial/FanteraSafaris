@@ -58,8 +58,6 @@ Route::view('/blog-single', 'blog-single')->name('blog.show');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-Route::get('/safaris/{slug}', [SafariController::class, 'show'])->name('safaris.show');
-
 /*
 |--------------------------------------------------------------------------
 | Authentication & Socialite
