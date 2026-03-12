@@ -36,7 +36,7 @@
     </x-slot>
 
     {{-- Luxury Hero Section --}}
-    <div class="hero-wrap" style="background-image: url('{{ asset('front/images/destinations_hero.jpg') }}'); height: 55vh; background-size: cover; background-position: center;">
+    <div class="hero-wrap" style="background-image: url('{{ asset('front/images/bg_1.jpg') }}'); height: 55vh; background-size: cover; background-position: center;">
         <div class="overlay" style="position: absolute; inset: 0;"></div>
         <div class="container" style="z-index: 2;">
             <div class="row justify-content-center text-center">
