@@ -166,7 +166,7 @@
                         <span class="text-muted small">Per Person (Adult)</span>
                     </div>
 
-                    <form action="{{ route('inquiries.store') }}" method="POST" class="booking-form">
+                    <form action="/contact" method="POST" class="booking-form">
                         @csrf
                         <input type="hidden" name="package_id" value="{{ $package->id }}">
                         
