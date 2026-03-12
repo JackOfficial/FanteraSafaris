@@ -148,7 +148,7 @@
                 </div>
 
                 <hr class="my-5">
-                @include('front.partials._reviews')
+                @include('partials._reviews')
 
             </div>
 
