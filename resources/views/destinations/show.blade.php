@@ -177,7 +177,7 @@
         </div>
     </div>
     {{-- Floating Background Image --}}
-    <img src="{{ asset('front/images/land_cruiser_extended.png') }}" class="fleet-floating-img" alt="Safari Land Cruiser">
+    <img src="{{ asset('front/images/Land Cruiser Extended.jpg') }}" class="fleet-floating-img" alt="Safari Land Cruiser">
 </div>
 
                     {{-- Bootstrap Pagination --}}
