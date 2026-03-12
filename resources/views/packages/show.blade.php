@@ -106,7 +106,7 @@
                     <h4 class="mb-4 font-weight-bold border-bottom pb-2">Tour Overview</h4>
                     <p class="lead text-primary font-italic mb-4" style="font-size: 18px;">{{ $package->summary }}</p>
                     <div class="text-secondary leading-relaxed" style="font-size: 16px; line-height: 1.8;">
-                        {!! nl2br(e($package->description)) !!}
+                        {!! $package->description !!}
                     </div>
                 </div>
 
