@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Login;
 use App\Models\Booking;
 use App\Models\User;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -52,6 +53,8 @@ view()->composer('admin.layouts.sidebar', function ($view) {
             Login::class,
             UpdateLastLogin::class
         );
+
+        Paginator::useBootstrapFive();
 
     }
 
