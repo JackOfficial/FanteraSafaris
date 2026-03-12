@@ -1,125 +1,115 @@
 <x-layout 
     :title="'Premier East African Safari Destinations | Fantera Safaris'"
-    :metaDescription="'Discover the best destinations in Uganda, Kenya, and Tanzania. From the misty mountains of Bwindi to the vast Serengeti plains.'"
+    :metaDescription="'Explore our curated list of destinations across Rwanda, Uganda, Kenya, and Tanzania. Find the perfect backdrop for your next adventure.'"
 >
-   <x-slot name="styles">
+    <x-slot name="styles">
         <style>
             :root { --safari-gold: #ffc107; --safari-dark: #1a1a1a; }
-            .hero-wrap { position: relative; overflow: hidden; }
-            .hero-wrap .overlay { background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%); }
-            .sidebar-wrap { border: 1px solid rgba(0,0,0,0.05); background: #ffffff !important; border-radius: 20px !important; position: sticky; top: 100px; }
-            .tour-card { border: none !important; border-radius: 24px !important; background: #fff; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); overflow: hidden; }
-            .tour-card:hover { transform: translateY(-12px); box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important; }
-            .tour-card .img { position: relative; overflow: hidden; border-radius: 20px; margin: 10px; height: 240px !important; }
-            .img-bg { transition: 0.8s ease; background-size: cover; background-position: center; width: 100%; height: 100%; }
-            .tour-card:hover .img-bg { transform: scale(1.1); }
-            .badge-luxury { position: absolute; top: 15px; left: 15px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px); color: var(--safari-dark); padding: 6px 15px; border-radius: 50px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; z-index: 2; }
-            input[type='range'] { accent-color: var(--safari-gold); cursor: pointer; }
-        </style>
-   </x-slot>
+            .hero-wrap { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+            .hero-wrap .overlay { background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%); z-index: 1; }
+            
+            /* Enhanced Destination Card */
+            .dest-card { border: none !important; border-radius: 30px !important; background: #fff; transition: all 0.5s ease; overflow: hidden; height: 100%; border: 1px solid #f0f0f0 !important; }
+            .dest-card:hover { transform: translateY(-15px); box-shadow: 0 40px 80px rgba(0,0,0,0.1) !important; border-color: transparent !important; }
+            
+            .dest-img-container { position: relative; height: 320px; overflow: hidden; margin: 12px; border-radius: 22px; }
+            .dest-img { transition: 1.2s cubic-bezier(0.165, 0.84, 0.44, 1); background-size: cover; background-position: center; width: 100%; height: 100%; }
+            .dest-card:hover .dest-img { transform: scale(1.15); }
+            
+            /* Badge Styling */
+            .tour-count-badge { 
+                position: absolute; top: 15px; left: 15px; 
+                background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px); 
+                color: var(--safari-dark); padding: 6px 18px; border-radius: 50px; 
+                font-size: 11px; font-weight: 800; z-index: 2; letter-spacing: 1px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
 
-    {{-- Dynamic Hero Section --}}
-    <div class="hero-wrap js-fullheight" style="background-image: url('{{ asset('front/images/zanzibar_beach.jpg') }}'); height: 60vh;">
-        <div class="overlay"></div>
-        <div class="container h-100">
-            <div class="row h-100 align-items-center justify-content-center text-center">
+            /* Country Pill Filters */
+            .filter-pill { 
+                padding: 10px 25px; border-radius: 50px; background: #fff; 
+                color: var(--safari-dark); border: 1px solid #e0e0e0; 
+                transition: 0.3s; font-weight: 600; font-size: 14px; margin: 5px; display: inline-block;
+            }
+            .filter-pill:hover, .filter-pill.active { background: var(--safari-dark); color: #fff; border-color: var(--safari-dark); text-decoration: none; }
+        </style>
+    </x-slot>
+
+    {{-- Luxury Hero Section --}}
+    <div class="hero-wrap" style="background-image: url('{{ asset('front/images/destinations_hero.jpg') }}'); height: 55vh; background-size: cover; background-position: center;">
+        <div class="overlay" style="position: absolute; inset: 0;"></div>
+        <div class="container" style="z-index: 2;">
+            <div class="row justify-content-center text-center">
                 <div class="col-md-10">
-                    <span class="subheading text-warning font-weight-bold" style="letter-spacing: 3px; font-size: 13px;">CHOOSE YOUR ADVENTURE</span>
-                    <h1 class="display-3 font-weight-bold text-white mb-3" style="font-family: 'Playfair Display', serif;">Explore East Africa</h1>
-                    <p class="lead text-white-50 mb-4" style="max-width: 600px; margin: 0 auto;">
-                        Bespoke itineraries from the misty Gorilla peaks to the golden Serengeti plains.
-                    </p>
+                    <span class="subheading text-warning font-weight-bold" style="letter-spacing: 5px; font-size: 13px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">UNVEIL THE WILD</span>
+                    <h1 class="display-3 font-weight-bold text-white mb-3" style="font-family: 'Playfair Display', serif;">Our Destinations</h1>
+                    <p class="text-white-50 lead mx-auto" style="max-width: 600px;">Curated landscapes where nature remains untouched and adventures are born.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <section class="ftco-section bg-light" id="tours-section">
+    <section class="ftco-section bg-light pt-5">
         <div class="container">
-            <div class="row">
-                {{-- Dynamic Sidebar Filter --}}
-                <div class="col-lg-3 sidebar">
-                    <div class="sidebar-wrap p-4 shadow-sm">
-                        <h3 class="heading mb-4" style="font-family: 'Playfair Display', serif; font-weight: 700;">Refine Search</h3>
-                        <form action="{{ route('safaris.index') }}" method="GET">
-                            <div class="form-group mb-4">
-                                <label class="small font-weight-bold text-muted uppercase">Destination</label>
-                                <select name="destination" class="form-control border-0 bg-light" style="border-radius: 12px; height: 50px;">
-                                    <option value="">All Regions</option>
-                                    @foreach($destinations as $dest)
-                                        <option value="{{ $dest->slug }}" {{ request('destination') == $dest->slug ? 'selected' : '' }}>
-                                            {{ $dest->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group mb-4">
-                                <label class="small font-weight-bold text-muted uppercase">Max Budget: <span class="text-warning">$<span id="rangeValue">{{ request('price', 5000) }}</span></span></label>
-                                <input name="price" value="{{ request('price', 5000) }}" min="500" max="10000" step="100" type="range" class="w-100 mb-2" oninput="document.getElementById('rangeValue').innerText = this.value">
-                            </div>
-
-                            <button type="submit" class="btn btn-dark py-3 w-100 shadow-sm" style="border-radius: 15px; font-weight: 700;">Apply Filters</button>
-                            @if(request()->anyFilled(['destination', 'price']))
-                                <a href="{{ route('safaris.index') }}" class="btn btn-link btn-sm w-100 mt-2 text-muted">Clear Filters</a>
-                            @endif
-                        </form>
+            {{-- Modern Country Filter Bar --}}
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <div class="filter-container">
+                        <a href="{{ route('destinations.index') }}" class="filter-pill {{ !request('country') ? 'active' : '' }}">All Regions</a>
+                        @foreach($countries as $country)
+                            <a href="{{ route('destinations.index', ['country' => $country]) }}" 
+                               class="filter-pill {{ request('country') == $country ? 'active' : '' }}">
+                               {{ $country }}
+                            </a>
+                        @endforeach
                     </div>
                 </div>
+            </div>
 
-                <div class="col-lg-9">
-                    <div class="row">
-                        {{-- Dynamic Tour Loop --}}
-                        @forelse($packages as $package)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="tour-card shadow-sm mb-4">
-                                <div class="img">
-                                    {{-- Tag logic: Show the first category name or a custom 'Featured' tag --}}
-                                    <div class="badge-luxury">{{ $package->categories->first()->name ?? 'Safari' }}</div>
-                                    <div class="img-bg" style="background-image: url('{{ $package->photo ? asset('storage/' . $package->photo->path) : asset('front/images/safari_default.jpg') }}');"></div>
+            <div class="row">
+                @forelse($destinations as $dest)
+                <div class="col-md-6 col-lg-4 mb-5">
+                    <a href="{{ route('destinations.show', $dest->slug) }}" class="text-decoration-none">
+                        <div class="dest-card shadow-sm">
+                            <div class="dest-img-container">
+                                <div class="tour-count-badge">
+                                    <i class="fas fa-binoculars mr-1 text-warning"></i> 
+                                    {{ $dest->packages_count }} TOURS
                                 </div>
-                                
-                                <div class="text p-4">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div>
-                                            <p class="text-warning mb-1" style="font-size: 11px; font-weight: 800; letter-spacing: 1px;">
-                                                <i class="fas fa-map-marker-alt mr-1"></i> 
-                                                {{ strtoupper($package->destinations->pluck('name')->implode(', ')) }}
-                                            </p>
-                                            <h3 style="font-size: 1.15rem; font-weight: 700; line-height: 1.3;">
-                                                <a href="{{ route('safaris.show', $package->slug) }}" class="text-dark">{{ $package->name }}</a>
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="d-flex align-items-center mt-3 pt-3" style="border-top: 1px solid #f0f0f0;">
-                                        <div class="price">
-                                            <span class="text-muted small">From</span>
-                                            <span class="d-block font-weight-bold text-dark" style="font-size: 1.2rem;">
-                                                ${{ number_format($package->price) }}
-                                            </span>
-                                        </div>
-                                        <div class="ml-auto">
-                                            <a href="{{ route('safaris.show', $package->slug) }}" class="btn btn-warning btn-sm px-3 shadow-sm" style="border-radius: 10px; font-weight: 700;">View Details</a>
-                                        </div>
-                                    </div>
+                                <div class="dest-img" style="background-image: url('{{ $dest->image ? asset('storage/'.$dest->image) : asset('front/images/dest_default.jpg') }}');"></div>
+                            </div>
+                            
+                            <div class="text p-4 pt-2 text-center">
+                                <span class="country-tag" style="font-size: 11px;">{{ $dest->country }}</span>
+                                <h3 class="mt-2 mb-3" style="font-family: 'Playfair Display', serif; font-weight: 800; color: var(--safari-dark); letter-spacing: -0.5px;">
+                                    {{ $dest->name }}
+                                </h3>
+                                <p class="text-muted small px-3 line-height-lg" style="line-height: 1.6;">
+                                    {{ Str::limit(strip_tags($dest->description), 95) }}
+                                </p>
+                                <hr style="width: 40px; border-top: 2px solid var(--safari-gold); margin: 20px auto;">
+                                <div class="mt-2">
+                                    <span class="text-dark font-weight-bold" style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
+                                        Explore Region <i class="fas fa-chevron-right ml-1 small"></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        @empty
-                        <div class="col-12 text-center py-5">
-                            <h4 class="text-muted">No safaris found matching your criteria.</h4>
-                            <a href="{{ route('safaris.index') }}" class="btn btn-warning mt-3">View All Safaris</a>
-                        </div>
-                        @endforelse
-                    </div>
+                    </a>
+                </div>
+                @empty
+                <div class="col-12 text-center py-5">
+                    <img src="{{ asset('front/images/no-results.png') }}" style="width: 150px; opacity: 0.5;" alt="No results">
+                    <h4 class="text-muted mt-4">No destinations found in this region.</h4>
+                    <a href="{{ route('destinations.index') }}" class="btn btn-dark mt-3 px-4" style="border-radius: 50px;">View All</a>
+                </div>
+                @endforelse
+            </div>
 
-                    {{-- Dynamic Pagination --}}
-                    <div class="row mt-5">
-                        <div class="col text-center d-flex justify-content-center">
-                            {{ $packages->appends(request()->query())->links() }}
-                        </div>
-                    </div>
+            {{-- Custom Pagination Styling --}}
+            <div class="row mt-5">
+                <div class="col text-center d-flex justify-content-center">
+                    {{ $destinations->appends(request()->query())->links() }}
                 </div>
             </div>
         </div>
