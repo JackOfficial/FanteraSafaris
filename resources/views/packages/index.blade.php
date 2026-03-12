@@ -80,7 +80,7 @@
             <div class="col-lg-3 sidebar ftco-animate">
                 <div class="sidebar-box bg-white p-4 rounded shadow-sm mb-4 border">
                     <h3 class="heading-2 mb-4" style="font-size: 18px; font-weight: 700;">Find Your Adventure</h3>
-                    <form action="{{ route('packages.index') }}" method="GET" class="search-property-1">
+                    <form action="{{ route('safaris.index') }}" method="GET" class="search-property-1">
                         <div class="form-group mb-3">
                             <label class="small font-weight-bold text-muted">Search</label>
                             <div class="form-field">
@@ -96,7 +96,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary btn-block py-3 mt-4">Filter Results</button>
                         @if(request()->anyFilled(['search', 'price_range']))
-                            <a href="{{ route('packages.index') }}" class="btn btn-link btn-block btn-sm text-muted mt-2">Clear Filters</a>
+                            <a href="{{ route('safaris.index') }}" class="btn btn-link btn-block btn-sm text-muted mt-2">Clear Filters</a>
                         @endif
                     </form>
                 </div>
@@ -116,7 +116,7 @@
 
                         <div class="col-md-6 mb-5 ftco-animate">
                             <div class="destination">
-                                <a href="{{ route('packages.show', $package->slug) }}" class="img d-flex justify-content-center align-items-center" 
+                                <a href="{{ route('safaris.show', $package->slug) }}" class="img d-flex justify-content-center align-items-center" 
                                    style="background-image: url('{{ $package->image_path ? asset('storage/' . $package->image_path) : asset('front/images/placeholder.jpg') }}');">
                                     
                                     <div class="badge-overlay">
@@ -140,7 +140,7 @@
                                         {{ $package->categories->pluck('name')->implode(' • ') }}
                                     </div>
                                     <h3 class="mb-2" style="font-size: 20px; font-weight: 700;">
-                                        <a href="{{ route('packages.show', $package->slug) }}" class="text-dark">{{ $package->name }}</a>
+                                        <a href="{{ route('safaris.show', $package->slug) }}" class="text-dark">{{ $package->name }}</a>
                                     </h3>
                                     
                                     <div class="d-flex mb-3">
