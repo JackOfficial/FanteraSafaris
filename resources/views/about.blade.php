@@ -4,6 +4,15 @@
 >
     <x-slot:styles>
         <style>
+
+            [data-toggle="collapse"][aria-expanded="true"] i {
+    transform: rotate(45deg);
+    color: #dc3545 !important; /* Optional: change color when open */
+}
+.btn-link i {
+    transition: 0.3s transform ease;
+}
+
             .btn-warning {
                 background-color: #d4a373;
                 border: none;

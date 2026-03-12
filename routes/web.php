@@ -45,6 +45,10 @@ Route::prefix('destinations')->group(function () {
 
 });
 
+Route::name('fleet.')->group(function () {
+    Route::get('/fleet', [FleetController::class, 'index'])->name('fleet.index');
+});
+
 // Hotels & Packages
 Route::view('/hotel', 'hotel')->name('hotel.index');
 Route::view('/hotel-single', 'hotel-single')->name('hotel.show');

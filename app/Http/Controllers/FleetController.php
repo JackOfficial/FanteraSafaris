@@ -12,7 +12,7 @@ class FleetController extends Controller
      */
     public function index()
     {
-        //
+       return view('fleet.index');
     }
 
     /**
@@ -34,9 +34,10 @@ class FleetController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($slug)
     {
-        //
+        // For individual vehicle details
+        return view('fleet.show', compact('slug'));
     }
 
     /**
